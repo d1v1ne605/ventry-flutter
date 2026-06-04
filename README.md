@@ -1,3 +1,3 @@
-# flutter_mvvm_ddd_bloc
+# ventry_flutter
 
 A new Flutter project.

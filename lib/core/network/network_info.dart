@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_mvvm_ddd_bloc/core/network/interceptors/auth_interceptor.dart';
-import 'package:flutter_mvvm_ddd_bloc/core/network/interceptors/error_interceptor.dart';
+import 'package:ventry_flutter/core/network/interceptors/auth_interceptor.dart';
+import 'package:ventry_flutter/core/network/interceptors/error_interceptor.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

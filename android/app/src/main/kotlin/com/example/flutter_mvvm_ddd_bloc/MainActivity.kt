@@ -1,4 +1,4 @@
-package com.example.flutter_mvvm_ddd_bloc
+package com.example.ventry_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

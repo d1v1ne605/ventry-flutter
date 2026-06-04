@@ -1,4 +1,4 @@
-name: flutter_mvvm_ddd_bloc
+name: ventry_flutter
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -30,6 +30,7 @@ dev_dependencies:
   injectable_generator: ^2.6.2
   freezed: ^2.5.2
   json_serializable: ^6.7.1
+  rename_app: ^1.6.6
 
 flutter:
   generate: true
