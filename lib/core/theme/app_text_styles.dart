@@ -68,4 +68,57 @@ class AppTextStyles {
         height: 20 / 14,
         color: const Color(0xFF475569),
       );
+
+  // ── Manrope styles (Inventory Dashboard / Figma) ──────────────────────────
+
+  /// "Inventory Dashboard" heading — Manrope SemiBold 24 (style_A80L26)
+  static TextStyle get dashboardHeading => GoogleFonts.manrope(
+        fontSize: 24.sp,
+        fontWeight: FontWeight.w600,
+        height: 32 / 24,
+        color: AppColors.heading,
+      );
+
+  /// Card title — Manrope SemiBold 18 (style_6QKXRQ)
+  static TextStyle get cardTitle => GoogleFonts.manrope(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
+        height: 24 / 18,
+        color: AppColors.heading,
+      );
+
+  /// "STORAGE MANAGER" app bar title — Manrope Bold 16 uppercase (style_SF3FVA)
+  static TextStyle get topBarTitle => GoogleFonts.manrope(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w700,
+        height: 24 / 16,
+        letterSpacing: 16 * 0.05,
+        color: AppColors.primary,
+      );
+
+  /// Nav label — Manrope SemiBold 14 (style_1CFXP6)
+  static TextStyle get navLabel => GoogleFonts.manrope(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+        height: 16 / 14,
+        letterSpacing: 14 * 0.0357,
+        color: AppColors.navInactive,
+      );
+
+  /// Nav label active
+  static TextStyle get navLabelActive => GoogleFonts.manrope(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+        height: 16 / 14,
+        letterSpacing: 14 * 0.0357,
+        color: AppColors.primary,
+      );
+
+  /// Body regular 14 — Manrope Regular (style_FJFLON)
+  static TextStyle get bodyManrope => GoogleFonts.manrope(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w400,
+        height: 20 / 14,
+        color: AppColors.subtitle,
+      );
 }
