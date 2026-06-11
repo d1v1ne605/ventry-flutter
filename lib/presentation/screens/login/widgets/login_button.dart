@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/constants/app_size.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_state.dart';
@@ -20,10 +22,15 @@ class LoginButton extends StatelessWidget {
       listener: _onStateChanged,
       builder: (context, state) {
         return PrimaryButton(
-          text: 'Login',
+          text: AppStrings.login.submitButton,
           isLoading: state.status == LoginStatus.loading,
-          icon: const Icon(Icons.login, color: Colors.white, size: 16),
-          onPressed: () => context.read<LoginBloc>().add(const LoginSubmitted()),
+          icon: const Icon(
+            Icons.login,
+            color: Colors.white,
+            size: AppSize.size16,
+          ),
+          onPressed: () =>
+              context.read<LoginBloc>().add(const LoginSubmitted()),
         );
       },
     );
@@ -32,11 +39,13 @@ class LoginButton extends StatelessWidget {
   void _onStateChanged(BuildContext context, LoginState state) {
     if (state.status == LoginStatus.failure) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.errorMessage ?? 'Authentication Failed')),
+        SnackBar(
+          content: Text(state.errorMessage ?? AppStrings.login.errorDefault),
+        ),
       );
     } else if (state.status == LoginStatus.success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login Successful')),
+        SnackBar(content: Text(AppStrings.login.successMessage)),
       );
     }
   }

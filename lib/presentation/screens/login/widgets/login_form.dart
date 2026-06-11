@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/constants/app_size.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../bloc/login_bloc.dart';
@@ -10,8 +13,7 @@ import 'login_button.dart';
 
 /// Displays the login form: email field, password field, and submit button.
 ///
-/// Each field is built via private methods to keep a single widget class
-/// while still separating visual concerns logically.
+/// All labels, hints, and spacing come from [AppStrings] / [AppSize].
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
@@ -21,9 +23,9 @@ class LoginForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildEmailField(context),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSize.size24.h),
         _buildPasswordField(context),
-        SizedBox(height: 32.h),
+        SizedBox(height: AppSize.size32.h),
         const LoginButton(),
       ],
     );
@@ -31,20 +33,27 @@ class LoginForm extends StatelessWidget {
 
   Widget _buildEmailField(BuildContext context) {
     return CustomTextField(
-      label: 'Email Address',
-      hintText: 'admin@storagepro.com',
-      prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF64748B)),
-      onChanged: (val) =>
-          context.read<LoginBloc>().add(LoginEmailChanged(val)),
+      label: AppStrings.login.emailLabel,
+      hintText: AppStrings.login.emailHint,
+      prefixIcon: Icon(
+        Icons.email_outlined,
+        color: AppColors.textBody,
+        size: AppSize.size20,
+      ),
+      onChanged: (val) => context.read<LoginBloc>().add(LoginEmailChanged(val)),
     );
   }
 
   Widget _buildPasswordField(BuildContext context) {
     return CustomTextField(
-      label: 'Password',
-      hintText: '••••••••',
+      label: AppStrings.login.passwordLabel,
+      hintText: AppStrings.login.passwordHint,
       obscureText: true,
-      prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF64748B)),
+      prefixIcon: Icon(
+        Icons.lock_outline,
+        color: AppColors.textBody,
+        size: AppSize.size20,
+      ),
       topTrailing: _buildForgotPasswordLink(),
       onChanged: (val) =>
           context.read<LoginBloc>().add(LoginPasswordChanged(val)),
@@ -56,7 +65,7 @@ class LoginForm extends StatelessWidget {
       onTap: () {
         // TODO: Navigate to Forgot Password screen
       },
-      child: Text('Forgot Password?', style: AppTextStyles.linkSmall),
+      child: Text(AppStrings.login.forgotPassword, style: AppTextStyles.linkSmall),
     );
   }
 }
