@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/constants/app_size.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'login_footer.dart';
 import 'login_header.dart';
@@ -15,19 +16,22 @@ class LoginCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.inputBorder),
+        borderRadius: BorderRadius.circular(AppSize.size12.r),
+        border: Border.all(
+          color: AppColors.inputBorder,
+          width: AppSize.size1,
+        ),
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
+            padding: EdgeInsets.all(AppSize.size32.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const LoginHeader(),
-                SizedBox(height: 32.h),
+                SizedBox(height: AppSize.size32.h),
                 const LoginForm(),
               ],
             ),

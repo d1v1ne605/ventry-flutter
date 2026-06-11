@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/constants/app_size.dart';
 import '../../../injection.dart';
 import 'bloc/login_bloc.dart';
 import 'widgets/login_card.dart';
@@ -20,7 +21,10 @@ class LoginPage extends StatelessWidget {
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSize.size16.w,
+                vertical: AppSize.size20.h,
+              ),
               child: const LoginCard(),
             ),
           ),

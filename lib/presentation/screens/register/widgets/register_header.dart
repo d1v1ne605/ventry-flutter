@@ -5,18 +5,23 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-/// Displays the login screen header: circular logo, welcome title, and subtitle.
-class LoginHeader extends StatelessWidget {
-  const LoginHeader({super.key});
+/// Displays the registration screen header: logo, title, and subtitle.
+class RegisterHeader extends StatelessWidget {
+  const RegisterHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         _buildLogo(),
-        Text(AppStrings.login.title, style: AppTextStyles.heading1),
+        SizedBox(height: AppSize.size8.h),
+        Text(AppStrings.register.title, style: AppTextStyles.heading1),
         SizedBox(height: AppSize.size4.h),
-        Text(AppStrings.login.subtitle, style: AppTextStyles.body),
+        Text(
+          AppStrings.register.subtitle,
+          style: AppTextStyles.bodySubtle,
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }
@@ -41,9 +46,9 @@ class LoginHeader extends StatelessWidget {
       ),
       child: Center(
         child: Icon(
-          Icons.storefront_outlined,
+          Icons.store_outlined,
           color: AppColors.primary,
-          size: AppSize.size24,
+          size: AppSize.size28,
         ),
       ),
     );
