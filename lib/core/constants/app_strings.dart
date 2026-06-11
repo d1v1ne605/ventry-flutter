@@ -1,73 +1,72 @@
 /// Centralized string constants used across the entire app.
-///
-/// Avoids scattered string literals in widget trees. Each nested class
-/// groups strings by feature / screen for easy discoverability.
 class AppStrings {
-  // ── Register screen ────────────────────────────────────────────────────────
-  static const register = _Register();
+  // ── Auth ─────────────────────────────────────────────────────────────────────
+  // ignore: non_constant_identifier_names
+  static final login = _LoginStrings();
 
-  // ── Login screen ───────────────────────────────────────────────────────────
-  static const login = _Login();
+  // ignore: non_constant_identifier_names
+  static final register = _RegisterStrings();
 
-  // ── Shared / Common ────────────────────────────────────────────────────────
-  static const common = _Common();
+  // ── App-wide ─────────────────────────────────────────────────────────────────
+  static const String appName = 'Ventry';
+
+  // ── Inventory Dashboard ──────────────────────────────────────────────────────
+  static const String storageManagerTitle = 'STORAGE MANAGER';
+  static const String inventoryDashboard = 'Inventory Dashboard';
+  static const String inventorySubtitle = 'Manage your physical assets';
+
+  // ── Cards ────────────────────────────────────────────────────────────────────
+  static const String productCatalogTitle = 'Product Catalog';
+  static const String productCatalogSubtitle = 'View and edit all stored items';
+  static const String categoryManagementTitle = 'Category Management';
+  static const String categoryManagementSubtitle =
+      'Organize items by type and location';
+  static const String stockMovementLogsTitle = 'Stock Movement Logs';
+  static const String stockMovementLogsSubtitle =
+      'Track inbound and outbound history';
+
+  // ── Bottom Nav ───────────────────────────────────────────────────────────────
+  static const String navSales = 'Sales';
+  static const String navInventory = 'Inventory';
+  static const String navPartners = 'Partners';
+  static const String navAccount = 'Account';
 }
 
-class _Register {
-  const _Register();
-
-  // Header
-  String get title => 'Start Your Shop';
-  String get subtitle =>
-      'Create your account to manage your inventory\nefficiently.';
-
-  // Sections
-  String get personalInfoSection => 'Personal Information';
-  String get shopDetailsSection => 'Shop Details';
-
-  // Field labels
-  String get fullNameLabel => 'Full Name';
-  String get emailLabel => 'Email Address';
-  String get phoneLabel => 'Phone Number';
-  String get shopNameLabel => 'Shop Name';
-
-  // Field hints
-  String get fullNameHint => 'e.g. Nguyen Van A';
-  String get emailHint => 'your@email.com';
-  String get phoneHint => '+84 xxx xxx xxx';
-  String get shopNameHint => 'e.g. My Awesome Store';
-
-  // Button
-  String get createButton => 'Create My Shop';
-
-  // Footer
-  String get footerPrefix => 'Already have a shop? ';
-  String get footerLink => 'Login';
+/// Login screen string tokens.
+class _LoginStrings {
+  final String title = 'Welcome Back';
+  final String subtitle = 'Sign in to continue managing your inventory';
+  final String emailLabel = 'Email';
+  final String emailHint = 'Enter your email';
+  final String passwordLabel = 'Password';
+  final String passwordHint = 'Enter your password';
+  final String forgotPassword = 'Forgot password?';
+  final String submitButton = 'Sign In';
+  final String footerPrefix = "Don't have an account?";
+  final String footerLink = 'Sign Up';
+  final String errorDefault = 'Invalid email or password. Please try again.';
+  final String successMessage = 'Login successful!';
 }
 
-class _Login {
-  const _Login();
-
-  String get title => 'Welcome Back';
-  String get subtitle => 'Sign in to your workspace';
-
-  String get emailLabel => 'Email Address';
-  String get emailHint => 'admin@storagepro.com';
-  String get passwordLabel => 'Password';
-  String get passwordHint => '••••••••';
-  String get forgotPassword => 'Forgot Password?';
-
-  String get submitButton => 'Login';
-
-  String get footerPrefix => "Don't have a shop? ";
-  String get footerLink => 'Create a new Shop';
-
-  String get errorDefault => 'Authentication Failed';
-  String get successMessage => 'Login Successful';
-}
-
-class _Common {
-  const _Common();
-
-  String get unknownError => 'An unexpected error occurred.';
+/// Register screen string tokens.
+class _RegisterStrings {
+  final String title = 'Create Account';
+  final String subtitle = 'Join us to manage your inventory smarter';
+  final String fullNameLabel = 'Full Name';
+  final String fullNameHint = 'Enter your full name';
+  final String emailLabel = 'Email';
+  final String emailHint = 'Enter your email';
+  final String phoneLabel = 'Phone Number';
+  final String phoneHint = 'Enter your phone number';
+  final String passwordLabel = 'Password';
+  final String passwordHint = 'Enter your password';
+  final String confirmPasswordLabel = 'Confirm Password';
+  final String confirmPasswordHint = 'Re-enter your password';
+  final String personalInfoSection = 'Personal Information';
+  final String shopDetailsSection = 'Shop Details';
+  final String shopNameLabel = 'Company / Shop Name';
+  final String shopNameHint = 'Enter your company name';
+  final String createButton = 'Create Account';
+  final String footerPrefix = 'Already have an account?';
+  final String footerLink = 'Sign In';
 }
