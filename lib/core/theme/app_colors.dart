@@ -94,4 +94,56 @@ class AppColors {
       blurRadius: 6,
     ),
   ];
+
+  // ── Product Catalog ─────────────────────────────────────────────────────────
+
+  // Search bar
+  static const Color searchBarFill = Color(0xFFF1F5F9);
+  static const Color searchBarBorder = Color(0xFFE2E8F0);
+
+  // Filter chip — active (teal outlined)
+  static const Color filterChipActiveBorder = Color(0xFF00685F);
+  static const Color filterChipActiveFill = Color(0xFFFFFFFF);
+  static const Color filterChipActiveText = Color(0xFF00685F);
+  // Filter chip — inactive
+  static const Color filterChipInactiveBorder = Color(0xFFE2E8F0);
+  static const Color filterChipInactiveFill = Color(0xFFFFFFFF);
+  static const Color filterChipInactiveText = Color(0xFF6D7A77);
+  // Filter chip count badge
+  static const Color filterChipBadgeTeal = Color(0xFF00685F);
+  static const Color filterChipBadgeOrange = Color(0xFFFFA500);
+  static const Color filterChipBadgeText = Color(0xFFFFFFFF);
+
+  // SKU chip background
+  static const Color skuChipFill = Color(0xFFF1F5F9);
+  static const Color skuChipText = Color(0xFF6D7A77);
+
+  // Stock status badge — In Stock
+  static const Color inStockBadgeFill = Color(0xFFE6F4F1);
+  static const Color inStockBadgeText = Color(0xFF00685F);
+  static const Color inStockDot = Color(0xFF22C55E);
+
+  // Stock status badge — Low Stock
+  static const Color lowStockBadgeFill = Color(0xFFFFF7E6);
+  static const Color lowStockBadgeText = Color(0xFFF59E0B);
+  static const Color lowStockDot = Color(0xFFF59E0B);
+  // Low stock left border
+  static const Color lowStockBorder = Color(0xFFF59E0B);
+
+  // Stock status badge — Out of Stock
+  static const Color outOfStockBadgeFill = Color(0xFFFFECEC);
+  static const Color outOfStockBadgeText = Color(0xFFEF4444);
+  static const Color outOfStockDot = Color(0xFFEF4444);
+  // Out of stock left border
+  static const Color outOfStockBorder = Color(0xFFEF4444);
+  // Muted text for out-of-stock products
+  static const Color textMuted = Color(0xFFADB5BD);
+
+  // Product name text
+  static const Color productName = Color(0xFF1C2B2A);
+  static const Color productMeta = Color(0xFF6D7A77);
+  static const Color productPrice = Color(0xFF191C1E);
+
+  // FAB
+  static const Color fabBackground = Color(0xFF00685F);
 }

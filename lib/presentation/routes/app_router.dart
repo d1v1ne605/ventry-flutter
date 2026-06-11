@@ -2,9 +2,10 @@ import 'package:go_router/go_router.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
+import '../screens/product_catalog/product_catalog_page.dart';
 
 final router = GoRouter(
-  initialLocation: '/inventory',
+  initialLocation: '/product-catalog',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const LoginPage()),
     GoRoute(
@@ -14,6 +15,10 @@ final router = GoRouter(
     GoRoute(
       path: '/inventory',
       builder: (context, state) => const InventoryDashboardPage(),
+    ),
+    GoRoute(
+      path: '/product-catalog',
+      builder: (context, state) => const ProductCatalogPage(),
     ),
   ],
 );

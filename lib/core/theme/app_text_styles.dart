@@ -121,4 +121,70 @@ class AppTextStyles {
         height: 20 / 14,
         color: AppColors.subtitle,
       );
+
+  // ── Product Catalog styles ───────────────────────────────────────────────────
+
+  /// Top bar brand name — Manrope Bold 20
+  static TextStyle get topBarBrand => GoogleFonts.manrope(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.primary,
+      );
+
+  /// Product name — Manrope SemiBold 16
+  static TextStyle get productName => GoogleFonts.manrope(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        height: 22 / 16,
+        color: AppColors.productName,
+      );
+
+  /// Product name muted (out of stock)
+  static TextStyle get productNameMuted => GoogleFonts.manrope(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        height: 22 / 16,
+        color: AppColors.textMuted,
+      );
+
+  /// Product meta (size, color) — Manrope Regular 13
+  static TextStyle get productMeta => GoogleFonts.manrope(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w400,
+        color: AppColors.productMeta,
+      );
+
+  /// SKU chip text — Manrope Medium 12
+  static TextStyle get skuChip => GoogleFonts.manrope(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.skuChipText,
+      );
+
+  /// Product price — Manrope SemiBold 15
+  static TextStyle get productPrice => GoogleFonts.manrope(
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.productPrice,
+      );
+
+  /// Stock badge text — Manrope SemiBold 12
+  static TextStyle get stockBadge => GoogleFonts.manrope(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+      );
+
+  /// Filter chip label — Manrope SemiBold 13
+  static TextStyle get filterChipLabel => GoogleFonts.manrope(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w600,
+      );
+
+  /// Search hint / input — Manrope Regular 14
+  static TextStyle get searchHint => GoogleFonts.manrope(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textHint,
+      );
 }
+

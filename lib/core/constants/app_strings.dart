@@ -30,6 +30,18 @@ class AppStrings {
   static const String navInventory = 'Inventory';
   static const String navPartners = 'Partners';
   static const String navAccount = 'Account';
+
+  // ── Product Catalog ──────────────────────────────────────────────────────────
+  static const String productCatalogPageTitle = 'StockMaster';
+  static const String searchHint = 'Search by SKU name, barcode, ...';
+  static const String filterTotalStock = 'Total Stock';
+  static const String filterLowStock = 'Low Stock';
+  static const String filterOutOfStock = 'Out of Stock';
+  static const String inStock = 'In Stock';
+  static const String lowStock = 'Low Stock';
+  static const String outOfStock = 'Out';
+  static const String skuPrefix = 'SKU: ';
+  static const String addProduct = 'Add Product';
 }
 
 /// Login screen string tokens.
