@@ -57,6 +57,17 @@ class AppStrings {
   static const String quickAddStep2Required = 'Required';
   static const String quickAddStep2Optional = 'Optional';
   static const String quickAddStep2Progress = 'Step 2 of 5';
+  static const String quickAddStep3ProgressText = 'Step 3';
+  static const String quickAddStep3Title = 'Attributes & Partners';
+  static const String quickAddStep3AttributesTitle = 'Attributes';
+  static const String quickAddStep3AddAttributeButton = 'Add Attribute';
+  static const String quickAddStep3BarcodeTitle = 'Barcode / QR';
+  static const String quickAddStep3BarcodeHint = 'Scan or enter barcode manually';
+  static const String quickAddStep3Scan = 'Scan';
+  static const String quickAddStep3SupplierTitle = 'Supplier';
+  static const String quickAddStep3SupplierHint = 'Select a supplier...';
+  static const String quickAddStep3KeyHint = 'e.g., Warranty';
+  static const String quickAddStep3ValueHint = 'e.g., 1 Year';
 
 
   // ── Product Catalog ──────────────────────────────────────────────────────────

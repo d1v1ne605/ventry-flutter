@@ -59,8 +59,7 @@ class _QuickAddStep2PageState extends State<QuickAddStep2Page> {
   }
 
   void _onNextPressed() {
-    // Navigate to Product Catalog for demo flow
-    context.go('/product-catalog');
+    context.go('/quick-add-step3');
   }
 
   @override
