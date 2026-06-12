@@ -68,6 +68,25 @@ class AppStrings {
   static const String quickAddStep3SupplierHint = 'Select a supplier...';
   static const String quickAddStep3KeyHint = 'e.g., Warranty';
   static const String quickAddStep3ValueHint = 'e.g., 1 Year';
+  static const String quickAddStep4ProgressText = 'Step 4 of 4';
+  static const String quickAddStep4Title = 'Review & Confirm';
+  static const String quickAddStep4BasicDetailsLabel = 'BASIC DETAILS';
+  static const String quickAddStep4AttributesLabel = 'ATTRIBUTES & VARIANTS';
+  static const String quickAddStep4PricingLabel = 'PRICING';
+  static const String quickAddStep4InventoryLabel = 'INVENTORY';
+  static const String quickAddStep4SupplierBarcodeLabel = 'SUPPLIER & BARCODE';
+  static const String quickAddStep4SellingPrice = 'Selling Price';
+  static const String quickAddStep4CostPrice = 'Cost Price';
+  static const String quickAddStep4Margin = 'Margin';
+  static const String quickAddStep4InitialStock = 'Initial Stock';
+  static const String quickAddStep4LowStockAlert = 'Low Stock Alert';
+  static const String quickAddStep4Location = 'Location';
+  static const String quickAddStep4Supplier = 'Supplier';
+  static const String quickAddStep4BarcodeOptional = 'Barcode (Optional)';
+  static const String quickAddStep4Missing = 'MISSING';
+  static const String quickAddStep4BarcodeScanHint = 'Scan or enter barcode';
+  static const String quickAddStep4GeneratedVariants = 'Generated Variants';
+  static const String quickAddStep4Status = 'Status';
 
 
   // ── Product Catalog ──────────────────────────────────────────────────────────

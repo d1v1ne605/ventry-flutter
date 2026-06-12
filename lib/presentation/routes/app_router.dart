@@ -6,6 +6,7 @@ import '../screens/product_catalog/product_catalog_page.dart';
 import '../screens/quick_add/quick_add_step1_page.dart';
 import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
+import '../screens/quick_add/quick_add_step4_page.dart';
 
 final router = GoRouter(
   initialLocation: '/quick-add',
@@ -34,6 +35,10 @@ final router = GoRouter(
     GoRoute(
       path: '/quick-add-step3',
       builder: (context, state) => const QuickAddStep3Page(),
+    ),
+    GoRoute(
+      path: '/quick-add-step4',
+      builder: (context, state) => const QuickAddStep4Page(),
     ),
   ],
 );

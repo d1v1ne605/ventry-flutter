@@ -88,8 +88,7 @@ class _QuickAddStep3PageState extends State<QuickAddStep3Page> {
   }
 
   void _onNextPressed() {
-    // End of Quick Add wizard for now -> Navigate back to Product Catalog
-    context.go('/product-catalog');
+    context.go('/quick-add-step4');
   }
 
   @override
