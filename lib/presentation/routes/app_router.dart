@@ -3,9 +3,11 @@ import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
 import '../screens/product_catalog/product_catalog_page.dart';
+import '../screens/quick_add/quick_add_step1_page.dart';
+import '../screens/quick_add/quick_add_step2_page.dart';
 
 final router = GoRouter(
-  initialLocation: '/product-catalog',
+  initialLocation: '/quick-add',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const LoginPage()),
     GoRoute(
@@ -20,5 +22,14 @@ final router = GoRouter(
       path: '/product-catalog',
       builder: (context, state) => const ProductCatalogPage(),
     ),
+    GoRoute(
+      path: '/quick-add',
+      builder: (context, state) => const QuickAddStep1Page(),
+    ),
+    GoRoute(
+      path: '/quick-add-step2',
+      builder: (context, state) => const QuickAddStep2Page(),
+    ),
   ],
 );
+

@@ -31,6 +31,34 @@ class AppStrings {
   static const String navPartners = 'Partners';
   static const String navAccount = 'Account';
 
+  // ── Quick Add ────────────────────────────────────────────────────────────────
+  static const String quickAddTitle = 'Add Product';
+  static const String quickAddBasicInfoTitle = 'Basic Information';
+  static const String quickAddProductNameLabel = 'Product Name';
+  static const String quickAddProductNameHint = 'Enter product name';
+  static const String quickAddSkuLabel = 'SKU Code';
+  static const String quickAddSkuHint = 'PROD-789';
+  static const String quickAddCategoryLabel = 'Category';
+  static const String quickAddDescriptionLabel = 'Short Description';
+  static const String quickAddDescriptionHint = 'Brief details about the product...';
+  static const String quickAddImageLabel = 'Product Image';
+  static const String quickAddNext = 'Next';
+  static const String quickAddBack = 'Back';
+  static const String quickAddStep2Title = 'Price & Inventory';
+  static const String quickAddStep2Subtitle = 'Set the retail price and your cost price to track margins.';
+  static const String quickAddStep2CurrencyLabel = 'Currency';
+  static const String quickAddStep2SellingPriceLabel = 'Selling Price';
+  static const String quickAddStep2CostPriceLabel = 'Cost Price';
+  static const String quickAddStep2CostPriceHelper = 'Used to calculate profit margin.';
+  static const String quickAddStep2InventoryTitle = 'Inventory';
+  static const String quickAddStep2QuantityLabel = 'Stock Quantity';
+  static const String quickAddStep2UnitLabel = 'Unit of Measure';
+  static const String quickAddStep2InfoText = 'Margins will be automatically calculated on the dashboard once this product is saved and inventory is tracked.';
+  static const String quickAddStep2Required = 'Required';
+  static const String quickAddStep2Optional = 'Optional';
+  static const String quickAddStep2Progress = 'Step 2 of 5';
+
+
   // ── Product Catalog ──────────────────────────────────────────────────────────
   static const String productCatalogPageTitle = 'StockMaster';
   static const String searchHint = 'Search by SKU name, barcode, ...';
