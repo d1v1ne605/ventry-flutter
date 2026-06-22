@@ -40,20 +40,24 @@ class AppStrings {
   static const String quickAddSkuHint = 'PROD-789';
   static const String quickAddCategoryLabel = 'Category';
   static const String quickAddDescriptionLabel = 'Short Description';
-  static const String quickAddDescriptionHint = 'Brief details about the product...';
+  static const String quickAddDescriptionHint =
+      'Brief details about the product...';
   static const String quickAddImageLabel = 'Product Image';
   static const String quickAddNext = 'Next';
   static const String quickAddBack = 'Back';
   static const String quickAddStep2Title = 'Price & Inventory';
-  static const String quickAddStep2Subtitle = 'Set the retail price and your cost price to track margins.';
+  static const String quickAddStep2Subtitle =
+      'Set the retail price and your cost price to track margins.';
   static const String quickAddStep2CurrencyLabel = 'Currency';
   static const String quickAddStep2SellingPriceLabel = 'Selling Price';
   static const String quickAddStep2CostPriceLabel = 'Cost Price';
-  static const String quickAddStep2CostPriceHelper = 'Used to calculate profit margin.';
+  static const String quickAddStep2CostPriceHelper =
+      'Used to calculate profit margin.';
   static const String quickAddStep2InventoryTitle = 'Inventory';
   static const String quickAddStep2QuantityLabel = 'Stock Quantity';
   static const String quickAddStep2UnitLabel = 'Unit of Measure';
-  static const String quickAddStep2InfoText = 'Margins will be automatically calculated on the dashboard once this product is saved and inventory is tracked.';
+  static const String quickAddStep2InfoText =
+      'Margins will be automatically calculated on the dashboard once this product is saved and inventory is tracked.';
   static const String quickAddStep2Required = 'Required';
   static const String quickAddStep2Optional = 'Optional';
   static const String quickAddStep2Progress = 'Step 2 of 5';
@@ -62,7 +66,8 @@ class AppStrings {
   static const String quickAddStep3AttributesTitle = 'Attributes';
   static const String quickAddStep3AddAttributeButton = 'Add Attribute';
   static const String quickAddStep3BarcodeTitle = 'Barcode / QR';
-  static const String quickAddStep3BarcodeHint = 'Scan or enter barcode manually';
+  static const String quickAddStep3BarcodeHint =
+      'Scan or enter barcode manually';
   static const String quickAddStep3Scan = 'Scan';
   static const String quickAddStep3SupplierTitle = 'Supplier';
   static const String quickAddStep3SupplierHint = 'Select a supplier...';
@@ -87,7 +92,6 @@ class AppStrings {
   static const String quickAddStep4BarcodeScanHint = 'Scan or enter barcode';
   static const String quickAddStep4GeneratedVariants = 'Generated Variants';
   static const String quickAddStep4Status = 'Status';
-
 
   // ── Product Catalog ──────────────────────────────────────────────────────────
   static const String productCatalogPageTitle = 'StockMaster';
@@ -124,19 +128,22 @@ class _RegisterStrings {
   final String subtitle = 'Join us to manage your inventory smarter';
   final String fullNameLabel = 'Full Name';
   final String fullNameHint = 'Enter your full name';
-  final String emailLabel = 'Email';
-  final String emailHint = 'Enter your email';
-  final String phoneLabel = 'Phone Number';
-  final String phoneHint = 'Enter your phone number';
+  final String usernameLabel = 'Username';
+  final String usernameHint = 'Enter your username';
   final String passwordLabel = 'Password';
   final String passwordHint = 'Enter your password';
   final String confirmPasswordLabel = 'Confirm Password';
   final String confirmPasswordHint = 'Re-enter your password';
-  final String personalInfoSection = 'Personal Information';
+  final String personalInfoSection = 'Account Setup';
   final String shopDetailsSection = 'Shop Details';
   final String shopNameLabel = 'Company / Shop Name';
   final String shopNameHint = 'Enter your company name';
   final String createButton = 'Create Account';
   final String footerPrefix = 'Already have an account?';
   final String footerLink = 'Sign In';
+  final String errorRequiredFields = 'Please fill in all required fields.';
+  final String errorPasswordMismatch = 'Password confirmation does not match.';
+  final String errorDefault =
+      'Unable to create your account. Please try again.';
+  final String successMessage = 'Account created successfully. Please sign in.';
 }

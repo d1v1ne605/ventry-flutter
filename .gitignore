@@ -82,3 +82,6 @@ lib/core/l10n/app_localizations*.dart
 
 injection.config.dart
 .agents/
+env/
+.codex/
+.vscode/

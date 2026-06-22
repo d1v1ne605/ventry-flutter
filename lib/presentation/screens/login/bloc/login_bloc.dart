@@ -1,5 +1,7 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/base/base_view_model.dart';
+import 'package:ventry_flutter/core/logging/app_logger.dart';
 import 'login_email_changed.dart';
 import 'login_event.dart';
 import 'login_password_changed.dart';
@@ -8,8 +10,8 @@ import 'login_status.dart';
 import 'login_submitted.dart';
 
 @injectable
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const LoginState()) {
+class LoginBloc extends BaseViewModel<LoginEvent, LoginState> {
+  LoginBloc(AppLogger logger) : super(const LoginState(), logger) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);

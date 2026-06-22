@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../routes/router_constants.dart';
 
 /// "Already have a shop? Login" link row below the submit button.
 class RegisterFooter extends StatelessWidget {
@@ -16,7 +18,7 @@ class RegisterFooter extends StatelessWidget {
       child: Center(
         child: GestureDetector(
           onTap: () {
-            // TODO: Navigate back to Login via GoRouter
+            context.goNamed(RouterName.login);
           },
           child: RichText(
             text: TextSpan(

@@ -6,9 +6,10 @@ import '../theme/app_text_styles.dart';
 
 /// Generic labelled text field that follows the app design system.
 ///
-/// Renders a label row (with optional trailing widget) above a styled
-/// [TextField]. All sizes come from [AppSize] — no magic numbers.
-class CustomTextField extends StatelessWidget {
+/// When [obscureText] is true an eye-icon toggle is automatically added
+/// as a suffixIcon so the user can reveal/hide the value.
+/// All sizes come from [AppSize] — no magic numbers.
+class CustomTextField extends StatefulWidget {
   final String label;
   final String hintText;
   final Widget? prefixIcon;
@@ -32,6 +33,21 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscured;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscured = widget.obscureText;
+  }
+
+  void _toggleVisibility() => setState(() => _obscured = !_obscured);
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,13 +63,28 @@ class CustomTextField extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTextStyles.label),
-        if (topTrailing != null) topTrailing!,
+        Text(widget.label, style: AppTextStyles.label),
+        if (widget.topTrailing != null) widget.topTrailing!,
       ],
     );
   }
 
   Widget _buildInput() {
+    // If the caller passes an explicit suffixIcon, use it;
+    // otherwise, for password fields, auto-generate the eye toggle.
+    Widget? effectiveSuffix = widget.suffixIcon;
+    if (effectiveSuffix == null && widget.obscureText) {
+      effectiveSuffix = IconButton(
+        onPressed: _toggleVisibility,
+        icon: Icon(
+          _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          color: AppColors.textBody,
+          size: AppSize.size20,
+        ),
+        splashRadius: AppSize.size20,
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.inputFill,
@@ -71,15 +102,15 @@ class CustomTextField extends StatelessWidget {
         ],
       ),
       child: TextField(
-        obscureText: obscureText,
-        onChanged: onChanged,
+        obscureText: _obscured,
+        onChanged: widget.onChanged,
         style: AppTextStyles.input,
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: AppTextStyles.inputHint,
           border: InputBorder.none,
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
+          prefixIcon: widget.prefixIcon,
+          suffixIcon: effectiveSuffix,
           contentPadding: EdgeInsets.symmetric(
             horizontal: AppSize.size16.w,
             vertical: AppSize.size12.h,
