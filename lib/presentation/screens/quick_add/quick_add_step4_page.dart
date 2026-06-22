@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_4/quick_add_step4_body.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_4/quick_add_step4_bottom_bar.dart';
 
@@ -37,13 +38,13 @@ class _QuickAddStep4PageState extends State<QuickAddStep4Page> {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go('/quick-add-step3');
+      context.go(RouterPath.quickAddStep3);
     }
   }
 
   void _onConfirmPressed() {
     // End of wizard -> Navigate to Product Catalog
-    context.go('/product-catalog');
+    context.go(RouterPath.productCatalog);
   }
 
   @override
@@ -97,11 +98,11 @@ class _QuickAddStep4PageState extends State<QuickAddStep4Page> {
           supplierName: 'Acme Corporation Ltd.',
           barcodeController: _barcodeController,
           barcodeFocusNode: _barcodeFocusNode,
-          onEditBasicDetails: () => context.go('/quick-add'),
-          onEditAttributes: () => context.go('/quick-add-step3'),
-          onEditPricing: () => context.go('/quick-add-step2'),
-          onEditInventory: () => context.go('/quick-add-step2'),
-          onEditSupplier: () => context.go('/quick-add-step3'),
+          onEditBasicDetails: () => context.go(RouterPath.quickAdd),
+          onEditAttributes: () => context.go(RouterPath.quickAddStep3),
+          onEditPricing: () => context.go(RouterPath.quickAddStep2),
+          onEditInventory: () => context.go(RouterPath.quickAddStep2),
+          onEditSupplier: () => context.go(RouterPath.quickAddStep3),
         ),
         bottomNavigationBar: QuickAddStep4BottomBar(
           onBack: () => _navigateBack(context),

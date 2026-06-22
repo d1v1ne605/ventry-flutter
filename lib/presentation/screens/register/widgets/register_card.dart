@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_size.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/primary_button.dart';
+import 'register_button.dart';
 import 'register_footer.dart';
 import 'register_form.dart';
 import 'register_header.dart';
@@ -23,12 +22,7 @@ class RegisterCard extends StatelessWidget {
         SizedBox(height: AppSize.size20.h),
         const RegisterForm(),
         SizedBox(height: AppSize.size20.h),
-        PrimaryButton(
-          text: AppStrings.register.createButton,
-          onPressed: () {
-            // TODO: Dispatch register event via Bloc
-          },
-        ),
+        const RegisterButton(),
         const RegisterFooter(),
       ],
     );

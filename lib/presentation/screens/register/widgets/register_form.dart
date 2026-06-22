@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ventry_flutter/presentation/screens/register/bloc/register_name_changed.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../bloc/register_bloc.dart';
+import '../bloc/register_confirm_password_changed.dart';
+import '../bloc/register_password_changed.dart';
+import '../bloc/register_shop_name_changed.dart';
+import '../bloc/register_username_changed.dart';
 
 /// A card section with a heading and a list of form fields.
 ///
@@ -29,10 +36,7 @@ class RegisterFormSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSize.size12.r),
-        border: Border.all(
-          color: AppColors.inputBorder,
-          width: AppSize.size1,
-        ),
+        border: Border.all(color: AppColors.inputBorder, width: AppSize.size1),
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
@@ -70,14 +74,14 @@ class RegisterForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildPersonalInfoSection(),
+        _buildPersonalInfoSection(context),
         SizedBox(height: AppSize.size20.h),
-        _buildShopDetailsSection(),
+        _buildShopDetailsSection(context),
       ],
     );
   }
 
-  Widget _buildPersonalInfoSection() {
+  Widget _buildPersonalInfoSection(BuildContext context) {
     return RegisterFormSection(
       sectionTitle: AppStrings.register.personalInfoSection,
       fields: [
@@ -89,30 +93,50 @@ class RegisterForm extends StatelessWidget {
             color: AppColors.textBody,
             size: AppSize.size20,
           ),
+          onChanged: (value) =>
+              context.read<RegisterBloc>().add(RegisterNameChanged(value)),
         ),
         CustomTextField(
-          label: AppStrings.register.emailLabel,
-          hintText: AppStrings.register.emailHint,
+          label: AppStrings.register.usernameLabel,
+          hintText: AppStrings.register.usernameHint,
           prefixIcon: Icon(
-            Icons.email_outlined,
+            Icons.account_circle_outlined,
             color: AppColors.textBody,
             size: AppSize.size20,
           ),
+          onChanged: (value) =>
+              context.read<RegisterBloc>().add(RegisterUsernameChanged(value)),
         ),
         CustomTextField(
-          label: AppStrings.register.phoneLabel,
-          hintText: AppStrings.register.phoneHint,
+          label: AppStrings.register.passwordLabel,
+          hintText: AppStrings.register.passwordHint,
+          obscureText: true,
           prefixIcon: Icon(
-            Icons.phone_outlined,
+            Icons.lock_outline,
             color: AppColors.textBody,
             size: AppSize.size20,
+          ),
+          onChanged: (value) =>
+              context.read<RegisterBloc>().add(RegisterPasswordChanged(value)),
+        ),
+        CustomTextField(
+          label: AppStrings.register.confirmPasswordLabel,
+          hintText: AppStrings.register.confirmPasswordHint,
+          obscureText: true,
+          prefixIcon: Icon(
+            Icons.lock_reset_outlined,
+            color: AppColors.textBody,
+            size: AppSize.size20,
+          ),
+          onChanged: (value) => context.read<RegisterBloc>().add(
+            RegisterConfirmPasswordChanged(value),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildShopDetailsSection() {
+  Widget _buildShopDetailsSection(BuildContext context) {
     return RegisterFormSection(
       sectionTitle: AppStrings.register.shopDetailsSection,
       fields: [
@@ -124,6 +148,8 @@ class RegisterForm extends StatelessWidget {
             color: AppColors.textBody,
             size: AppSize.size20,
           ),
+          onChanged: (value) =>
+              context.read<RegisterBloc>().add(RegisterShopNameChanged(value)),
         ),
       ],
     );

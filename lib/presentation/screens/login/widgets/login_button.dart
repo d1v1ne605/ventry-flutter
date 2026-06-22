@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_state.dart';
@@ -38,15 +39,12 @@ class LoginButton extends StatelessWidget {
 
   void _onStateChanged(BuildContext context, LoginState state) {
     if (state.status == LoginStatus.failure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.errorMessage ?? AppStrings.login.errorDefault),
-        ),
+      AppSnackBar.showError(
+        context,
+        state.errorMessage ?? AppStrings.login.errorDefault,
       );
     } else if (state.status == LoginStatus.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.login.successMessage)),
-      );
+      AppSnackBar.showSuccess(context, AppStrings.login.successMessage);
     }
   }
 }

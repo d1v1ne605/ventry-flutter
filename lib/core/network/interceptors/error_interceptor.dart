@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import '../../../core/errors/failures.dart';
+import '../../../core/logging/app_logger.dart';
 
 /// Interceptor to handle DioExceptions and map them to Failure objects
 /// for consistent error handling across the application.
 class ErrorInterceptor extends Interceptor {
+  ErrorInterceptor(this._logger);
+
+  final AppLogger _logger;
+
+  static const String _serverErrorMessage = 'Server error occurred';
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     _logError(err);
@@ -29,52 +35,61 @@ class ErrorInterceptor extends Interceptor {
   /// Handle HTTP server errors based on status code
   void _handleServerError(DioException err, ErrorInterceptorHandler handler) {
     final statusCode = err.response?.statusCode;
-    final errorMessage =
-        err.response?.data?['message'] ?? 'Server error occurred';
+    final errorMessage = _readResponseMessage(err);
 
     switch (statusCode) {
       case 400:
         // Bad request
-        _attachFailure(err, ServerFailure('Invalid request: $errorMessage'));
+        handler.next(
+          _attachFailure(err, ServerFailure('Invalid request: $errorMessage')),
+        );
         break;
       case 401:
         // Unauthorized - session expired
-        _attachFailure(
-          err,
-          ServerFailure('Session expired. Please login again'),
+        handler.next(
+          _attachFailure(
+            err,
+            const ServerFailure('Session expired. Please login again'),
+          ),
         );
         break;
       case 403:
         // Forbidden - no access permission
-        _attachFailure(err, ServerFailure('Access denied'));
+        handler.next(_attachFailure(err, const ServerFailure('Access denied')));
         break;
       case 404:
         // Not found
-        _attachFailure(err, ServerFailure('Resource not found'));
+        handler.next(
+          _attachFailure(err, const ServerFailure('Resource not found')),
+        );
         break;
       case 409:
         // Conflict
-        _attachFailure(err, ServerFailure('Data conflict: $errorMessage'));
+        handler.next(
+          _attachFailure(err, ServerFailure('Data conflict: $errorMessage')),
+        );
         break;
       case 422:
         // Unprocessable entity (validation error)
-        _attachFailure(err, ServerFailure('Validation error: $errorMessage'));
+        handler.next(
+          _attachFailure(err, ServerFailure('Validation error: $errorMessage')),
+        );
         break;
       case 500:
       case 502:
       case 503:
       case 504:
         // Server error
-        _attachFailure(
-          err,
-          ServerFailure('Server error. Please try again later'),
+        handler.next(
+          _attachFailure(
+            err,
+            const ServerFailure('Server error. Please try again later'),
+          ),
         );
         break;
       default:
-        _attachFailure(err, ServerFailure(errorMessage));
+        handler.next(_attachFailure(err, ServerFailure(errorMessage)));
     }
-
-    handler.next(err);
   }
 
   /// Handle timeout errors
@@ -83,32 +98,42 @@ class ErrorInterceptor extends Interceptor {
         ? 'Connection timeout. Please check your network connection'
         : 'Response timeout. Please try again';
 
-    _attachFailure(err, NetworkFailure(message));
-    handler.next(err);
+    handler.next(_attachFailure(err, NetworkFailure(message)));
   }
 
   /// Handle network connectivity errors
   void _handleNetworkError(DioException err, ErrorInterceptorHandler handler) {
-    _attachFailure(err, NetworkFailure('No internet connection'));
-    handler.next(err);
+    handler.next(_attachFailure(err, const NetworkFailure()));
   }
 
   /// Attach Failure object to DioException for easy retrieval in repository layer
-  void _attachFailure(DioException err, Failure failure) {
-    err = err.copyWith(error: failure);
+  DioException _attachFailure(DioException err, Failure failure) {
+    return err.copyWith(error: failure);
   }
 
-  /// Log error details (only in debug mode)
-  void _logError(DioException err) {
-    if (kDebugMode) {
-      print('❌ DIO ERROR:');
-      print('  Status Code: ${err.response?.statusCode}');
-      print('  Type: ${err.type}');
-      print('  Message: ${err.message}');
-      print('  URL: ${err.requestOptions.path}');
-      if (err.response?.data != null) {
-        print('  Response: ${err.response?.data}');
+  String _readResponseMessage(DioException err) {
+    final data = err.response?.data;
+    if (data is Map<String, dynamic>) {
+      final message = data['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        return message;
       }
     }
+
+    if (data is String && data.trim().isNotEmpty) {
+      return data;
+    }
+
+    return _serverErrorMessage;
+  }
+
+  /// Log error details via AppLogger.
+  void _logError(DioException err) {
+    _logger.error(
+      'DIO ERROR | ${err.requestOptions.method} ${err.requestOptions.path} '
+      '| status: ${err.response?.statusCode} | type: ${err.type}',
+      error: err,
+      stackTrace: err.stackTrace,
+    );
   }
 }

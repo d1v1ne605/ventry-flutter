@@ -7,39 +7,50 @@ import '../screens/quick_add/quick_add_step1_page.dart';
 import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
+import 'router_constants.dart';
 
 final router = GoRouter(
-  initialLocation: '/quick-add',
+  initialLocation: RouterPath.register,
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const LoginPage()),
     GoRoute(
-      path: '/register',
+      path: RouterPath.login,
+      name: RouterName.login,
+      builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: RouterPath.register,
+      name: RouterName.register,
       builder: (context, state) => const RegisterPage(),
     ),
     GoRoute(
-      path: '/inventory',
+      path: RouterPath.inventory,
+      name: RouterName.inventory,
       builder: (context, state) => const InventoryDashboardPage(),
     ),
     GoRoute(
-      path: '/product-catalog',
+      path: RouterPath.productCatalog,
+      name: RouterName.productCatalog,
       builder: (context, state) => const ProductCatalogPage(),
     ),
     GoRoute(
-      path: '/quick-add',
+      path: RouterPath.quickAdd,
+      name: RouterName.quickAdd,
       builder: (context, state) => const QuickAddStep1Page(),
     ),
     GoRoute(
-      path: '/quick-add-step2',
+      path: RouterPath.quickAddStep2,
+      name: RouterName.quickAddStep2,
       builder: (context, state) => const QuickAddStep2Page(),
     ),
     GoRoute(
-      path: '/quick-add-step3',
+      path: RouterPath.quickAddStep3,
+      name: RouterName.quickAddStep3,
       builder: (context, state) => const QuickAddStep3Page(),
     ),
     GoRoute(
-      path: '/quick-add-step4',
+      path: RouterPath.quickAddStep4,
+      name: RouterName.quickAddStep4,
       builder: (context, state) => const QuickAddStep4Page(),
     ),
   ],
 );
-

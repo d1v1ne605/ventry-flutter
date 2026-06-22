@@ -1,8 +1,10 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_size.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../injection.dart';
+import 'bloc/register_bloc.dart';
 import 'widgets/register_card.dart';
 
 /// Entry point for the Shop Owner Registration screen.
@@ -14,15 +16,18 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSize.size16.w,
-            vertical: AppSize.size20.h,
+    return BlocProvider(
+      create: (_) => getIt<RegisterBloc>(),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSize.size16.w,
+              vertical: AppSize.size20.h,
+            ),
+            child: const RegisterCard(),
           ),
-          child: const RegisterCard(),
         ),
       ),
     );

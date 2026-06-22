@@ -1,11 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../errors/failures.dart';
+import '../logging/app_logger.dart';
 
 /// BaseViewModel acts as a BaseBloc.
 /// Every BLoC/Cubit in the system should inherit from this class to reuse
 /// common logic such as error handling from Domain Layer, logging, and teardown.
 abstract class BaseViewModel<Event, State> extends Bloc<Event, State> {
-  BaseViewModel(super.initialState);
+  BaseViewModel(super.initialState, this._logger);
+
+  final AppLogger _logger;
 
   /// Utility function to map [Failure] from Domain Layer
   /// (usually returned via dartz Either) to user-friendly UI messages.
@@ -23,24 +26,28 @@ abstract class BaseViewModel<Event, State> extends Bloc<Event, State> {
         return 'An unknown error has occurred.';
     }
     */
-    return failure.toString();
+    return failure.message;
   }
 
   /// Common hook to track all State transitions of ViewModels.
-  /// Very useful when integrating with log tracking systems like Firebase Crashlytics
-  /// or printing to console during debug.
   @override
   void onTransition(Transition<Event, State> transition) {
     super.onTransition(transition);
-    // TODO: Integrate internal Logger here
-    // print('Transition in ${this.runtimeType}: $transition');
+    _logger.debug(
+      '[$runtimeType] '
+      '${transition.currentState.runtimeType} → '
+      '${transition.nextState.runtimeType}',
+    );
   }
 
   /// Catch unhandled exceptions that occur during Event mapping.
   @override
   void onError(Object error, StackTrace stackTrace) {
-    // TODO: Send error log to alert system
-    // print('Error in ${this.runtimeType}: $error');
+    _logger.error(
+      '[$runtimeType] Unhandled error',
+      error: error,
+      stackTrace: stackTrace,
+    );
     super.onError(error, stackTrace);
   }
 

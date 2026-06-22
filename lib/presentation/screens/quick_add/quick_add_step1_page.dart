@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/models/product_category.dart';
 import 'package:ventry_flutter/core/widgets/add_product_mode_toggle.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_category_dropdown.dart';
@@ -58,12 +59,12 @@ class _QuickAddStep1PageState extends State<QuickAddStep1Page> {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go('/product-catalog');
+      context.go(RouterPath.productCatalog);
     }
   }
 
   void _onNextPressed() {
-    context.go('/quick-add-step2');
+    context.go(RouterPath.quickAddStep2);
   }
 
   @override
