@@ -9,6 +9,8 @@ import 'package:ventry_flutter/domain/entities/onboarding/register_owner_entity.
 import 'package:ventry_flutter/domain/entities/onboarding/register_owner_params.dart';
 import 'package:ventry_flutter/domain/repositories/onboarding/onboarding_repository.dart';
 
+import 'package:ventry_flutter/core/network/dio_exception_extension.dart';
+
 @LazySingleton(as: OnboardingRepository)
 class OnboardingRepositoryImpl implements OnboardingRepository {
   final OnboardingRemoteDataSource _remoteDataSource;
@@ -25,25 +27,10 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       );
       return Right(_toEntity(response));
     } on DioException catch (error) {
-      return Left(_mapDioException(error));
+      return Left(error.toFailure());
     } catch (_) {
       return const Left(ServerFailure());
     }
-  }
-
-  Failure _mapDioException(DioException error) {
-    final failure = error.error;
-    if (failure is Failure) {
-      return failure;
-    }
-
-    final message = error.response?.data is Map<String, dynamic>
-        ? error.response?.data['message'] as String?
-        : null;
-
-    return ServerFailure(
-      message ?? error.message ?? const ServerFailure().message,
-    );
   }
 
   RegisterOwnerRequestModel _toRequestModel(RegisterOwnerParams params) {

@@ -45,11 +45,13 @@ class ErrorInterceptor extends Interceptor {
         );
         break;
       case 401:
-        // Unauthorized - session expired
+        // Unauthorized - session expired or invalid credentials
         handler.next(
           _attachFailure(
             err,
-            const ServerFailure('Session expired. Please login again'),
+            ServerFailure(errorMessage != _serverErrorMessage 
+                ? errorMessage 
+                : 'Session expired. Please login again'),
           ),
         );
         break;

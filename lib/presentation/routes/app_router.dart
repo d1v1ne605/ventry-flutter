@@ -7,10 +7,33 @@ import '../screens/quick_add/quick_add_step1_page.dart';
 import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
+import '../../injection.dart';
+import 'auth_notifier.dart';
 import 'router_constants.dart';
 
 final router = GoRouter(
-  initialLocation: RouterPath.register,
+  initialLocation: RouterPath.login,
+  refreshListenable: getIt<AuthNotifier>(),
+  redirect: (context, state) {
+    final authNotifier = getIt<AuthNotifier>();
+    
+    // Wait until we have checked local storage for existing token
+    if (!authNotifier.isInitialized) return null;
+
+    final isAuth = authNotifier.isAuthenticated;
+    final isLoginRoute = state.matchedLocation == RouterPath.login || 
+                         state.matchedLocation == RouterPath.register;
+
+    if (!isAuth && !isLoginRoute) {
+      return RouterPath.login;
+    }
+    
+    if (isAuth && isLoginRoute) {
+      return RouterPath.inventory;
+    }
+
+    return null;
+  },
   routes: [
     GoRoute(
       path: RouterPath.login,

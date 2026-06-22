@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/login/bloc/login_event.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../bloc/login_bloc.dart';
-import '../bloc/login_email_changed.dart';
-import '../bloc/login_password_changed.dart';
 import 'login_button.dart';
 
 /// Displays the login form: email field, password field, and submit button.
@@ -65,7 +64,10 @@ class LoginForm extends StatelessWidget {
       onTap: () {
         // TODO: Navigate to Forgot Password screen
       },
-      child: Text(AppStrings.login.forgotPassword, style: AppTextStyles.linkSmall),
+      child: Text(
+        AppStrings.login.forgotPassword,
+        style: AppTextStyles.linkSmall,
+      ),
     );
   }
 }

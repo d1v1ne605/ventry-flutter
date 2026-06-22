@@ -12,7 +12,7 @@ import 'core/theme/app_colors.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  configureDependencies();
+  await configureDependencies();
 
   final logger = getIt<AppLogger>();
 

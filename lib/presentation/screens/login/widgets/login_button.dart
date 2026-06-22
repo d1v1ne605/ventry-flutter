@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/login/bloc/login_event.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_state.dart';
-import '../bloc/login_status.dart';
-import '../bloc/login_submitted.dart';
 
 /// Login submit button that reacts to [LoginBloc] state.
 ///
