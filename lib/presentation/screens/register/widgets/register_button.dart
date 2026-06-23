@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
@@ -8,7 +9,6 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../../routes/router_constants.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_state.dart';
-import '../bloc/register_status.dart';
 import '../bloc/register_submitted.dart';
 
 class RegisterButton extends StatelessWidget {
@@ -22,7 +22,7 @@ class RegisterButton extends StatelessWidget {
       builder: (context, state) {
         return PrimaryButton(
           text: AppStrings.register.createButton,
-          isLoading: state.status == RegisterStatus.loading,
+          isLoading: state.status == BaseStatus.loading,
           icon: const Icon(
             Icons.person_add_alt_1,
             color: Colors.white,
@@ -37,7 +37,7 @@ class RegisterButton extends StatelessWidget {
   }
 
   void _onStateChanged(BuildContext context, RegisterState state) {
-    if (state.status == RegisterStatus.failure) {
+    if (state.status == BaseStatus.failure) {
       AppSnackBar.showError(
         context,
         state.errorMessage ?? AppStrings.register.errorDefault,
@@ -45,7 +45,7 @@ class RegisterButton extends StatelessWidget {
       return;
     }
 
-    if (state.status == RegisterStatus.success) {
+    if (state.status == BaseStatus.success) {
       AppSnackBar.showSuccess(context, AppStrings.register.successMessage);
       context.goNamed(RouterName.login);
     }

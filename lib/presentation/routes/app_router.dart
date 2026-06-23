@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../../core/layouts/main_layout.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
@@ -7,6 +8,7 @@ import '../screens/quick_add/quick_add_step1_page.dart';
 import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
+import '../screens/category_management/category_management_page.dart';
 import '../../injection.dart';
 import 'auth_notifier.dart';
 import 'router_constants.dart';
@@ -16,18 +18,19 @@ final router = GoRouter(
   refreshListenable: getIt<AuthNotifier>(),
   redirect: (context, state) {
     final authNotifier = getIt<AuthNotifier>();
-    
+
     // Wait until we have checked local storage for existing token
     if (!authNotifier.isInitialized) return null;
 
     final isAuth = authNotifier.isAuthenticated;
-    final isLoginRoute = state.matchedLocation == RouterPath.login || 
-                         state.matchedLocation == RouterPath.register;
+    final isLoginRoute =
+        state.matchedLocation == RouterPath.login ||
+        state.matchedLocation == RouterPath.register;
 
     if (!isAuth && !isLoginRoute) {
       return RouterPath.login;
     }
-    
+
     if (isAuth && isLoginRoute) {
       return RouterPath.inventory;
     }
@@ -45,10 +48,17 @@ final router = GoRouter(
       name: RouterName.register,
       builder: (context, state) => const RegisterPage(),
     ),
-    GoRoute(
-      path: RouterPath.inventory,
-      name: RouterName.inventory,
-      builder: (context, state) => const InventoryDashboardPage(),
+    ShellRoute(
+      builder: (context, state, child) {
+        return MainLayout(body: child);
+      },
+      routes: [
+        GoRoute(
+          path: RouterPath.inventory,
+          name: RouterName.inventory,
+          builder: (context, state) => const InventoryDashboardPage(),
+        ),
+      ],
     ),
     GoRoute(
       path: RouterPath.productCatalog,
@@ -74,6 +84,11 @@ final router = GoRouter(
       path: RouterPath.quickAddStep4,
       name: RouterName.quickAddStep4,
       builder: (context, state) => const QuickAddStep4Page(),
+    ),
+    GoRoute(
+      path: RouterPath.categoryManagement,
+      name: RouterName.categoryManagement,
+      builder: (context, state) => const CategoryManagementPage(),
     ),
   ],
 );

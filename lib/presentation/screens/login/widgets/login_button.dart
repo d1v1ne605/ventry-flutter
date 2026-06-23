@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/presentation/screens/login/bloc/login_event.dart';
 import '../../../../core/constants/app_size.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -23,7 +24,7 @@ class LoginButton extends StatelessWidget {
       builder: (context, state) {
         return PrimaryButton(
           text: AppStrings.login.submitButton,
-          isLoading: state.status == LoginStatus.loading,
+          isLoading: state.status == BaseStatus.loading,
           icon: const Icon(
             Icons.login,
             color: Colors.white,
@@ -37,12 +38,12 @@ class LoginButton extends StatelessWidget {
   }
 
   void _onStateChanged(BuildContext context, LoginState state) {
-    if (state.status == LoginStatus.failure) {
+    if (state.status == BaseStatus.failure) {
       AppSnackBar.showError(
         context,
         state.errorMessage ?? AppStrings.login.errorDefault,
       );
-    } else if (state.status == LoginStatus.success) {
+    } else if (state.status == BaseStatus.success) {
       AppSnackBar.showSuccess(context, AppStrings.login.successMessage);
     }
   }
