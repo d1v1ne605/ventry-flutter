@@ -13,6 +13,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ventry_flutter/data/datasources/local/auth/auth_local_datasource.dart';
 import 'package:ventry_flutter/data/datasources/remote/auth/auth_api.dart';
+import 'package:ventry_flutter/data/datasources/remote/category/category_api.dart';
 
 @module
 abstract class RegisterModule {
@@ -61,5 +62,10 @@ abstract class RegisterModule {
   @lazySingleton
   AuthApi authApi(Dio dio) {
     return AuthApi(dio);
+  }
+
+  @lazySingleton
+  CategoryApi categoryApi(Dio dio) {
+    return CategoryApi(dio);
   }
 }

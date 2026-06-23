@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/domain/entities/onboarding/register_owner_entity.dart';
-import 'register_status.dart';
 
 const Object _unsetValue = Object();
 
@@ -10,7 +10,7 @@ class RegisterState extends Equatable {
   final String password;
   final String confirmPassword;
   final String shopName;
-  final RegisterStatus status;
+  final BaseStatus status;
   final String? errorMessage;
   final RegisterOwnerEntity? owner;
 
@@ -20,7 +20,7 @@ class RegisterState extends Equatable {
     this.password = '',
     this.confirmPassword = '',
     this.shopName = '',
-    this.status = RegisterStatus.initial,
+    this.status = BaseStatus.initial,
     this.errorMessage,
     this.owner,
   });
@@ -31,7 +31,7 @@ class RegisterState extends Equatable {
     String? password,
     String? confirmPassword,
     String? shopName,
-    RegisterStatus? status,
+    BaseStatus? status,
     Object? errorMessage = _unsetValue,
     Object? owner = _unsetValue,
   }) {

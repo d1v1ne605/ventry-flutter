@@ -19,6 +19,8 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.onMenuTap,
     this.onActionTap,
     this.actionIcon = AppAssets.icSearch,
+    this.leadingWidget,
+    this.trailingWidget,
   });
 
   /// Title displayed in the center of the bar (usually in UPPERCASE).
@@ -31,7 +33,13 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onActionTap;
 
   /// Asset path for the trailing action icon. Defaults to search icon.
-  final String actionIcon;
+  final String? actionIcon;
+
+  /// Custom widget to replace the default leading menu button
+  final Widget? leadingWidget;
+
+  /// Custom widget to replace the default trailing action button
+  final Widget? trailingWidget;
 
   @override
   Size get preferredSize => Size.fromHeight(64.h);
@@ -41,8 +49,6 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Container(
-        height: 64.h,
-        padding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
         decoration: BoxDecoration(
           color: AppColors.barBackground,
           border: Border(
@@ -56,12 +62,17 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            height: 64.h,
+            padding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Leading menu button
-            _BarIconButton(
+            leadingWidget ?? _BarIconButton(
               iconPath: AppAssets.icMenu,
               iconWidth: 18.w,
               iconHeight: 12.h,
@@ -75,13 +86,18 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
 
             // Trailing action button
-            _BarIconButton(
-              iconPath: actionIcon,
-              iconWidth: 18.w,
-              iconHeight: 18.h,
-              onTap: onActionTap,
-            ),
+            trailingWidget ??
+                (actionIcon != null && actionIcon!.isNotEmpty
+                    ? _BarIconButton(
+                        iconPath: actionIcon!,
+                        iconWidth: 18.w,
+                        iconHeight: 18.h,
+                        onTap: onActionTap,
+                      )
+                    : SizedBox(width: 40.w, height: 40.h)),
           ],
+        ),
+          ),
         ),
       ),
     );
