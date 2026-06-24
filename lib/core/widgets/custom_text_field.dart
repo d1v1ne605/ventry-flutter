@@ -20,6 +20,12 @@ class CustomTextField extends StatefulWidget {
   /// (e.g. "Forgot Password?" link).
   final Widget? topTrailing;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
+  final int? maxLines;
+  final int? minLines;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final bool isRequired;
 
   const CustomTextField({
     super.key,
@@ -30,6 +36,12 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.topTrailing,
     this.onChanged,
+    this.controller,
+    this.maxLines = 1,
+    this.minLines,
+    this.textInputAction,
+    this.focusNode,
+    this.isRequired = false,
   });
 
   @override
@@ -63,7 +75,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(widget.label, style: AppTextStyles.label),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(widget.label, style: AppTextStyles.label),
+            if (widget.isRequired) ...[
+              SizedBox(width: AppSize.size4.w),
+              Text(
+                '*',
+                style: AppTextStyles.label.copyWith(
+                  color: const Color(0xFFEF4444), // Red-500
+                ),
+              ),
+            ],
+          ],
+        ),
         if (widget.topTrailing != null) widget.topTrailing!,
       ],
     );
@@ -102,9 +128,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ],
       ),
       child: TextField(
+        controller: widget.controller,
+        focusNode: widget.focusNode,
         obscureText: _obscured,
         onChanged: widget.onChanged,
         style: AppTextStyles.input,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        textInputAction: widget.textInputAction,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: AppTextStyles.inputHint,

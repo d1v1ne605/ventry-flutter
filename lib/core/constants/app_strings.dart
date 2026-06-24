@@ -63,6 +63,8 @@ class AppStrings {
   static const String quickAddDescriptionHint =
       'Brief details about the product...';
   static const String quickAddImageLabel = 'Product Image';
+  static const String quickAddTapToUpload = 'Tap to upload image';
+  static const String quickAddTapToUploadImages = 'Tap to upload images';
   static const String quickAddNext = 'Next';
   static const String quickAddBack = 'Back';
   static const String quickAddStep2Title = 'Price & Inventory';
@@ -125,6 +127,23 @@ class AppStrings {
   static const String outOfStock = 'Out';
   static const String skuPrefix = 'SKU: ';
   static const String addProduct = 'Add Product';
+
+  // ── Add Product ──────────────────────────────────────────────────────────────
+  static const String addProductTitle = 'Add Product';
+  static const String addProductProgress1 = '1 of 3';
+  static const String addProductNameLabel = 'Product Name';
+  static const String addProductNameHint = 'Enter product name';
+  static const String addProductCategoryLabel = 'Category';
+  static const String addProductCurrencyLabel = 'Currency';
+  static const String addProductUnitLabel = 'Unit of Measure';
+  static const String addProductDescriptionLabel = 'Description';
+  static const String addProductDescriptionHint =
+      'Briefly describe the product...';
+  static const String addProductImageLabel = 'Product Image';
+  static const String addProductImageHint = 'Tap to upload an image';
+  static const String addProductCancel = 'Cancel';
+  static const String addProductNext = 'Next';
+  static const String createNewCategory = 'Create New Category';
 }
 
 /// Login screen string tokens.

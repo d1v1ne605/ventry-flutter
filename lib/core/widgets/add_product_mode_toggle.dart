@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
-import 'package:ventry_flutter/presentation/screens/quick_add/models/product_category.dart';
+import 'package:ventry_flutter/presentation/screens/quick_add/models/add_product_mode.dart';
 
 /// Segmented tab switcher: Simple | Professional.
 ///

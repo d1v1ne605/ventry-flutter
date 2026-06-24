@@ -3,25 +3,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
-import 'package:ventry_flutter/presentation/screens/quick_add/models/product_category.dart';
 
-/// Labelled category dropdown matching the Figma "Category" field.
-///
-/// Shows "Select Category" hint when nothing is selected.
-/// Opens a [showModalBottomSheet] picker on tap.
-class QuickAddCategoryDropdown extends StatelessWidget {
-  const QuickAddCategoryDropdown({
+class AddProductDropdown<T> extends StatelessWidget {
+  const AddProductDropdown({
     super.key,
     required this.label,
-    required this.categories,
-    required this.selectedCategory,
+    required this.items,
+    required this.selectedValue,
     required this.onSelected,
+    required this.itemAsString,
+    this.bottomAction,
+    this.hintText = 'Select option',
   });
 
   final String label;
-  final List<ProductCategory> categories;
-  final ProductCategory? selectedCategory;
-  final void Function(ProductCategory) onSelected;
+  final List<T> items;
+  final T? selectedValue;
+  final void Function(T) onSelected;
+  final String Function(T) itemAsString;
+  final Widget? bottomAction;
+  final String hintText;
 
   void _openPicker(BuildContext context) {
     showModalBottomSheet<void>(
@@ -32,20 +33,23 @@ class QuickAddCategoryDropdown extends StatelessWidget {
         ),
       ),
       backgroundColor: AppColors.surface,
-      builder: (_) => _CategorySheet(
-        categories: categories,
-        selected: selectedCategory,
-        onSelected: (cat) {
+      builder: (_) => _DropdownSheet<T>(
+        items: items,
+        selected: selectedValue,
+        itemAsString: itemAsString,
+        bottomAction: bottomAction,
+        onSelected: (val) {
           Navigator.of(context).pop();
-          onSelected(cat);
+          onSelected(val);
         },
+        title: hintText,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = selectedCategory != null;
+    final hasSelection = selectedValue != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -72,7 +76,7 @@ class QuickAddCategoryDropdown extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? selectedCategory!.name : 'Select Category',
+                    hasSelection ? itemAsString(selectedValue as T) : hintText,
                     style: GoogleFonts.manrope(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
@@ -96,17 +100,22 @@ class QuickAddCategoryDropdown extends StatelessWidget {
   }
 }
 
-/// Bottom sheet listing all categories.
-class _CategorySheet extends StatelessWidget {
-  const _CategorySheet({
-    required this.categories,
+class _DropdownSheet<T> extends StatelessWidget {
+  const _DropdownSheet({
+    required this.items,
     required this.selected,
     required this.onSelected,
+    required this.title,
+    required this.itemAsString,
+    this.bottomAction,
   });
 
-  final List<ProductCategory> categories;
-  final ProductCategory? selected;
-  final void Function(ProductCategory) onSelected;
+  final List<T> items;
+  final T? selected;
+  final void Function(T) onSelected;
+  final String title;
+  final String Function(T) itemAsString;
+  final Widget? bottomAction;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +142,7 @@ class _CategorySheet extends StatelessWidget {
                 AppSize.size8.h,
               ),
               child: Text(
-                'Select Category',
+                title,
                 style: GoogleFonts.manrope(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
@@ -144,14 +153,14 @@ class _CategorySheet extends StatelessWidget {
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: categories.length,
+                itemCount: items.length,
                 itemBuilder: (_, i) {
-                  final cat = categories[i];
-                  final isSelected = selected?.id == cat.id;
+                  final item = items[i];
+                  final isSelected = selected == item;
                   return ListTile(
-                    onTap: () => onSelected(cat),
+                    onTap: () => onSelected(item),
                     title: Text(
-                      cat.name,
+                      itemAsString(item),
                       style: GoogleFonts.manrope(
                         fontSize: 14.sp,
                         fontWeight: isSelected
@@ -173,6 +182,7 @@ class _CategorySheet extends StatelessWidget {
                 },
               ),
             ),
+            if (bottomAction != null) bottomAction!,
           ],
         ),
       ),
