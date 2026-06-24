@@ -1,108 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
-import 'package:ventry_flutter/core/widgets/app_bottom_nav_bar.dart';
-import 'package:ventry_flutter/presentation/screens/product_catalog/models/product_item.dart';
+import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/injection.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
+import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_event.dart';
+import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_state.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_card.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_catalog_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_filter_chips.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_search_bar.dart';
 
-/// Product Catalog screen — Figma node 44:118 "Product Catalog".
-///
-/// Pure UI page (no Bloc yet). State held locally in [_ProductCatalogPageState]:
-/// - [_query]          — current search text
-/// - [_selectedFilter] — active filter tab
-/// - [_currentNavItem] — active bottom nav tab
-///
-/// Static mock data will be replaced by Bloc-emitted state in the next phase.
-class ProductCatalogPage extends StatefulWidget {
+/// Product Catalog screen wrapped in [BlocProvider].
+/// Removed AppBottomNavBar — handled by MainLayout (ShellRoute).
+class ProductCatalogPage extends StatelessWidget {
   const ProductCatalogPage({super.key});
 
   @override
-  State<ProductCatalogPage> createState() => _ProductCatalogPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<ProductCatalogBloc>()..add(const LoadSkus()),
+      child: const _ProductCatalogView(),
+    );
+  }
 }
 
-class _ProductCatalogPageState extends State<ProductCatalogPage> {
+class _ProductCatalogView extends StatefulWidget {
+  const _ProductCatalogView();
+
+  @override
+  State<_ProductCatalogView> createState() => _ProductCatalogViewState();
+}
+
+class _ProductCatalogViewState extends State<_ProductCatalogView> {
   final TextEditingController _searchController = TextEditingController();
-  ProductFilter _selectedFilter = ProductFilter.totalStock;
-  AppNavItem _currentNavItem = AppNavItem.inventory;
-  String _query = '';
-
-  /// Mock product data — will come from Bloc in the future.
-  static final List<ProductItem> _mockProducts = [
-    const ProductItem(
-      id: '1',
-      name: 'iPhone 15 Pro',
-      meta: 'Size: 128GB • Color: Titanium',
-      sku: 'IP15P-128-TI',
-      price: 999.00,
-      stockStatus: StockStatus.inStock,
-      stockCount: 45,
-    ),
-    const ProductItem(
-      id: '2',
-      name: 'Nike Pegasus 40',
-      meta: 'Color: Black • Size: 42',
-      sku: 'NK-PEG40-BK-42',
-      price: 130.00,
-      stockStatus: StockStatus.lowStock,
-      stockCount: 3,
-    ),
-    const ProductItem(
-      id: '3',
-      name: 'Samsung S24 Ultra',
-      meta: 'Color: Gray • Size: 256GB',
-      sku: 'SS-S24U-256-GR',
-      price: 1199.00,
-      stockStatus: StockStatus.outOfStock,
-      stockCount: null,
-    ),
-    const ProductItem(
-      id: '4',
-      name: 'MacBook Air M3',
-      meta: 'Color: Silver • RAM: 16GB',
-      sku: 'MB-AIR-M3-16',
-      price: 1299.00,
-      stockStatus: StockStatus.inStock,
-      stockCount: 12,
-    ),
-    const ProductItem(
-      id: '5',
-      name: 'AirPods Pro 2',
-      meta: 'Color: White',
-      sku: 'APP-PRO2-WH',
-      price: 249.00,
-      stockStatus: StockStatus.lowStock,
-      stockCount: 2,
-    ),
-  ];
-
-  List<ProductItem> get _filteredProducts {
-    final byQuery = _query.isEmpty
-        ? _mockProducts
-        : _mockProducts
-            .where((p) =>
-                p.name.toLowerCase().contains(_query.toLowerCase()) ||
-                p.sku.toLowerCase().contains(_query.toLowerCase()))
-            .toList();
-
-    return switch (_selectedFilter) {
-      ProductFilter.totalStock => byQuery,
-      ProductFilter.lowStock =>
-        byQuery.where((p) => p.stockStatus == StockStatus.lowStock).toList(),
-      ProductFilter.outOfStock =>
-        byQuery.where((p) => p.stockStatus == StockStatus.outOfStock).toList(),
-    };
-  }
-
-  int get _lowStockCount =>
-      _mockProducts.where((p) => p.stockStatus == StockStatus.lowStock).length;
-
-  int get _outOfStockCount =>
-      _mockProducts.where((p) => p.stockStatus == StockStatus.outOfStock).length;
 
   @override
   void dispose() {
@@ -118,123 +55,69 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
         title: AppStrings.productCatalogPageTitle,
         onBarcodeTap: () {},
       ),
-      body: _ProductCatalogBody(
-        searchController: _searchController,
-        selectedFilter: _selectedFilter,
-        products: _filteredProducts,
-        totalCount: _mockProducts.length,
-        lowStockCount: _lowStockCount,
-        outOfStockCount: _outOfStockCount,
-        onQueryChanged: (q) => setState(() => _query = q),
-        onFilterChanged: (f) => setState(() => _selectedFilter = f),
-        onProductTap: (_) {},
-        onQrTap: () {},
-        onFilterBarTap: () {},
-      ),
-      floatingActionButton: _AddProductFab(onTap: () {}),
-      bottomNavigationBar: AppBottomNavBar(
-        currentItem: _currentNavItem,
-        onItemTapped: (item) => setState(() => _currentNavItem = item),
-      ),
+      body: _ProductCatalogBody(searchController: _searchController),
+      floatingActionButton: const _AddProductFab(),
     );
   }
 }
 
-/// Scrollable body of [ProductCatalogPage].
-/// Extracted to keep [_ProductCatalogPageState.build] concise.
 class _ProductCatalogBody extends StatelessWidget {
-  const _ProductCatalogBody({
-    required this.searchController,
-    required this.selectedFilter,
-    required this.products,
-    required this.totalCount,
-    required this.lowStockCount,
-    required this.outOfStockCount,
-    required this.onQueryChanged,
-    required this.onFilterChanged,
-    required this.onProductTap,
-    required this.onQrTap,
-    required this.onFilterBarTap,
-  });
+  const _ProductCatalogBody({required this.searchController});
 
   final TextEditingController searchController;
-  final ProductFilter selectedFilter;
-  final List<ProductItem> products;
-  final int totalCount;
-  final int lowStockCount;
-  final int outOfStockCount;
-  final void Function(String) onQueryChanged;
-  final void Function(ProductFilter) onFilterChanged;
-  final void Function(ProductItem) onProductTap;
-  final VoidCallback onQrTap;
-  final VoidCallback onFilterBarTap;
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        // Sticky search + filter header
         SliverToBoxAdapter(
-          child: _StickyHeader(
-            controller: searchController,
-            selectedFilter: selectedFilter,
-            totalCount: totalCount,
-            lowStockCount: lowStockCount,
-            outOfStockCount: outOfStockCount,
-            onQueryChanged: onQueryChanged,
-            onFilterChanged: onFilterChanged,
-            onQrTap: onQrTap,
-            onFilterBarTap: onFilterBarTap,
-          ),
+          child: _StickyHeader(controller: searchController),
         ),
-        // Product list
-        SliverPadding(
-          padding: EdgeInsets.fromLTRB(
-            AppSize.size16.w,
-            AppSize.size8.h,
-            AppSize.size16.w,
-            100.h, // space for FAB + bottom nav
-          ),
-          sliver: products.isEmpty
-              ? const SliverToBoxAdapter(child: _EmptyState())
-              : SliverList.separated(
-                  itemCount: products.length,
-                  separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                  itemBuilder: (_, i) => ProductCard(
-                    product: products[i],
-                    onTap: () => onProductTap(products[i]),
-                  ),
+        BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
+          buildWhen: (prev, curr) =>
+              prev.isLoading != curr.isLoading ||
+              prev.skus != curr.skus,
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
+              );
+            }
+
+            if (state.skus.isEmpty) {
+              return const SliverFillRemaining(child: _EmptyState());
+            }
+
+            return SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                AppSize.size16.w,
+                AppSize.size8.h,
+                AppSize.size16.w,
+                96.h,
+              ),
+              sliver: SliverList.separated(
+                itemCount: state.skus.length,
+                separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                itemBuilder: (_, i) => ProductCard(
+                  sku: state.skus[i],
+                  onTap: () {},
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
   }
 }
 
-/// White-background card containing search bar + filter chips.
 class _StickyHeader extends StatelessWidget {
-  const _StickyHeader({
-    required this.controller,
-    required this.selectedFilter,
-    required this.totalCount,
-    required this.lowStockCount,
-    required this.outOfStockCount,
-    required this.onQueryChanged,
-    required this.onFilterChanged,
-    required this.onQrTap,
-    required this.onFilterBarTap,
-  });
+  const _StickyHeader({required this.controller});
 
   final TextEditingController controller;
-  final ProductFilter selectedFilter;
-  final int totalCount;
-  final int lowStockCount;
-  final int outOfStockCount;
-  final void Function(String) onQueryChanged;
-  final void Function(ProductFilter) onFilterChanged;
-  final VoidCallback onQrTap;
-  final VoidCallback onFilterBarTap;
 
   @override
   Widget build(BuildContext context) {
@@ -251,25 +134,54 @@ class _StickyHeader extends StatelessWidget {
         children: [
           ProductSearchBar(
             controller: controller,
-            onChanged: onQueryChanged,
-            onQrTap: onQrTap,
-            onFilterTap: onFilterBarTap,
+            onChanged: (query) =>
+                context.read<ProductCatalogBloc>().add(SearchSkus(query)),
+            onQrTap: () {},
+            onFilterTap: () {},
           ),
           SizedBox(height: AppSize.size16.h),
-          ProductFilterChips(
-            selectedFilter: selectedFilter,
-            onFilterChanged: onFilterChanged,
-            totalCount: totalCount,
-            lowStockCount: lowStockCount,
-            outOfStockCount: outOfStockCount,
+          BlocSelector<ProductCatalogBloc, ProductCatalogState,
+              _FilterCounts>(
+            selector: (state) => _FilterCounts(
+              total: state.total,
+              lowStock: state.skus
+                  .where((s) => s.stockStatus == SkuStockStatus.lowStock)
+                  .length,
+              outOfStock: state.skus
+                  .where((s) => s.stockStatus == SkuStockStatus.outOfStock)
+                  .length,
+              filterStatus: state.filterStatus,
+              isStockAlert: state.isStockAlert,
+            ),
+            builder: (context, counts) => ProductFilterChips(
+              selectedFilter: _resolveFilter(counts),
+              onFilterChanged: (filter) => _onFilterChanged(context, filter),
+              totalCount: counts.total,
+              lowStockCount: counts.lowStock,
+              outOfStockCount: counts.outOfStock,
+            ),
           ),
         ],
       ),
     );
   }
+
+  ProductFilter _resolveFilter(_FilterCounts counts) {
+    if (counts.isStockAlert == true) return ProductFilter.lowStock;
+    if (counts.filterStatus == 'OUT_OF_STOCK') return ProductFilter.outOfStock;
+    return ProductFilter.totalStock;
+  }
+
+  void _onFilterChanged(BuildContext context, ProductFilter filter) {
+    context.read<ProductCatalogBloc>().add(
+          FilterSkus(
+            status: filter == ProductFilter.outOfStock ? 'OUT_OF_STOCK' : null,
+            isStockAlert: filter == ProductFilter.lowStock ? true : null,
+          ),
+        );
+  }
 }
 
-/// Shown when the product list is empty (e.g. no search results).
 class _EmptyState extends StatelessWidget {
   const _EmptyState();
 
@@ -287,12 +199,8 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            'No products found',
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: AppColors.navInactive,
-              fontWeight: FontWeight.w500,
-            ),
+            AppStrings.productCatalogEmpty,
+            style: AppTextStyles.searchHint,
           ),
         ],
       ),
@@ -300,16 +208,13 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-/// Teal circular FAB that triggers the add-product flow.
 class _AddProductFab extends StatelessWidget {
-  const _AddProductFab({this.onTap});
-
-  final VoidCallback? onTap;
+  const _AddProductFab();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => context.go(RouterPath.quickAdd),
       child: Container(
         width: 56.r,
         height: 56.r,
@@ -329,4 +234,34 @@ class _AddProductFab extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Internal DTO for BlocSelector to avoid rebuilding when unrelated state changes.
+class _FilterCounts {
+  final int total;
+  final int lowStock;
+  final int outOfStock;
+  final String? filterStatus;
+  final bool? isStockAlert;
+
+  const _FilterCounts({
+    required this.total,
+    required this.lowStock,
+    required this.outOfStock,
+    this.filterStatus,
+    this.isStockAlert,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      other is _FilterCounts &&
+      other.total == total &&
+      other.lowStock == lowStock &&
+      other.outOfStock == outOfStock &&
+      other.filterStatus == filterStatus &&
+      other.isStockAlert == isStockAlert;
+
+  @override
+  int get hashCode =>
+      Object.hash(total, lowStock, outOfStock, filterStatus, isStockAlert);
 }

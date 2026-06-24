@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
@@ -29,42 +31,53 @@ class ProductCatalogTopBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
-      child: Container(
-        height: 64.h,
-        padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border(
-            bottom: BorderSide(color: AppColors.divider, width: 1),
+    return SafeArea(
+      bottom: false,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: Container(
+          height: 64.h,
+          padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            border: Border(
+              bottom: BorderSide(color: AppColors.divider, width: 1),
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x080F172A),
+                offset: Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ],
           ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x080F172A),
-              offset: Offset(0, 2),
-              blurRadius: 8,
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Back button
-            _TopBarIconButton(
-              icon: Icons.arrow_back_ios_new_rounded,
-              onTap: onBackTap ?? () => Navigator.of(context).maybePop(),
-            ),
-            const Spacer(),
-            // Logo + brand name
-            _BrandTitle(title: title),
-            const Spacer(),
-            // Barcode scanner
-            _TopBarIconButton(
-              icon: Icons.barcode_reader,
-              onTap: onBarcodeTap,
-            ),
-          ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Back button
+              _TopBarIconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: AppSize.size20.r,
+                ),
+                onTap: onBackTap ?? () => Navigator.of(context).maybePop(),
+              ),
+              const Spacer(),
+              // Logo + brand name
+              _BrandTitle(title: title),
+              const Spacer(),
+              // Barcode scanner
+              _TopBarIconButton(
+                icon: SvgPicture.asset(
+                  AppAssets.icScanner,
+                  width: AppSize.size22.w,
+                  height: AppSize.size22.h,
+                  color: AppColors.heading,
+                ),
+                onTap: onBarcodeTap,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -107,7 +120,7 @@ class _BrandTitle extends StatelessWidget {
 class _TopBarIconButton extends StatelessWidget {
   const _TopBarIconButton({required this.icon, this.onTap});
 
-  final IconData icon;
+  final Widget icon;
   final VoidCallback? onTap;
 
   @override
@@ -118,10 +131,7 @@ class _TopBarIconButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(9999),
-        child: Padding(
-          padding: EdgeInsets.all(AppSize.size8.r),
-          child: Icon(icon, size: 22.r, color: AppColors.heading),
-        ),
+        child: Padding(padding: EdgeInsets.all(AppSize.size8.r), child: icon),
       ),
     );
   }

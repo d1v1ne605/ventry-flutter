@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ventry_flutter/data/datasources/local/auth/auth_local_datasource.dart';
 import 'package:ventry_flutter/data/datasources/remote/auth/auth_api.dart';
 import 'package:ventry_flutter/data/datasources/remote/category/category_api.dart';
+import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart';
 
 @module
 abstract class RegisterModule {
@@ -29,7 +30,11 @@ abstract class RegisterModule {
   }
 
   @lazySingleton
-  Dio dio(AppLogger logger, CookieJar cookieJar, AuthInterceptor authInterceptor) =>
+  Dio dio(
+    AppLogger logger,
+    CookieJar cookieJar,
+    AuthInterceptor authInterceptor,
+  ) =>
       Dio(
           BaseOptions(
             baseUrl: dotenv.env['BASE_URL']!,
@@ -50,7 +55,10 @@ abstract class RegisterModule {
         ]);
 
   @lazySingleton
-  AuthInterceptor authInterceptor(AuthLocalDataSource localDataSource, CookieJar cookieJar) {
+  AuthInterceptor authInterceptor(
+    AuthLocalDataSource localDataSource,
+    CookieJar cookieJar,
+  ) {
     return AuthInterceptor(localDataSource, cookieJar);
   }
 
@@ -67,5 +75,10 @@ abstract class RegisterModule {
   @lazySingleton
   CategoryApi categoryApi(Dio dio) {
     return CategoryApi(dio);
+  }
+
+  @lazySingleton
+  ProductApi productApi(Dio dio) {
+    return ProductApi(dio);
   }
 }

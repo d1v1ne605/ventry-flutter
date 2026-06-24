@@ -24,4 +24,5 @@ abstract final class RouterName {
   static const String quickAddStep3 = 'quickAddStep3';
   static const String quickAddStep4 = 'quickAddStep4';
   static const String categoryManagement = 'categoryManagement';
+  static const String skuDetail = 'skuDetail';
 }

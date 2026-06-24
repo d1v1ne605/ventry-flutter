@@ -115,6 +115,7 @@ class AppStrings {
 
   // ── Product Catalog ──────────────────────────────────────────────────────────
   static const String productCatalogPageTitle = 'StockMaster';
+  static const String productCatalogEmpty = 'No products found';
   static const String searchHint = 'Search by SKU name, barcode, ...';
   static const String filterTotalStock = 'Total Stock';
   static const String filterLowStock = 'Low Stock';

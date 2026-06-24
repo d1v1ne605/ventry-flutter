@@ -1,5 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/layouts/main_layout.dart';
+import 'package:ventry_flutter/core/layouts/main_layout.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
@@ -58,12 +59,22 @@ final router = GoRouter(
           name: RouterName.inventory,
           builder: (context, state) => const InventoryDashboardPage(),
         ),
+        GoRoute(
+          path: RouterPath.productCatalog,
+          name: RouterName.productCatalog,
+          builder: (context, state) => const ProductCatalogPage(),
+          routes: [
+            GoRoute(
+              path: ':skuUid',
+              name: RouterName.skuDetail,
+              builder: (context, state) {
+                // TODO: Replace with SkuDetailPage
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
       ],
-    ),
-    GoRoute(
-      path: RouterPath.productCatalog,
-      name: RouterName.productCatalog,
-      builder: (context, state) => const ProductCatalogPage(),
     ),
     GoRoute(
       path: RouterPath.quickAdd,

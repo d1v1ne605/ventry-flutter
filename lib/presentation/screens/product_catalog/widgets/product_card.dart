@@ -4,27 +4,27 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
-import 'package:ventry_flutter/presentation/screens/product_catalog/models/product_item.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 
-/// Single product row card in the catalog list.
+/// Single SKU row card in the product catalog list.
 ///
-/// Visual behaviour per [StockStatus]:
-/// - **inStock**  → no left border, green badge
-/// - **lowStock** → amber left border accent, orange badge
-/// - **outOfStock** → red left border accent, muted text, pink "Out" badge
+/// Visual behaviour per [SkuStockStatus]:
+/// - **inStock**    → no left border, green badge
+/// - **lowStock**   → amber left border accent, orange badge
+/// - **outOfStock** → red left border accent, muted text, pink badge
 class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
-    required this.product,
+    required this.sku,
     this.onTap,
   });
 
-  final ProductItem product;
+  final SkuEntity sku;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final bool isOut = product.stockStatus.isOutOfStock;
+    final bool isOut = sku.stockStatus.isOutOfStock;
     final Color? leftBorderColor = _resolveLeftBorderColor();
 
     return GestureDetector(
@@ -38,15 +38,15 @@ class ProductCard extends StatelessWidget {
                   left: BorderSide(color: leftBorderColor, width: 4.w),
                 )
               : null,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color(0x0A1E293B),
-              offset: const Offset(0, 2),
+              color: Color(0x0A1E293B),
+              offset: Offset(0, 2),
               blurRadius: 8,
             ),
             BoxShadow(
-              color: const Color(0xA0FFFFFF),
-              offset: const Offset(-1, -1),
+              color: Color(0xA0FFFFFF),
+              offset: Offset(-1, -1),
               blurRadius: 4,
             ),
           ],
@@ -56,11 +56,9 @@ class ProductCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _ProductImage(imageUrl: product.imageUrl, isOut: isOut),
+              _ProductImage(imageUrl: sku.primaryImageUrl, isOut: isOut),
               SizedBox(width: AppSize.size12.w),
-              Expanded(
-                child: _ProductInfo(product: product),
-              ),
+              Expanded(child: _ProductInfo(sku: sku)),
             ],
           ),
         ),
@@ -68,15 +66,13 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Color? _resolveLeftBorderColor() => switch (product.stockStatus) {
-        StockStatus.inStock => null,
-        StockStatus.lowStock => AppColors.lowStockBorder,
-        StockStatus.outOfStock => AppColors.outOfStockBorder,
+  Color? _resolveLeftBorderColor() => switch (sku.stockStatus) {
+        SkuStockStatus.inStock => null,
+        SkuStockStatus.lowStock => AppColors.lowStockBorder,
+        SkuStockStatus.outOfStock => AppColors.outOfStockBorder,
       };
 }
 
-/// Product thumbnail image with rounded corners.
-/// Falls back to a grey placeholder when [imageUrl] is null.
 class _ProductImage extends StatelessWidget {
   const _ProductImage({this.imageUrl, required this.isOut});
 
@@ -104,7 +100,6 @@ class _ProductImage extends StatelessWidget {
   }
 }
 
-/// Fallback icon shown when no product image is available.
 class _PlaceholderIcon extends StatelessWidget {
   const _PlaceholderIcon({required this.isOut});
 
@@ -120,27 +115,25 @@ class _PlaceholderIcon extends StatelessWidget {
   }
 }
 
-/// Title, meta, SKU chip and price column for [ProductCard].
 class _ProductInfo extends StatelessWidget {
-  const _ProductInfo({required this.product});
+  const _ProductInfo({required this.sku});
 
-  final ProductItem product;
+  final SkuEntity sku;
 
   @override
   Widget build(BuildContext context) {
-    final bool isOut = product.stockStatus.isOutOfStock;
+    final bool isOut = sku.stockStatus.isOutOfStock;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Stock badge + name row
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Text(
-                product.name,
+                sku.spuName,
                 style: isOut
                     ? AppTextStyles.productNameMuted
                     : AppTextStyles.productName,
@@ -149,32 +142,35 @@ class _ProductInfo extends StatelessWidget {
               ),
             ),
             SizedBox(width: AppSize.size8.w),
-            _StockBadge(status: product.stockStatus, count: product.stockCount),
+            _StockBadge(status: sku.stockStatus, count: sku.stockQuantity),
           ],
         ),
-        SizedBox(height: 4.h),
-        // Meta line
-        Text(
-          product.meta,
-          style: AppTextStyles.productMeta,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        if (sku.skuCode != null) ...[
+          SizedBox(height: 4.h),
+          Text(
+            sku.skuCode!,
+            style: AppTextStyles.productMeta,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
         SizedBox(height: 6.h),
-        // SKU chip + price row
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _SkuChip(sku: product.sku),
+            if (sku.skuCode != null)
+              _SkuChip(skuCode: sku.skuCode!)
+            else
+              _SkuChip(skuCode: sku.uid.substring(0, 8)),
             const Spacer(),
-            Text(
-              '\$${product.price.toStringAsFixed(2)}',
-              style: isOut
-                  ? AppTextStyles.productPrice.copyWith(
-                      color: AppColors.textMuted,
-                    )
-                  : AppTextStyles.productPrice,
-            ),
+            if (sku.sellingPrice != null)
+              Text(
+                '\$${sku.sellingPrice!.toStringAsFixed(2)}',
+                style: isOut
+                    ? AppTextStyles.productPrice
+                        .copyWith(color: AppColors.textMuted)
+                    : AppTextStyles.productPrice,
+              ),
           ],
         ),
       ],
@@ -182,11 +178,10 @@ class _ProductInfo extends StatelessWidget {
   }
 }
 
-/// Pill-shaped SKU chip (grey background).
 class _SkuChip extends StatelessWidget {
-  const _SkuChip({required this.sku});
+  const _SkuChip({required this.skuCode});
 
-  final String sku;
+  final String skuCode;
 
   @override
   Widget build(BuildContext context) {
@@ -197,23 +192,22 @@ class _SkuChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Text(
-        '${AppStrings.skuPrefix}$sku',
+        '${AppStrings.skuPrefix}$skuCode',
         style: AppTextStyles.skuChip,
       ),
     );
   }
 }
 
-/// Colored status badge (green / orange / red-pink).
 class _StockBadge extends StatelessWidget {
   const _StockBadge({required this.status, required this.count});
 
-  final StockStatus status;
-  final int? count;
+  final SkuStockStatus status;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    final _BadgeConfig cfg = _BadgeConfig.fromStatus(status, count);
+    final cfg = _BadgeConfig.fromStatus(status, count);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
@@ -243,7 +237,6 @@ class _StockBadge extends StatelessWidget {
   }
 }
 
-/// Configuration helper for [_StockBadge] colours and label.
 class _BadgeConfig {
   const _BadgeConfig({
     required this.fill,
@@ -257,21 +250,21 @@ class _BadgeConfig {
   final Color textColor;
   final String label;
 
-  factory _BadgeConfig.fromStatus(StockStatus status, int? count) {
+  factory _BadgeConfig.fromStatus(SkuStockStatus status, int count) {
     return switch (status) {
-      StockStatus.inStock => _BadgeConfig(
+      SkuStockStatus.inStock => _BadgeConfig(
           fill: AppColors.inStockBadgeFill,
           dotColor: AppColors.inStockDot,
           textColor: AppColors.inStockBadgeText,
-          label: '${AppStrings.inStock}: ${count ?? 0}',
+          label: '${AppStrings.inStock}: $count',
         ),
-      StockStatus.lowStock => _BadgeConfig(
+      SkuStockStatus.lowStock => _BadgeConfig(
           fill: AppColors.lowStockBadgeFill,
           dotColor: AppColors.lowStockDot,
           textColor: AppColors.lowStockBadgeText,
-          label: '${AppStrings.lowStock}: ${count ?? 0}',
+          label: '${AppStrings.lowStock}: $count',
         ),
-      StockStatus.outOfStock => _BadgeConfig(
+      SkuStockStatus.outOfStock => _BadgeConfig(
           fill: AppColors.outOfStockBadgeFill,
           dotColor: AppColors.outOfStockDot,
           textColor: AppColors.outOfStockBadgeText,

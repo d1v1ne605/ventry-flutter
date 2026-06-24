@@ -14,6 +14,11 @@ class MainLayout extends StatelessWidget {
 
   const MainLayout({super.key, required this.body, this.isPaddingTop = false});
 
+  /// Routes that manage their own AppBar (via nested Scaffold).
+  /// MainLayout will hide its default header for these routes so the
+  /// child page's custom AppBar is shown instead.
+  static const _selfManagedAppBarRoutes = [RouterPath.productCatalog];
+
   String _getTitle(String location) {
     if (location.startsWith(RouterPath.inventory)) {
       return AppStrings.storageManagerTitle;
@@ -22,10 +27,19 @@ class MainLayout extends StatelessWidget {
   }
 
   AppNavItem _getNavItem(String location) {
+    if (location.startsWith(RouterPath.productCatalog)) {
+      return AppNavItem.inventory;
+    }
     if (location.startsWith(RouterPath.inventory)) {
       return AppNavItem.inventory;
     }
     return AppNavItem.inventory;
+  }
+
+  /// Returns true when the active route provides its own AppBar,
+  /// meaning MainLayout should not render its default header.
+  bool _hasOwnAppBar(String location) {
+    return _selfManagedAppBarRoutes.any((route) => location.startsWith(route));
   }
 
   void _onNavItemTapped(BuildContext context, AppNavItem item) {
@@ -44,14 +58,21 @@ class MainLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
-    final title = _getTitle(location);
     final currentItem = _getNavItem(location);
+    final hasOwnAppBar = _hasOwnAppBar(location);
 
     return _buildSafeArea(
       context,
       Scaffold(
         backgroundColor: AppColors.screenBackground,
-        appBar: AppTopBar(title: title, onMenuTap: () {}, onActionTap: () {}),
+        // Null when the child page manages its own AppBar (no double-header)
+        appBar: hasOwnAppBar
+            ? null
+            : AppTopBar(
+                title: _getTitle(location),
+                onMenuTap: () {},
+                onActionTap: () {},
+              ),
         body: body,
         bottomNavigationBar: AppBottomNavBar(
           currentItem: currentItem,
