@@ -21,6 +21,26 @@ class AppStrings {
   static const String categoryManagementTitle = 'Category Management';
   static const String categoryManagementSubtitle =
       'Organize items by type and location';
+  static const String categorySearchHint = 'Search category...';
+  static const String categoryAddButton = 'Add Category';
+  static const String categoryEditButton = 'Edit Category';
+  static const String categoryNewTitle = 'New Category';
+  static const String categoryEditTitle = 'Edit Category';
+  static const String categoryUpdateTitle = 'Update Category';
+  static const String categorySaveTitle = 'Save Category';
+  static const String categoryDeleteTitle = 'Delete Category';
+  static String categoryDeleteConfirm(String name) =>
+      'Are you sure you want to delete $name?';
+  static const String categoryNameLabel = 'Name';
+  static const String categoryNameHint = 'Category Name';
+  static const String categoryImageLabel = 'Image URL (optional)';
+  static const String categoryImageHint = 'https://...';
+  static const String categorySaveButton = 'Save';
+  static const String categoryCancelButton = 'Cancel';
+  static const String categoryDeleteButton = 'Delete';
+  static const String categoryEmpty = 'No categories found.';
+  static const String categoryNoResults = 'No results found.';
+
   static const String stockMovementLogsTitle = 'Stock Movement Logs';
   static const String stockMovementLogsSubtitle =
       'Track inbound and outbound history';

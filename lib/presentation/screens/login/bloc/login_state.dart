@@ -1,24 +1,23 @@
 import 'package:equatable/equatable.dart';
-
-enum LoginStatus { initial, loading, success, failure }
+import 'package:ventry_flutter/core/base/base_status.dart';
 
 class LoginState extends Equatable {
   final String email;
   final String password;
-  final LoginStatus status;
+  final BaseStatus status;
   final String? errorMessage;
 
   const LoginState({
     this.email = '',
     this.password = '',
-    this.status = LoginStatus.initial,
+    this.status = BaseStatus.initial,
     this.errorMessage,
   });
 
   LoginState copyWith({
     String? email,
     String? password,
-    LoginStatus? status,
+    BaseStatus? status,
     String? errorMessage,
   }) {
     return LoginState(

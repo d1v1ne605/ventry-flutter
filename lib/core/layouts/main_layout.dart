@@ -17,9 +17,7 @@ class MainLayout extends StatelessWidget {
   /// Routes that manage their own AppBar (via nested Scaffold).
   /// MainLayout will hide its default header for these routes so the
   /// child page's custom AppBar is shown instead.
-  static const _selfManagedAppBarRoutes = [
-    RouterPath.productCatalog,
-  ];
+  static const _selfManagedAppBarRoutes = [RouterPath.productCatalog];
 
   String _getTitle(String location) {
     if (location.startsWith(RouterPath.inventory)) {
@@ -41,9 +39,7 @@ class MainLayout extends StatelessWidget {
   /// Returns true when the active route provides its own AppBar,
   /// meaning MainLayout should not render its default header.
   bool _hasOwnAppBar(String location) {
-    return _selfManagedAppBarRoutes.any(
-      (route) => location.startsWith(route),
-    );
+    return _selfManagedAppBarRoutes.any((route) => location.startsWith(route));
   }
 
   void _onNavItemTapped(BuildContext context, AppNavItem item) {

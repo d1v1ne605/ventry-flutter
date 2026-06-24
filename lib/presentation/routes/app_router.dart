@@ -9,6 +9,7 @@ import '../screens/quick_add/quick_add_step1_page.dart';
 import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
+import '../screens/category_management/category_management_page.dart';
 import '../../injection.dart';
 import 'auth_notifier.dart';
 import 'router_constants.dart';
@@ -94,6 +95,11 @@ final router = GoRouter(
       path: RouterPath.quickAddStep4,
       name: RouterName.quickAddStep4,
       builder: (context, state) => const QuickAddStep4Page(),
+    ),
+    GoRoute(
+      path: RouterPath.categoryManagement,
+      name: RouterName.categoryManagement,
+      builder: (context, state) => const CategoryManagementPage(),
     ),
   ],
 );

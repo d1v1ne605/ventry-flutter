@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/base/base_view_model.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/logging/app_logger.dart';
@@ -11,7 +12,6 @@ import 'register_name_changed.dart';
 import 'register_password_changed.dart';
 import 'register_shop_name_changed.dart';
 import 'register_state.dart';
-import 'register_status.dart';
 import 'register_submitted.dart';
 import 'register_username_changed.dart';
 
@@ -71,14 +71,14 @@ class RegisterBloc extends BaseViewModel<RegisterEvent, RegisterState> {
       return;
     }
 
-    emit(state.copyWith(status: RegisterStatus.loading, errorMessage: null));
+    emit(state.copyWith(status: BaseStatus.loading, errorMessage: null));
 
     final result = await _registerOwner(_request);
     result.fold(
       (failure) => emit(_failureState(failure.message)),
       (response) => emit(
         state.copyWith(
-          status: RegisterStatus.success,
+          status: BaseStatus.success,
           errorMessage: null,
           owner: response,
         ),
@@ -99,7 +99,7 @@ class RegisterBloc extends BaseViewModel<RegisterEvent, RegisterState> {
       password: password,
       confirmPassword: confirmPassword,
       shopName: shopName,
-      status: RegisterStatus.initial,
+      status: BaseStatus.initial,
       errorMessage: null,
       owner: null,
     );
@@ -107,7 +107,7 @@ class RegisterBloc extends BaseViewModel<RegisterEvent, RegisterState> {
 
   RegisterState _failureState(String message) {
     return state.copyWith(
-      status: RegisterStatus.failure,
+      status: BaseStatus.failure,
       errorMessage: message,
       owner: null,
     );

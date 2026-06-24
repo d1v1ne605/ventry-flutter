@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
-import 'package:ventry_flutter/core/theme/app_colors.dart';
-import 'package:ventry_flutter/core/widgets/app_bottom_nav_bar.dart';
-import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/inventory_dashboard/widgets/inventory_dashboard_card.dart';
 import 'package:ventry_flutter/presentation/screens/inventory_dashboard/widgets/inventory_header_section.dart';
 
@@ -16,55 +15,34 @@ import 'package:ventry_flutter/presentation/screens/inventory_dashboard/widgets/
 /// - [InventoryHeaderSection] with title and scanner button
 /// - A list of [InventoryDashboardCard] items
 /// - [AppBottomNavBar] (shared, reusable)
-class InventoryDashboardPage extends StatefulWidget {
+class InventoryDashboardPage extends StatelessWidget {
   const InventoryDashboardPage({super.key});
 
-  @override
-  State<InventoryDashboardPage> createState() => _InventoryDashboardPageState();
-}
-
-class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
-  AppNavItem _currentNavItem = AppNavItem.inventory;
-
-  /// Static card data — will be replaced by Bloc state in the future.
-  static const List<InventoryCardData> _cards = [
-    InventoryCardData(
-      title: AppStrings.productCatalogTitle,
-      subtitle: AppStrings.productCatalogSubtitle,
-      iconPath: AppAssets.icInventory,
-    ),
-    InventoryCardData(
-      title: AppStrings.categoryManagementTitle,
-      subtitle: AppStrings.categoryManagementSubtitle,
-      iconPath: AppAssets.icPartners,
-    ),
-    InventoryCardData(
-      title: AppStrings.stockMovementLogsTitle,
-      subtitle: AppStrings.stockMovementLogsSubtitle,
-      iconPath: AppAssets.icSales,
-    ),
-  ];
-
-  void _onNavItemTapped(AppNavItem item) {
-    setState(() => _currentNavItem = item);
-    // Navigation between tabs will be handled by GoRouter in a future iteration.
+  List<InventoryCardData> _buildCards(BuildContext context) {
+    return [
+      InventoryCardData(
+        title: AppStrings.productCatalogTitle,
+        subtitle: AppStrings.productCatalogSubtitle,
+        iconPath: AppAssets.icInventory,
+        onTap: () => context.push(RouterPath.productCatalog),
+      ),
+      InventoryCardData(
+        title: AppStrings.categoryManagementTitle,
+        subtitle: AppStrings.categoryManagementSubtitle,
+        iconPath: AppAssets.icPartners,
+        onTap: () => context.push(RouterPath.categoryManagement),
+      ),
+      const InventoryCardData(
+        title: AppStrings.stockMovementLogsTitle,
+        subtitle: AppStrings.stockMovementLogsSubtitle,
+        iconPath: AppAssets.icSales,
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.screenBackground,
-      appBar: AppTopBar(
-        title: AppStrings.storageManagerTitle,
-        onMenuTap: () {},
-        onActionTap: () {},
-      ),
-      body: _InventoryDashboardBody(cards: _cards),
-      bottomNavigationBar: AppBottomNavBar(
-        currentItem: _currentNavItem,
-        onItemTapped: _onNavItemTapped,
-      ),
-    );
+    return _InventoryDashboardBody(cards: _buildCards(context));
   }
 }
 

@@ -9,6 +9,7 @@ abstract final class RouterPath {
   static const String quickAddStep2 = '/quick-add-step2';
   static const String quickAddStep3 = '/quick-add-step3';
   static const String quickAddStep4 = '/quick-add-step4';
+  static const String categoryManagement = '/category-management';
 }
 
 abstract final class RouterName {

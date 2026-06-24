@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
@@ -54,7 +56,10 @@ class ProductCatalogTopBar extends StatelessWidget
             children: [
               // Back button
               _TopBarIconButton(
-                icon: Icons.arrow_back_ios_new_rounded,
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: AppSize.size20.r,
+                ),
                 onTap: onBackTap ?? () => Navigator.of(context).maybePop(),
               ),
               const Spacer(),
@@ -63,7 +68,12 @@ class ProductCatalogTopBar extends StatelessWidget
               const Spacer(),
               // Barcode scanner
               _TopBarIconButton(
-                icon: Icons.barcode_reader,
+                icon: SvgPicture.asset(
+                  AppAssets.icScanner,
+                  width: AppSize.size22.w,
+                  height: AppSize.size22.h,
+                  color: AppColors.heading,
+                ),
                 onTap: onBarcodeTap,
               ),
             ],
@@ -110,7 +120,7 @@ class _BrandTitle extends StatelessWidget {
 class _TopBarIconButton extends StatelessWidget {
   const _TopBarIconButton({required this.icon, this.onTap});
 
-  final IconData icon;
+  final Widget icon;
   final VoidCallback? onTap;
 
   @override
@@ -121,10 +131,7 @@ class _TopBarIconButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(9999),
-        child: Padding(
-          padding: EdgeInsets.all(AppSize.size8.r),
-          child: Icon(icon, size: 22.r, color: AppColors.heading),
-        ),
+        child: Padding(padding: EdgeInsets.all(AppSize.size8.r), child: icon),
       ),
     );
   }
