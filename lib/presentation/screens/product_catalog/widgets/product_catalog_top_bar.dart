@@ -29,42 +29,45 @@ class ProductCatalogTopBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
-      child: Container(
-        height: 64.h,
-        padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border(
-            bottom: BorderSide(color: AppColors.divider, width: 1),
+    return SafeArea(
+      bottom: false,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: Container(
+          height: 64.h,
+          padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            border: Border(
+              bottom: BorderSide(color: AppColors.divider, width: 1),
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x080F172A),
+                offset: Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ],
           ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x080F172A),
-              offset: Offset(0, 2),
-              blurRadius: 8,
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Back button
-            _TopBarIconButton(
-              icon: Icons.arrow_back_ios_new_rounded,
-              onTap: onBackTap ?? () => Navigator.of(context).maybePop(),
-            ),
-            const Spacer(),
-            // Logo + brand name
-            _BrandTitle(title: title),
-            const Spacer(),
-            // Barcode scanner
-            _TopBarIconButton(
-              icon: Icons.barcode_reader,
-              onTap: onBarcodeTap,
-            ),
-          ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Back button
+              _TopBarIconButton(
+                icon: Icons.arrow_back_ios_new_rounded,
+                onTap: onBackTap ?? () => Navigator.of(context).maybePop(),
+              ),
+              const Spacer(),
+              // Logo + brand name
+              _BrandTitle(title: title),
+              const Spacer(),
+              // Barcode scanner
+              _TopBarIconButton(
+                icon: Icons.barcode_reader,
+                onTap: onBarcodeTap,
+              ),
+            ],
+          ),
         ),
       ),
     );

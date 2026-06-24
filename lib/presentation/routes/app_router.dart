@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ventry_flutter/core/layouts/main_layout.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
@@ -16,18 +18,19 @@ final router = GoRouter(
   refreshListenable: getIt<AuthNotifier>(),
   redirect: (context, state) {
     final authNotifier = getIt<AuthNotifier>();
-    
+
     // Wait until we have checked local storage for existing token
     if (!authNotifier.isInitialized) return null;
 
     final isAuth = authNotifier.isAuthenticated;
-    final isLoginRoute = state.matchedLocation == RouterPath.login || 
-                         state.matchedLocation == RouterPath.register;
+    final isLoginRoute =
+        state.matchedLocation == RouterPath.login ||
+        state.matchedLocation == RouterPath.register;
 
     if (!isAuth && !isLoginRoute) {
       return RouterPath.login;
     }
-    
+
     if (isAuth && isLoginRoute) {
       return RouterPath.inventory;
     }
@@ -45,15 +48,32 @@ final router = GoRouter(
       name: RouterName.register,
       builder: (context, state) => const RegisterPage(),
     ),
-    GoRoute(
-      path: RouterPath.inventory,
-      name: RouterName.inventory,
-      builder: (context, state) => const InventoryDashboardPage(),
-    ),
-    GoRoute(
-      path: RouterPath.productCatalog,
-      name: RouterName.productCatalog,
-      builder: (context, state) => const ProductCatalogPage(),
+    ShellRoute(
+      builder: (context, state, child) {
+        return MainLayout(body: child);
+      },
+      routes: [
+        GoRoute(
+          path: RouterPath.inventory,
+          name: RouterName.inventory,
+          builder: (context, state) => const InventoryDashboardPage(),
+        ),
+        GoRoute(
+          path: RouterPath.productCatalog,
+          name: RouterName.productCatalog,
+          builder: (context, state) => const ProductCatalogPage(),
+          routes: [
+            GoRoute(
+              path: ':skuUid',
+              name: RouterName.skuDetail,
+              builder: (context, state) {
+                // TODO: Replace with SkuDetailPage
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
     GoRoute(
       path: RouterPath.quickAdd,
