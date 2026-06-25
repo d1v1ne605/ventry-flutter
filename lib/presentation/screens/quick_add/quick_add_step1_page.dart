@@ -8,7 +8,6 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/models/product_category.dart';
-import 'package:ventry_flutter/core/widgets/add_product_mode_toggle.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/quick_add_bottom_action_bar.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_category_dropdown.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_image_upload.dart';

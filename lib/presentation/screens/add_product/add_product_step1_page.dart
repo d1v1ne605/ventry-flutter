@@ -11,9 +11,11 @@ import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
 import 'package:ventry_flutter/injection.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_dropdown.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_image_picker.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/add_product_step2_page.dart' as ventry_step2;
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_event.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
@@ -47,8 +49,11 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   final FocusNode _descFocus = FocusNode();
 
   CategoryEntity? _selectedCategory;
-  String? _selectedCurrency;
-  String? _selectedUnit;
+  final TextEditingController _currencyController = TextEditingController();
+  final TextEditingController _unitController = TextEditingController();
+
+  final FocusNode _currencyFocus = FocusNode();
+  final FocusNode _unitFocus = FocusNode();
   List<String> _imagePaths = [];
   
   final ImagePicker _picker = ImagePicker();
@@ -121,11 +126,16 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   void _navigateBack() {
     if (context.canPop()) {
       context.pop();
+    } else {
+      context.goNamed(RouterName.productCatalog);
     }
   }
 
   void _onNextPressed() {
-    // Navigate to step 2 when implemented
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ventry_step2.AddProductStep2Page()),
+    );
   }
 
   @override
@@ -134,6 +144,10 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
     _descController.dispose();
     _nameFocus.dispose();
     _descFocus.dispose();
+    _currencyController.dispose();
+    _unitController.dispose();
+    _currencyFocus.dispose();
+    _unitFocus.dispose();
     super.dispose();
   }
 
@@ -184,12 +198,12 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
           nameFocus: _nameFocus,
           descFocus: _descFocus,
           selectedCategory: _selectedCategory,
-          selectedCurrency: _selectedCurrency,
-          selectedUnit: _selectedUnit,
+          currencyController: _currencyController,
+          unitController: _unitController,
+          currencyFocus: _currencyFocus,
+          unitFocus: _unitFocus,
           imagePaths: _imagePaths,
           onCategorySelected: (val) => setState(() => _selectedCategory = val),
-          onCurrencySelected: (val) => setState(() => _selectedCurrency = val),
-          onUnitSelected: (val) => setState(() => _selectedUnit = val),
           onImageTap: _showImagePickerBottomSheet,
           onRemoveImage: (index) => setState(() => _imagePaths.removeAt(index)),
         ),
@@ -208,13 +222,13 @@ class _AddProductBody extends StatelessWidget {
     required this.descController,
     required this.nameFocus,
     required this.descFocus,
+    required this.currencyController,
+    required this.unitController,
+    required this.currencyFocus,
+    required this.unitFocus,
     required this.selectedCategory,
-    required this.selectedCurrency,
-    required this.selectedUnit,
     required this.imagePaths,
     required this.onCategorySelected,
-    required this.onCurrencySelected,
-    required this.onUnitSelected,
     required this.onImageTap,
     required this.onRemoveImage,
   });
@@ -223,13 +237,13 @@ class _AddProductBody extends StatelessWidget {
   final TextEditingController descController;
   final FocusNode nameFocus;
   final FocusNode descFocus;
+  final TextEditingController currencyController;
+  final TextEditingController unitController;
+  final FocusNode currencyFocus;
+  final FocusNode unitFocus;
   final CategoryEntity? selectedCategory;
-  final String? selectedCurrency;
-  final String? selectedUnit;
   final List<String> imagePaths;
   final void Function(CategoryEntity) onCategorySelected;
-  final void Function(String) onCurrencySelected;
-  final void Function(String) onUnitSelected;
   final VoidCallback onImageTap;
   final void Function(int) onRemoveImage;
 
@@ -364,20 +378,20 @@ class _AddProductBody extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: AppSize.size16.h),
-                AddProductDropdown<String>(
+                CustomTextField(
                   label: AppStrings.addProductCurrencyLabel,
-                  items: const ['USD', 'EUR', 'VND', 'GBP'],
-                  selectedValue: selectedCurrency,
-                  onSelected: onCurrencySelected,
-                  itemAsString: (s) => s,
+                  hintText: 'e.g. USD, EUR, VND',
+                  controller: currencyController,
+                  focusNode: currencyFocus,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: AppSize.size16.h),
-                AddProductDropdown<String>(
+                CustomTextField(
                   label: AppStrings.addProductUnitLabel,
-                  items: const ['Pieces', 'Boxes', 'Kilograms', 'Liters'],
-                  selectedValue: selectedUnit,
-                  onSelected: onUnitSelected,
-                  itemAsString: (s) => s,
+                  hintText: 'e.g. Pieces, Boxes',
+                  controller: unitController,
+                  focusNode: unitFocus,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(

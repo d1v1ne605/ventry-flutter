@@ -205,7 +205,7 @@ class _AddProductFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(RouterPath.addProduct),
+      onTap: () => context.push(RouterPath.addProduct),
       child: Container(
         width: 56.r,
         height: 56.r,

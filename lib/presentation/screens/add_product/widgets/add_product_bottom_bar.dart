@@ -10,10 +10,12 @@ class AddProductBottomBar extends StatelessWidget {
     super.key,
     required this.onCancel,
     required this.onNext,
+    this.leftButtonText,
   });
 
   final VoidCallback onCancel;
   final VoidCallback onNext;
+  final String? leftButtonText;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class AddProductBottomBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _CancelButton(onTap: onCancel),
+          _CancelButton(onTap: onCancel, text: leftButtonText),
           SizedBox(width: AppSize.size12.w),
           Expanded(child: _NextButton(onTap: onNext)),
         ],
@@ -43,9 +45,10 @@ class AddProductBottomBar extends StatelessWidget {
 }
 
 class _CancelButton extends StatelessWidget {
-  const _CancelButton({required this.onTap});
+  const _CancelButton({required this.onTap, this.text});
 
   final VoidCallback onTap;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,7 @@ class _CancelButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              AppStrings.addProductCancel,
+              text ?? AppStrings.addProductCancel,
               style: GoogleFonts.manrope(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
