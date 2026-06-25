@@ -10,6 +10,10 @@ import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_prod
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/price_and_inventory_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/sku_preview_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/variant_options_section.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 
 class AddProductStep2Page extends StatelessWidget {
   const AddProductStep2Page({super.key});
@@ -38,7 +42,7 @@ class AddProductStep2Page extends StatelessWidget {
         ),
         body: const _AddProductStep2Body(),
         bottomNavigationBar: AddProductBottomBar(
-          leftButtonText: 'Back',
+          leftButtonText: AppStrings.quickAddBack,
           onCancel: () => Navigator.of(context).pop(),
           onNext: () {},
         ),
@@ -52,96 +56,108 @@ class _AddProductStep2Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Progress Bar Area
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSize.size16.w,
-              AppSize.size16.h,
-              AppSize.size16.w,
-              AppSize.size8.h,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSize.size4.r),
-                    child: LinearProgressIndicator(
-                      value: 0.66,
-                      backgroundColor: AppColors.divider,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
+    return BlocListener<AttributeBloc, AttributeState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status &&
+          current.status == BaseStatus.failure,
+      listener: (context, state) {
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+      },
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Progress Bar Area
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSize.size16.w,
+                AppSize.size16.h,
+                AppSize.size16.w,
+                AppSize.size8.h,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSize.size4.r),
+                      child: LinearProgressIndicator(
+                        value: 0.66,
+                        backgroundColor: AppColors.divider,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.primary,
+                        ),
+                        minHeight: 8.h,
                       ),
-                      minHeight: 8.h,
                     ),
                   ),
-                ),
-                SizedBox(width: AppSize.size12.w),
-                Text(
-                  'Step 2 of 3',
-                  style: GoogleFonts.manrope(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.subtitle,
+                  SizedBox(width: AppSize.size12.w),
+                  Text(
+                    AppStrings.addProductProgress2,
+                    style: GoogleFonts.manrope(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.subtitle,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            child: Text(
-              'Price & SKU Variants',
-              style: GoogleFonts.manrope(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                ],
               ),
             ),
-          ),
-          SizedBox(height: AppSize.size16.h),
-
-          // Main Card
-          Container(
-            padding: EdgeInsets.all(AppSize.size16.r),
-            margin: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppSize.size12.r),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x080F1722),
-                  offset: Offset(0, 4),
-                  blurRadius: 12,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
+              child: Text(
+                AppStrings.priceAndSkuVariants,
+                style: GoogleFonts.manrope(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
                 ),
-              ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const PriceAndInventorySection(),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: AppSize.size16.h),
-                  child: const Divider(color: AppColors.divider),
-                ),
-                const VariantOptionsSection(),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSize.size24.h),
+            SizedBox(height: AppSize.size16.h),
 
-          // SKU Preview
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            child: const SkuPreviewSection(),
-          ),
-          SizedBox(height: AppSize.size24.h),
-        ],
+            // Main Card
+            Container(
+              padding: EdgeInsets.all(AppSize.size16.r),
+              margin: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSize.size12.r),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x080F1722),
+                    offset: Offset(0, 4),
+                    blurRadius: 12,
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const PriceAndInventorySection(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSize.size16.h),
+                    child: const Divider(color: AppColors.divider),
+                  ),
+                  const VariantOptionsSection(),
+                ],
+              ),
+            ),
+            SizedBox(height: AppSize.size24.h),
+
+            // SKU Preview
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
+              child: const SkuPreviewSection(),
+            ),
+            SizedBox(height: AppSize.size24.h),
+          ],
+        ),
       ),
     );
   }

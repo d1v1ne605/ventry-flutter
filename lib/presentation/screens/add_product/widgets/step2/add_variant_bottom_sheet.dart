@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
+import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 
@@ -43,7 +44,7 @@ class AddVariantBottomSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Add Custom Variant',
+                AppStrings.addCustomVariant,
                 style: GoogleFonts.manrope(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -65,7 +66,7 @@ class AddVariantBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Variant Attributes',
+                    AppStrings.variantAttributes,
                     style: GoogleFonts.manrope(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
@@ -74,20 +75,20 @@ class AddVariantBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.size12.h),
                   const CustomTextField(
-                    label: 'Color',
-                    hintText: 'e.g. Black',
+                    label: AppStrings.colorLabel,
+                    hintText: AppStrings.colorHint,
                   ),
                   SizedBox(height: AppSize.size12.h),
                   const CustomTextField(
-                    label: 'Storage',
-                    hintText: 'e.g. 128GB',
+                    label: AppStrings.storageLabel,
+                    hintText: AppStrings.storageHint,
                   ),
                   SizedBox(height: AppSize.size24.h),
                   const Divider(color: AppColors.divider),
                   SizedBox(height: AppSize.size24.h),
                   
                   Text(
-                    'Logistics & Pricing',
+                    AppStrings.logisticsAndPricing,
                     style: GoogleFonts.manrope(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
@@ -96,28 +97,28 @@ class AddVariantBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.size12.h),
                   const CustomTextField(
-                    label: 'SKU Code',
-                    hintText: 'IP15P-BLK-128',
+                    label: AppStrings.skuCodeLabel,
+                    hintText: AppStrings.skuCodeExampleHint,
                   ),
                   SizedBox(height: AppSize.size12.h),
                   const CustomTextField(
-                    label: 'Barcode',
-                    hintText: 'Scan or enter barcode',
+                    label: AppStrings.barcodeLabel,
+                    hintText: AppStrings.barcodeScanHint2,
                   ),
                   SizedBox(height: AppSize.size12.h),
                   Row(
                     children: [
                       const Expanded(
                         child: CustomTextField(
-                          label: 'Cost Price',
-                          hintText: '0.00',
+                          label: AppStrings.quickAddStep2CostPriceLabel,
+                          hintText: AppStrings.priceZeroHint,
                         ),
                       ),
                       SizedBox(width: AppSize.size12.w),
                       const Expanded(
                         child: CustomTextField(
-                          label: 'Selling Price',
-                          hintText: '0.00',
+                          label: AppStrings.quickAddStep2SellingPriceLabel,
+                          hintText: AppStrings.priceZeroHint,
                         ),
                       ),
                     ],
@@ -127,15 +128,15 @@ class AddVariantBottomSheet extends StatelessWidget {
                     children: [
                       const Expanded(
                         child: CustomTextField(
-                          label: 'Initial Stock',
-                          hintText: '0',
+                          label: AppStrings.initialStock,
+                          hintText: AppStrings.stockQuantityHint,
                         ),
                       ),
                       SizedBox(width: AppSize.size12.w),
                       const Expanded(
                         child: CustomTextField(
-                          label: 'Unit',
-                          hintText: 'pcs',
+                          label: AppStrings.quickAddStep2UnitLabel,
+                          hintText: AppStrings.unitPcsHint,
                         ),
                       ),
                     ],
@@ -163,7 +164,7 @@ class AddVariantBottomSheet extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: AppSize.size14.h),
                 child: Text(
-                  'Save Variant',
+                  AppStrings.saveVariant,
                   style: GoogleFonts.manrope(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,

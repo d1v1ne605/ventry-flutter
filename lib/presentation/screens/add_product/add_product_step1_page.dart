@@ -21,14 +21,23 @@ import 'package:ventry_flutter/presentation/screens/category_management/bloc/cat
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/add_category_bottom_sheet.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
 
 class AddProductStep1Page extends StatelessWidget {
   const AddProductStep1Page({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<CategoryBloc>()..add(LoadCategories()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<CategoryBloc>()..add(LoadCategories()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<AttributeBloc>()..add(LoadAttributesEvent()),
+        ),
+      ],
       child: const _AddProductStep1View(),
     );
   }
@@ -91,7 +100,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Upload Image',
+                  AppStrings.uploadImage,
                   style: GoogleFonts.manrope(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -101,7 +110,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
                 SizedBox(height: AppSize.size16.h),
                 ListTile(
                   leading: Icon(Icons.camera_alt_outlined, color: AppColors.subtitle),
-                  title: Text('Take a photo', style: GoogleFonts.manrope(color: AppColors.heading)),
+                  title: Text(AppStrings.takeAPhoto, style: GoogleFonts.manrope(color: AppColors.heading)),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImage(ImageSource.camera);
@@ -109,7 +118,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
                 ),
                 ListTile(
                   leading: Icon(Icons.photo_library_outlined, color: AppColors.subtitle),
-                  title: Text('Choose from gallery', style: GoogleFonts.manrope(color: AppColors.heading)),
+                  title: Text(AppStrings.chooseFromGallery, style: GoogleFonts.manrope(color: AppColors.heading)),
                   onTap: () {
                     Navigator.pop(context);
                     _pickMultipleImages();
@@ -132,9 +141,15 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   }
 
   void _onNextPressed() {
+    final attributeBloc = context.read<AttributeBloc>();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ventry_step2.AddProductStep2Page()),
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: attributeBloc,
+          child: const ventry_step2.AddProductStep2Page(),
+        ),
+      ),
     );
   }
 
@@ -168,7 +183,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
             });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Selected new category: ${state.categories.first.name}'),
+                content: Text(AppStrings.selectedNewCategory(state.categories.first.name)),
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -380,7 +395,7 @@ class _AddProductBody extends StatelessWidget {
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(
                   label: AppStrings.addProductCurrencyLabel,
-                  hintText: 'e.g. USD, EUR, VND',
+                  hintText: AppStrings.currencyHint,
                   controller: currencyController,
                   focusNode: currencyFocus,
                   textInputAction: TextInputAction.next,
@@ -388,7 +403,7 @@ class _AddProductBody extends StatelessWidget {
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(
                   label: AppStrings.addProductUnitLabel,
-                  hintText: 'e.g. Pieces, Boxes',
+                  hintText: AppStrings.unitHint,
                   controller: unitController,
                   focusNode: unitFocus,
                   textInputAction: TextInputAction.next,

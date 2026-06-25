@@ -35,6 +35,10 @@ dependencies:
   rxdart: ^0.28.0
   bloc_concurrency: ^0.3.0
   image_picker: ^1.2.2
+  drift: ^2.14.0
+  sqlite3_flutter_libs: ^0.5.24
+  path: ^1.9.0
+  uuid: ^4.5.3
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +51,7 @@ dev_dependencies:
   rename_app: ^1.6.6
   retrofit_generator: ^8.1.0
   mocktail: ^1.0.5
+  drift_dev: ^2.14.0
 
 dependency_overrides:
   retrofit_generator: 7.0.8

@@ -144,6 +144,56 @@ class AppStrings {
   static const String addProductCancel = 'Cancel';
   static const String addProductNext = 'Next';
   static const String createNewCategory = 'Create New Category';
+
+  static const String uploadImage = 'Upload Image';
+  static const String takeAPhoto = 'Take a photo';
+  static const String chooseFromGallery = 'Choose from gallery';
+  static String selectedNewCategory(String name) => 'Selected new category: $name';
+  static const String currencyHint = 'e.g. USD, EUR, VND';
+  static const String unitHint = 'e.g. Pieces, Boxes';
+  
+  static const String addProductProgress2 = 'Step 2 of 3';
+  static const String priceAndSkuVariants = 'Price & SKU Variants';
+  
+  static const String skuPreview = 'SKU Preview';
+  static String skuVariantsCount(int count) => '$count Variants';
+  static String priceLabel(String price) => 'Price: \$$price';
+  static String stockLabel(int stock) => 'Stock: $stock';
+  
+  static const String editVariant = 'Edit Variant';
+  static const String skuInfo = 'SKU Info : ';
+  static const String skuCodeLabel = 'SKU Code';
+  static const String skuCodeHint = 'Automatically';
+  static const String barcodeLabel = 'Barcode';
+  static const String barcodeHint = 'Scan or enter manually';
+  static const String pricingAndStock = 'Pricing & Stock';
+  static const String initialStock = 'Initial Stock';
+  static const String saveButton = 'Save';
+
+  static const String variantOptionsDefinition = 'Variant Options Definition';
+  static const String addAnotherOption = 'Add Another Option';
+  static const String optionNameLabel = 'Option Name';
+  static const String optionNameHint = 'e.g. Color';
+  static const String optionValuesLabel = 'Option Values';
+  static const String optionValuesHint = 'Type and press enter...';
+  
+  static const String sellingPriceHint = 'e.g. 10.00';
+  static const String costPriceHint = 'e.g. 5.00';
+  static const String stockQuantityHint = '0';
+  static const String editVariantPriceHint = '\$ 0.00';
+
+  static const String addCustomVariant = 'Add Custom Variant';
+  static const String variantAttributes = 'Variant Attributes';
+  static const String colorLabel = 'Color';
+  static const String colorHint = 'e.g. Black';
+  static const String storageLabel = 'Storage';
+  static const String storageHint = 'e.g. 128GB';
+  static const String logisticsAndPricing = 'Logistics & Pricing';
+  static const String skuCodeExampleHint = 'IP15P-BLK-128';
+  static const String barcodeScanHint2 = 'Scan or enter barcode';
+  static const String priceZeroHint = '0.00';
+  static const String unitPcsHint = 'pcs';
+  static const String saveVariant = 'Save Variant';
 }
 
 /// Login screen string tokens.
