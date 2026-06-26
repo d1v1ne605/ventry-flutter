@@ -6,13 +6,14 @@ import 'package:ventry_flutter/core/base/base_view_model.dart';
 import 'package:ventry_flutter/core/logging/app_logger.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_product_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_latest_generated_sku_code_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_skus_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/usecase.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_event.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_state.dart';
 
 EventTransformer<T> _debounceRestartable<T>(Duration duration) {
-  return (events, mapper) =>
-      events.debounceTime(duration).switchMap(mapper);
+  return (events, mapper) => events.debounceTime(duration).switchMap(mapper);
 }
 
 @injectable
@@ -20,11 +21,13 @@ class ProductCatalogBloc
     extends BaseViewModel<ProductCatalogEvent, ProductCatalogState> {
   final GetSkusUseCase _getSkusUseCase;
   final CreateProductUseCase _createProductUseCase;
+  final GetLatestGeneratedSkuCodeUseCase _getLatestGeneratedSkuCodeUseCase;
 
   ProductCatalogBloc(
     AppLogger logger,
     this._getSkusUseCase,
     this._createProductUseCase,
+    this._getLatestGeneratedSkuCodeUseCase,
   ) : super(const ProductCatalogState(), logger) {
     // droppable: ignore new events while one is already being processed
     on<LoadSkus>(_onLoadSkus, transformer: droppable());
@@ -110,13 +113,15 @@ class ProductCatalogBloc
     FilterSkus event,
     Emitter<ProductCatalogState> emit,
   ) async {
-    emit(state.copyWith(
-      isLoading: true,
-      filterStatus: event.status,
-      isStockAlert: event.isStockAlert,
-      clearFilterStatus: event.status == null,
-      clearStockAlert: event.isStockAlert == null,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        filterStatus: event.status,
+        isStockAlert: event.isStockAlert,
+        clearFilterStatus: event.status == null,
+        clearStockAlert: event.isStockAlert == null,
+      ),
+    );
 
     final result = await _getSkusUseCase(
       SkuQueryParams(
@@ -150,12 +155,58 @@ class ProductCatalogBloc
     CreateProduct event,
     Emitter<ProductCatalogState> emit,
   ) async {
-    emit(state.copyWith(
-      isSubmitting: true,
-      actionStatus: ProductCatalogActionStatus.initial,
-    ));
+    emit(
+      state.copyWith(
+        isSubmitting: true,
+        actionStatus: ProductCatalogActionStatus.initial,
+      ),
+    );
 
-    final result = await _createProductUseCase(event.params);
+    // Fetch latest generated SKU code
+    final latestCodeResult = await _getLatestGeneratedSkuCodeUseCase(
+      NoParams(),
+    );
+    int currentSkuNum = 0;
+    latestCodeResult.fold((l) {}, (code) {
+      if (code != null && code.startsWith('SP')) {
+        final numStr = code.substring(2);
+        currentSkuNum = int.tryParse(numStr) ?? 0;
+      }
+    });
+
+    // Auto-generate SKU codes
+    final updatedSkus = event.params.skus.map((sku) {
+      if (sku.skuCode == null || sku.skuCode!.trim().isEmpty) {
+        currentSkuNum++;
+        final newCode = 'SP${currentSkuNum.toString().padLeft(6, '0')}';
+        return CreateSkuParams(
+          skuCode: newCode,
+          barCode: sku.barCode,
+          sellingPrice: sku.sellingPrice,
+          costPrice: sku.costPrice,
+          stockQuantity: sku.stockQuantity,
+          minStockQuantity: sku.minStockQuantity,
+          imageUrls: sku.imageUrls,
+          isSellable: sku.isSellable,
+          attributeValueUids: sku.attributeValueUids,
+        );
+      }
+      return sku;
+    }).toList();
+
+    final finalParams = CreateProductParams(
+      name: event.params.name,
+      categoryUid: event.params.categoryUid,
+      description: event.params.description,
+      brand: event.params.brand,
+      imageUrl: event.params.imageUrl,
+      currency: event.params.currency,
+      unitOfMeasure: event.params.unitOfMeasure,
+      globalAttributeValueUids: event.params.globalAttributeValueUids,
+      skus: updatedSkus,
+    );
+
+    final result = await _createProductUseCase(finalParams);
 
     result.fold(
       (failure) => emit(
@@ -167,10 +218,12 @@ class ProductCatalogBloc
       ),
       (_) {
         // Single Responsibility: just signal success, let UI dispatch LoadSkus
-        emit(state.copyWith(
-          isSubmitting: false,
-          actionStatus: ProductCatalogActionStatus.success,
-        ));
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            actionStatus: ProductCatalogActionStatus.success,
+          ),
+        );
         // Automatically refresh list after create
         add(const LoadSkus());
       },

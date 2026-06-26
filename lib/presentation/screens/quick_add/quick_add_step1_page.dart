@@ -8,10 +8,12 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/models/product_category.dart';
-import 'package:ventry_flutter/core/widgets/add_product_mode_toggle.dart';
+import 'package:ventry_flutter/presentation/screens/quick_add/widgets/quick_add_bottom_action_bar.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_category_dropdown.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_image_upload.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_input_field.dart';
+import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/step_1_app_bar.dart';
+import 'package:ventry_flutter/presentation/screens/quick_add/models/add_product_mode.dart';
 
 /// Quick Add — Step 1: "Add Product".
 ///
@@ -41,6 +43,7 @@ class _QuickAddStep1PageState extends State<QuickAddStep1Page> {
 
   AddProductMode _mode = AddProductMode.simple;
   ProductCategory? _selectedCategory;
+  List<String> _imagePaths = [];
 
   /// Auto-generate a placeholder SKU.
   void _generateSku() {
@@ -84,7 +87,11 @@ class _QuickAddStep1PageState extends State<QuickAddStep1Page> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: AppColors.screenBackground,
-        appBar: _AddProductAppBar(onBack: () => _navigateBack(context)),
+        appBar: Step1AppBar(
+          mode: _mode,
+          onModeChanged: _onModeChanged,
+          onClose: () => _navigateBack(context),
+        ),
         body: _AddProductBody(
           mode: _mode,
           nameController: _nameController,
@@ -97,49 +104,15 @@ class _QuickAddStep1PageState extends State<QuickAddStep1Page> {
           onModeChanged: _onModeChanged,
           onCategorySelected: _onCategorySelected,
           onGenerateSku: _generateSku,
+          imagePaths: _imagePaths,
           onImageTap: () {},
+          onRemoveImage: (index) {
+            setState(() => _imagePaths.removeAt(index));
+          },
         ),
-        bottomNavigationBar: _BottomActionBar(
+        bottomNavigationBar: QuickAddBottomActionBar(
           onBack: () => _navigateBack(context),
           onNext: _onNextPressed,
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// App Bar
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _AddProductAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _AddProductAppBar({required this.onBack});
-
-  final VoidCallback onBack;
-
-  @override
-  Size get preferredSize => Size.fromHeight(56.h);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.surface,
-      elevation: 0,
-      centerTitle: false,
-      leading: IconButton(
-        onPressed: onBack,
-        icon: Icon(
-          Icons.arrow_back_rounded,
-          size: 22.r,
-          color: AppColors.heading,
-        ),
-      ),
-      title: Text(
-        AppStrings.quickAddTitle,
-        style: GoogleFonts.manrope(
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.heading,
         ),
       ),
     );
@@ -163,7 +136,9 @@ class _AddProductBody extends StatelessWidget {
     required this.onModeChanged,
     required this.onCategorySelected,
     required this.onGenerateSku,
+    required this.imagePaths,
     required this.onImageTap,
+    this.onRemoveImage,
   });
 
   final AddProductMode mode;
@@ -177,7 +152,9 @@ class _AddProductBody extends StatelessWidget {
   final void Function(AddProductMode) onModeChanged;
   final void Function(ProductCategory) onCategorySelected;
   final VoidCallback onGenerateSku;
+  final List<String> imagePaths;
   final VoidCallback onImageTap;
+  final void Function(int index)? onRemoveImage;
 
   @override
   Widget build(BuildContext context) {
@@ -186,25 +163,12 @@ class _AddProductBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Mode toggle — full-width with horizontal padding, white bg
-          Container(
-            color: AppColors.surface,
-            padding: EdgeInsets.fromLTRB(
-              AppSize.size16.w,
-              AppSize.size12.h,
-              AppSize.size16.w,
-              AppSize.size16.h,
-            ),
-            child: AddProductModeToggle(
-              selectedMode: mode,
-              onModeChanged: onModeChanged,
-            ),
-          ),
           SizedBox(height: AppSize.size8.h),
           // Form card
           Container(
             color: AppColors.surface,
             padding: EdgeInsets.all(AppSize.size16.r),
+            margin: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
             child: _BasicInfoForm(
               nameController: nameController,
               skuController: skuController,
@@ -215,7 +179,9 @@ class _AddProductBody extends StatelessWidget {
               selectedCategory: selectedCategory,
               onCategorySelected: onCategorySelected,
               onGenerateSku: onGenerateSku,
+              imagePaths: imagePaths,
               onImageTap: onImageTap,
+              onRemoveImage: onRemoveImage,
             ),
           ),
           SizedBox(height: AppSize.size24.h),
@@ -240,7 +206,9 @@ class _BasicInfoForm extends StatelessWidget {
     required this.selectedCategory,
     required this.onCategorySelected,
     required this.onGenerateSku,
+    required this.imagePaths,
     required this.onImageTap,
+    this.onRemoveImage,
   });
 
   final TextEditingController nameController;
@@ -252,7 +220,9 @@ class _BasicInfoForm extends StatelessWidget {
   final ProductCategory? selectedCategory;
   final void Function(ProductCategory) onCategorySelected;
   final VoidCallback onGenerateSku;
+  final List<String> imagePaths;
   final VoidCallback onImageTap;
+  final void Function(int index)? onRemoveImage;
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +277,9 @@ class _BasicInfoForm extends StatelessWidget {
         // Product Image
         QuickAddImageUpload(
           label: AppStrings.quickAddImageLabel,
+          imagePaths: imagePaths,
           onTap: onImageTap,
+          onRemoveImage: onRemoveImage,
         ),
       ],
     );
@@ -349,119 +321,6 @@ class _GenerateSkuButton extends StatelessWidget {
           Icons.refresh_rounded,
           size: 22.r,
           color: AppColors.primary,
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Bottom Action Bar
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _BottomActionBar extends StatelessWidget {
-  const _BottomActionBar({required this.onBack, required this.onNext});
-
-  final VoidCallback onBack;
-  final VoidCallback onNext;
-
-  @override
-  Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        AppSize.size16.w,
-        AppSize.size12.h,
-        AppSize.size16.w,
-        AppSize.size12.h + bottomPadding,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          top: BorderSide(color: AppColors.divider, width: AppSize.size1),
-        ),
-      ),
-      child: Row(
-        children: [
-          _BackButton(onTap: onBack),
-          SizedBox(width: AppSize.size12.w),
-          Expanded(child: _NextButton(onTap: onNext)),
-        ],
-      ),
-    );
-  }
-}
-
-class _BackButton extends StatelessWidget {
-  const _BackButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 48.h,
-        padding: EdgeInsets.symmetric(horizontal: AppSize.size20.w),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSize.size8.r),
-          border: Border.all(color: AppColors.inputBorder),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.chevron_left_rounded,
-              size: 20.r,
-              color: AppColors.subtitle,
-            ),
-            SizedBox(width: AppSize.size4.w),
-            Text(
-              AppStrings.quickAddBack,
-              style: GoogleFonts.manrope(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.subtitle,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NextButton extends StatelessWidget {
-  const _NextButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 48.h,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(AppSize.size8.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppStrings.quickAddNext,
-              style: GoogleFonts.manrope(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(width: AppSize.size8.w),
-            Icon(Icons.check_circle_rounded, size: 20.r, color: Colors.white),
-          ],
         ),
       ),
     );

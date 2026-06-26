@@ -20,6 +20,15 @@ class CustomTextField extends StatefulWidget {
   /// (e.g. "Forgot Password?" link).
   final Widget? topTrailing;
   final Function(String)? onChanged;
+  final Function(String)? onSubmitted;
+  final TextEditingController? controller;
+  final int? maxLines;
+  final bool enabled;
+  final int? minLines;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final bool isRequired;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -30,6 +39,15 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.topTrailing,
     this.onChanged,
+    this.onSubmitted,
+    this.controller,
+    this.maxLines = 1,
+    this.minLines,
+    this.enabled = true,
+    this.textInputAction,
+    this.focusNode,
+    this.isRequired = false,
+    this.keyboardType,
   });
 
   @override
@@ -63,7 +81,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(widget.label, style: AppTextStyles.label),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(widget.label, style: AppTextStyles.label),
+            if (widget.isRequired) ...[
+              SizedBox(width: AppSize.size4.w),
+              Text(
+                '*',
+                style: AppTextStyles.label.copyWith(
+                  color: const Color(0xFFEF4444), // Red-500
+                ),
+              ),
+            ],
+          ],
+        ),
         if (widget.topTrailing != null) widget.topTrailing!,
       ],
     );
@@ -87,10 +119,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.inputFill,
+        color: widget.enabled ? AppColors.inputFill : AppColors.inputFill.withOpacity(0.5),
         borderRadius: BorderRadius.circular(AppSize.size8.r),
         border: Border.all(
-          color: AppColors.inputBorder,
+          color: widget.enabled ? AppColors.inputBorder : AppColors.inputBorder.withOpacity(0.5),
           width: AppSize.size1,
         ),
         boxShadow: const [
@@ -102,9 +134,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ],
       ),
       child: TextField(
+        enabled: widget.enabled,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
         obscureText: _obscured,
         onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
         style: AppTextStyles.input,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        textInputAction: widget.textInputAction,
+        keyboardType: widget.keyboardType,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: AppTextStyles.inputHint,

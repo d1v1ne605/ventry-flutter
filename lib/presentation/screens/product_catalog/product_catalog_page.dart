@@ -71,13 +71,10 @@ class _ProductCatalogBody extends StatelessWidget {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverToBoxAdapter(
-          child: _StickyHeader(controller: searchController),
-        ),
+        SliverToBoxAdapter(child: _StickyHeader(controller: searchController)),
         BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
           buildWhen: (prev, curr) =>
-              prev.isLoading != curr.isLoading ||
-              prev.skus != curr.skus,
+              prev.isLoading != curr.isLoading || prev.skus != curr.skus,
           builder: (context, state) {
             if (state.isLoading) {
               return const SliverFillRemaining(
@@ -101,10 +98,8 @@ class _ProductCatalogBody extends StatelessWidget {
               sliver: SliverList.separated(
                 itemCount: state.skus.length,
                 separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                itemBuilder: (_, i) => ProductCard(
-                  sku: state.skus[i],
-                  onTap: () {},
-                ),
+                itemBuilder: (_, i) =>
+                    ProductCard(sku: state.skus[i], onTap: () {}),
               ),
             );
           },
@@ -140,8 +135,7 @@ class _StickyHeader extends StatelessWidget {
             onFilterTap: () {},
           ),
           SizedBox(height: AppSize.size16.h),
-          BlocSelector<ProductCatalogBloc, ProductCatalogState,
-              _FilterCounts>(
+          BlocSelector<ProductCatalogBloc, ProductCatalogState, _FilterCounts>(
             selector: (state) => _FilterCounts(
               total: state.total,
               lowStock: state.skus
@@ -174,11 +168,11 @@ class _StickyHeader extends StatelessWidget {
 
   void _onFilterChanged(BuildContext context, ProductFilter filter) {
     context.read<ProductCatalogBloc>().add(
-          FilterSkus(
-            status: filter == ProductFilter.outOfStock ? 'OUT_OF_STOCK' : null,
-            isStockAlert: filter == ProductFilter.lowStock ? true : null,
-          ),
-        );
+      FilterSkus(
+        status: filter == ProductFilter.outOfStock ? 'OUT_OF_STOCK' : null,
+        isStockAlert: filter == ProductFilter.lowStock ? true : null,
+      ),
+    );
   }
 }
 
@@ -198,10 +192,7 @@ class _EmptyState extends StatelessWidget {
             color: AppColors.navInactive.withValues(alpha: 0.4),
           ),
           SizedBox(height: 16.h),
-          Text(
-            AppStrings.productCatalogEmpty,
-            style: AppTextStyles.searchHint,
-          ),
+          Text(AppStrings.productCatalogEmpty, style: AppTextStyles.searchHint),
         ],
       ),
     );
@@ -214,7 +205,7 @@ class _AddProductFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(RouterPath.quickAdd),
+      onTap: () => context.push(RouterPath.addProduct),
       child: Container(
         width: 56.r,
         height: 56.r,

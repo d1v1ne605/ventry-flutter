@@ -63,6 +63,8 @@ class AppStrings {
   static const String quickAddDescriptionHint =
       'Brief details about the product...';
   static const String quickAddImageLabel = 'Product Image';
+  static const String quickAddTapToUpload = 'Tap to upload image';
+  static const String quickAddTapToUploadImages = 'Tap to upload images';
   static const String quickAddNext = 'Next';
   static const String quickAddBack = 'Back';
   static const String quickAddStep2Title = 'Price & Inventory';
@@ -125,6 +127,74 @@ class AppStrings {
   static const String outOfStock = 'Out';
   static const String skuPrefix = 'SKU: ';
   static const String addProduct = 'Add Product';
+
+  // ── Add Product ──────────────────────────────────────────────────────────────
+  static const String addProductTitle = 'Add Product';
+  static const String addProductProgress1 = '1 of 3';
+  static const String addProductNameLabel = 'Product Name';
+  static const String addProductNameHint = 'Enter product name';
+  static const String addProductCategoryLabel = 'Category';
+  static const String addProductCurrencyLabel = 'Currency';
+  static const String addProductUnitLabel = 'Unit of Measure';
+  static const String addProductDescriptionLabel = 'Description';
+  static const String addProductDescriptionHint =
+      'Briefly describe the product...';
+  static const String addProductImageLabel = 'Product Image';
+  static const String addProductImageHint = 'Tap to upload an image';
+  static const String addProductCancel = 'Cancel';
+  static const String addProductNext = 'Next';
+  static const String saveAndComplete = 'Save & Complete';
+  static const String createNewCategory = 'Create New Category';
+
+  static const String uploadImage = 'Upload Image';
+  static const String takeAPhoto = 'Take a photo';
+  static const String chooseFromGallery = 'Choose from gallery';
+  static String selectedNewCategory(String name) => 'Selected new category: $name';
+  static const String currencyHint = 'e.g. USD, EUR, VND';
+  static const String unitHint = 'e.g. Pieces, Boxes';
+  
+  static const String addProductProgress2 = 'Step 2 of 3';
+  static const String priceAndSkuVariants = 'Price & SKU Variants';
+  
+  static const String skuPreview = 'SKU Preview';
+  static String skuVariantsCount(int count) => '$count Variants';
+  static String priceLabel(String price) => 'Price: \$$price';
+  static String stockLabel(int stock) => 'Stock: $stock';
+  
+  static const String editVariant = 'Edit Variant';
+  static const String skuInfo = 'SKU Info : ';
+  static const String skuCodeLabel = 'SKU Code';
+  static const String skuCodeHint = 'Automatically';
+  static const String barcodeLabel = 'Barcode';
+  static const String barcodeHint = 'Scan or enter manually';
+  static const String pricingAndStock = 'Pricing & Stock';
+  static const String initialStock = 'Initial Stock';
+  static const String saveButton = 'Save';
+
+  static const String variantOptionsDefinition = 'Variant Options Definition';
+  static const String addAnotherOption = 'Add Another Option';
+  static const String optionNameLabel = 'Option Name';
+  static const String optionNameHint = 'e.g. Color';
+  static const String optionValuesLabel = 'Option Values';
+  static const String optionValuesHint = 'Type and press enter...';
+  
+  static const String sellingPriceHint = 'e.g. 10.00';
+  static const String costPriceHint = 'e.g. 5.00';
+  static const String stockQuantityHint = '0';
+  static const String editVariantPriceHint = '\$ 0.00';
+
+  static const String addCustomVariant = 'Add Custom Variant';
+  static const String variantAttributes = 'Variant Attributes';
+  static const String colorLabel = 'Color';
+  static const String colorHint = 'e.g. Black';
+  static const String storageLabel = 'Storage';
+  static const String storageHint = 'e.g. 128GB';
+  static const String logisticsAndPricing = 'Logistics & Pricing';
+  static const String skuCodeExampleHint = 'IP15P-BLK-128';
+  static const String barcodeScanHint2 = 'Scan or enter barcode';
+  static const String priceZeroHint = '0.00';
+  static const String unitPcsHint = 'pcs';
+  static const String saveVariant = 'Save Variant';
 }
 
 /// Login screen string tokens.

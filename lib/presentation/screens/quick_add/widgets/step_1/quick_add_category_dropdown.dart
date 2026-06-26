@@ -52,9 +52,9 @@ class QuickAddCategoryDropdown extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.manrope(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.subtitle,
+            fontSize: AppSize.size14.sp,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textHeading,
           ),
         ),
         SizedBox(height: AppSize.size4.h),
@@ -154,16 +154,20 @@ class _CategorySheet extends StatelessWidget {
                       cat.name,
                       style: GoogleFonts.manrope(
                         fontSize: 14.sp,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: isSelected
                             ? AppColors.primary
                             : AppColors.heading,
                       ),
                     ),
                     trailing: isSelected
-                        ? Icon(Icons.check_rounded,
-                            color: AppColors.primary, size: 20.r)
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: AppColors.primary,
+                            size: 20.r,
+                          )
                         : null,
                   );
                 },

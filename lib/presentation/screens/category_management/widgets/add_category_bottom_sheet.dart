@@ -5,6 +5,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
+import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_bloc.dart';
@@ -50,9 +51,7 @@ class _AddCategoryBottomSheetState extends State<AddCategoryBottomSheet> {
             context.pop();
           }
         } else if (state.actionStatus == CategoryActionStatus.failure && state.failure != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.failure!.message)),
-          );
+          AppSnackBar.showError(context, state.failure!.message);
         }
       },
       child: Container(

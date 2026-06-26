@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/layouts/main_layout.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/add_product_step1_page.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
@@ -100,6 +101,11 @@ final router = GoRouter(
       path: RouterPath.categoryManagement,
       name: RouterName.categoryManagement,
       builder: (context, state) => const CategoryManagementPage(),
+    ),
+    GoRoute(
+      path: RouterPath.addProduct,
+      name: RouterName.addProduct,
+      builder: (context, state) => const AddProductStep1Page(),
     ),
   ],
 );

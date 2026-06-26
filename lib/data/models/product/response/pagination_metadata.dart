@@ -6,10 +6,10 @@ part 'pagination_metadata.g.dart';
 @freezed
 class PaginationMetadata with _$PaginationMetadata {
   const factory PaginationMetadata({
-    required int total,
-    required int page,
-    required int limit,
-    required int totalPages,
+    @JsonKey(name: 'totalItems') @Default(0) int total,
+    @JsonKey(name: 'currentPage') @Default(1) int page,
+    @JsonKey(name: 'itemsPerPage') @Default(20) int limit,
+    @JsonKey(name: 'totalPages') @Default(0) int totalPages,
   }) = _PaginationMetadata;
 
   factory PaginationMetadata.fromJson(Map<String, dynamic> json) =>

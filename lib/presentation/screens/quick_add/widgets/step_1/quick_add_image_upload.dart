@@ -3,22 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_1/quick_add_image_upload_items.dart';
 
-/// Product image upload area with dashed border.
-///
-/// Shows a cloud upload icon + caption when no image is selected.
-/// Tapping triggers [onTap] (e.g., image picker integration).
+/// Product image upload area.
+/// Matches Figma label style and provides a large main image
+/// plus a row of smaller thumbnail boxes below for multiple images.
 class QuickAddImageUpload extends StatelessWidget {
   const QuickAddImageUpload({
     super.key,
     required this.label,
     required this.onTap,
-    this.imagePath,
+    this.imagePaths = const [],
+    this.onRemoveImage,
   });
 
   final String label;
   final VoidCallback onTap;
-  final String? imagePath;
+  final List<String> imagePaths;
+  final void Function(int index)? onRemoveImage;
 
   @override
   Widget build(BuildContext context) {
@@ -28,146 +30,51 @@ class QuickAddImageUpload extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.manrope(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.subtitle,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textBody,
           ),
         ),
         SizedBox(height: AppSize.size4.h),
+        // Main Image / Large Placeholder
         GestureDetector(
-          onTap: onTap,
-          child: _UploadBox(imagePath: imagePath),
+          onTap: imagePaths.isEmpty ? onTap : () {},
+          child: UploadBox(
+            imagePath: imagePaths.isNotEmpty ? imagePaths.first : null,
+            onRemove: imagePaths.isNotEmpty && onRemoveImage != null
+                ? () => onRemoveImage!(0)
+                : null,
+          ),
         ),
-      ],
-    );
-  }
-}
-
-class _UploadBox extends StatelessWidget {
-  const _UploadBox({this.imagePath});
-
-  final String? imagePath;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 120.h,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSize.size8.r),
-      ),
-      child: CustomPaint(
-        painter: _DashedBorderPainter(
-          color: AppColors.inputBorder,
-          radius: AppSize.size8.r,
-          dashWidth: 6,
-          dashGap: 4,
-        ),
-        child: imagePath != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(AppSize.size8.r),
-                child: Image.asset(
-                  imagePath!,
-                  fit: BoxFit.cover,
+        SizedBox(height: AppSize.size12.h),
+        // Small thumbnails row
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              for (int i = 1; i < imagePaths.length; i++) ...[
+                ImagePreviewItem(
+                  imagePath: imagePaths[i],
+                  onRemove: onRemoveImage != null ? () => onRemoveImage!(i) : null,
                 ),
-              )
-            : const _UploadPlaceholder(),
-      ),
-    );
-  }
-}
-
-class _UploadPlaceholder extends StatelessWidget {
-  const _UploadPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 40.r,
-          height: 40.r,
-          decoration: BoxDecoration(
-            color: AppColors.cardIconBackground,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.cloud_upload_outlined,
-            size: 22.r,
-            color: AppColors.primary,
-          ),
-        ),
-        SizedBox(height: AppSize.size8.h),
-        Text(
-          'Tap to upload image',
-          style: GoogleFonts.manrope(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primary,
+                SizedBox(width: 12.w),
+              ],
+              GestureDetector(
+                onTap: onTap,
+                child: const AddMoreBox(),
+              ),
+              // Show a couple of empty boxes if there are very few images
+              if (imagePaths.length <= 1) ...[
+                SizedBox(width: 12.w),
+                const EmptySmallBox(),
+                SizedBox(width: 12.w),
+                const EmptySmallBox(),
+              ],
+            ],
           ),
         ),
       ],
     );
   }
-}
-
-/// Custom painter that draws a dashed rectangle border.
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({
-    required this.color,
-    required this.radius,
-    this.dashWidth = 6,
-    this.dashGap = 4,
-  });
-
-  final Color color;
-  final double radius;
-  final double dashWidth;
-  final double dashGap;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        Radius.circular(radius),
-      ));
-
-    final dashPath = _createDashedPath(path, dashWidth, dashGap);
-    canvas.drawPath(dashPath, paint);
-  }
-
-  Path _createDashedPath(Path source, double dashWidth, double dashGap) {
-    final dest = Path();
-    for (final metric in source.computeMetrics()) {
-      double distance = 0;
-      bool draw = true;
-      while (distance < metric.length) {
-        final len = draw ? dashWidth : dashGap;
-        if (draw) {
-          dest.addPath(
-            metric.extractPath(distance, distance + len),
-            Offset.zero,
-          );
-        }
-        distance += len;
-        draw = !draw;
-      }
-    }
-    return dest;
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorderPainter old) =>
-      old.color != color ||
-      old.radius != radius ||
-      old.dashWidth != dashWidth ||
-      old.dashGap != dashGap;
 }

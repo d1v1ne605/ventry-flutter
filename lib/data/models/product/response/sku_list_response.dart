@@ -9,7 +9,8 @@ part 'sku_list_response.g.dart';
 class SkuListResponse with _$SkuListResponse {
   const factory SkuListResponse({
     @Default([]) List<SkuResponse> items,
-    required PaginationMetadata pagination,
+    @JsonKey(name: 'meta') PaginationMetadata? meta,
+    @JsonKey(name: 'pagination') PaginationMetadata? pagination,
   }) = _SkuListResponse;
 
   factory SkuListResponse.fromJson(Map<String, dynamic> json) =>

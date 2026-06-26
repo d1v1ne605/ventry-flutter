@@ -47,16 +47,16 @@ class QuickAddInputField extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.manrope(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.subtitle,
+                fontSize: AppSize.size14.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textHeading,
               ),
             ),
             if (statusText != null)
               Text(
                 statusText!,
                 style: GoogleFonts.manrope(
-                  fontSize: 11.sp,
+                  fontSize: AppSize.size12.sp,
                   fontWeight: FontWeight.w400,
                   color: AppColors.subtitle.withValues(alpha: 0.8),
                 ),
@@ -149,7 +149,8 @@ class _InputBoxState extends State<_InputBox> {
               focusNode: _focus,
               maxLines: widget.maxLines,
               minLines: widget.minLines,
-              keyboardType: widget.keyboardType ??
+              keyboardType:
+                  widget.keyboardType ??
                   (widget.maxLines > 1
                       ? TextInputType.multiline
                       : TextInputType.text),

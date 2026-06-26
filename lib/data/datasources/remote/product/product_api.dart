@@ -31,4 +31,7 @@ abstract class ProductApi {
   Future<SkuResponse> getSkuByUid(
     @Path('skuUid') String skuUid,
   );
+
+  @GET('/skus/generated-code/latest')
+  Future<dynamic> getLatestGeneratedSkuCode();
 }

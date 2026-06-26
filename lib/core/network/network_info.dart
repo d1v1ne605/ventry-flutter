@@ -15,6 +15,7 @@ import 'package:ventry_flutter/data/datasources/local/auth/auth_local_datasource
 import 'package:ventry_flutter/data/datasources/remote/auth/auth_api.dart';
 import 'package:ventry_flutter/data/datasources/remote/category/category_api.dart';
 import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart';
+import 'package:ventry_flutter/data/datasources/remote/attribute/attribute_api.dart';
 
 @module
 abstract class RegisterModule {
@@ -80,5 +81,10 @@ abstract class RegisterModule {
   @lazySingleton
   ProductApi productApi(Dio dio) {
     return ProductApi(dio);
+  }
+
+  @lazySingleton
+  AttributeApi attributeApi(Dio dio) {
+    return AttributeApi(dio);
   }
 }
