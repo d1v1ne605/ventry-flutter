@@ -17,7 +17,8 @@ class EditVariantBottomSheet extends StatefulWidget {
     double costPrice,
     double price,
     int stock,
-  ) onSave;
+  )
+  onSave;
 
   const EditVariantBottomSheet({
     super.key,
@@ -41,12 +42,17 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
     super.initState();
     _skuCodeController = TextEditingController(text: widget.sku.skuCode);
     _barcodeController = TextEditingController(text: widget.sku.barcode);
-    _costPriceController =
-        TextEditingController(text: widget.sku.costPrice > 0 ? widget.sku.costPrice.toStringAsFixed(2) : '');
-    _sellingPriceController =
-        TextEditingController(text: widget.sku.price > 0 ? widget.sku.price.toStringAsFixed(2) : '');
-    _stockController =
-        TextEditingController(text: widget.sku.stock > 0 ? widget.sku.stock.toString() : '');
+    _costPriceController = TextEditingController(
+      text: widget.sku.costPrice > 0
+          ? widget.sku.costPrice.toStringAsFixed(2)
+          : '',
+    );
+    _sellingPriceController = TextEditingController(
+      text: widget.sku.price > 0 ? widget.sku.price.toStringAsFixed(2) : '',
+    );
+    _stockController = TextEditingController(
+      text: widget.sku.stock > 0 ? widget.sku.stock.toString() : '',
+    );
   }
 
   @override
@@ -63,7 +69,8 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
     final skuCode = _skuCodeController.text.trim();
     final barcode = _barcodeController.text.trim();
     final costPrice = double.tryParse(_costPriceController.text.trim()) ?? 0.0;
-    final sellingPrice = double.tryParse(_sellingPriceController.text.trim()) ?? 0.0;
+    final sellingPrice =
+        double.tryParse(_sellingPriceController.text.trim()) ?? 0.0;
     final stock = int.tryParse(_stockController.text.trim()) ?? 0;
 
     widget.onSave(skuCode, barcode, costPrice, sellingPrice, stock);
@@ -75,7 +82,9 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.screenBackground,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSize.size16.r)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSize.size16.r),
+        ),
       ),
       child: SafeArea(
         child: Padding(
@@ -94,13 +103,16 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                 _buildHeader(),
                 const Divider(height: 1, color: AppColors.divider),
                 SizedBox(height: AppSize.size16.h),
-                _buildSectionTitle(AppStrings.skuInfo, Icons.inventory_2_outlined, suffixText: widget.sku.name),
+                _buildSectionTitle(
+                  AppStrings.skuInfo,
+                  Icons.inventory_2_outlined,
+                  suffixText: widget.sku.name,
+                ),
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(
                   label: AppStrings.skuCodeLabel,
                   hintText: AppStrings.skuCodeHint,
                   controller: _skuCodeController,
-                  textInputAction: TextInputAction.next,
                   // If we want a dotted border, CustomTextField might not support it directly without a custom decoration,
                   // but we stick to the standard CustomTextField for consistency as requested by no-hardcode rule.
                 ),
@@ -109,17 +121,22 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                   label: AppStrings.barcodeLabel,
                   hintText: AppStrings.barcodeHint,
                   controller: _barcodeController,
-                  textInputAction: TextInputAction.next,
                   suffixIcon: Padding(
                     padding: EdgeInsets.all(AppSize.size12.r),
                     child: SvgPicture.asset(
                       AppAssets.icScanner,
-                      colorFilter: const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.primary,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(height: AppSize.size24.h),
-                _buildSectionTitle(AppStrings.pricingAndStock, Icons.payments_outlined),
+                _buildSectionTitle(
+                  AppStrings.pricingAndStock,
+                  Icons.payments_outlined,
+                ),
                 SizedBox(height: AppSize.size16.h),
                 Row(
                   children: [
@@ -128,7 +145,7 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                         label: AppStrings.quickAddStep2CostPriceLabel,
                         hintText: AppStrings.editVariantPriceHint,
                         controller: _costPriceController,
-                        textInputAction: TextInputAction.next,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                     SizedBox(width: AppSize.size16.w),
@@ -137,7 +154,7 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                         label: AppStrings.quickAddStep2SellingPriceLabel,
                         hintText: AppStrings.editVariantPriceHint,
                         controller: _sellingPriceController,
-                        textInputAction: TextInputAction.next,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ),
                   ],
@@ -148,6 +165,7 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                   hintText: AppStrings.stockQuantityHint,
                   controller: _stockController,
                   textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: AppSize.size24.h),
                 const Divider(height: 1, color: AppColors.divider),

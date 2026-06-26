@@ -33,10 +33,10 @@ class ProductRepositoryImpl implements ProductRepository {
       return Right(
         SkuListEntity(
           items: response.items.map(_mapSkuToEntity).toList(),
-          total: response.pagination.total,
-          page: response.pagination.page,
-          limit: response.pagination.limit,
-          totalPages: response.pagination.totalPages,
+          total: response.meta?.total ?? response.pagination?.total ?? 0,
+          page: response.meta?.page ?? response.pagination?.page ?? 1,
+          limit: response.meta?.limit ?? response.pagination?.limit ?? 20,
+          totalPages: response.meta?.totalPages ?? response.pagination?.totalPages ?? 0,
         ),
       );
     } on DioException catch (e) {
@@ -51,6 +51,24 @@ class ProductRepositoryImpl implements ProductRepository {
     try {
       final response = await _productApi.getSkuByUid(skuUid);
       return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure('An unexpected error occurred'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> getLatestGeneratedSkuCode() async {
+    try {
+      final response = await _productApi.getLatestGeneratedSkuCode();
+      String? code;
+      if (response is String) {
+        code = response;
+      } else if (response is Map<String, dynamic>) {
+        code = response['skuCode'] as String? ?? response['code'] as String?;
+      }
+      return Right(code);
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
@@ -112,10 +130,10 @@ class ProductRepositoryImpl implements ProductRepository {
       isSellable: response.isSellable,
       version: response.version,
       spuUid: response.spu.uid,
-      spuName: response.spu.name,
-      spuStatus: response.spu.status,
-      createdAt: response.createdAt,
-      updatedAt: response.updatedAt,
+      spuName: response.spu.name ?? 'Unknown',
+      spuStatus: response.spu.status ?? 'UNKNOWN',
+      createdAt: response.createdAt ?? DateTime.now(),
+      updatedAt: response.updatedAt ?? DateTime.now(),
     );
   }
 

@@ -5,6 +5,7 @@ part 'create_product_sku_request.g.dart';
 
 @freezed
 class CreateProductSkuRequest with _$CreateProductSkuRequest {
+  @JsonSerializable(includeIfNull: false)
   const factory CreateProductSkuRequest({
     String? skuCode,
     String? barCode,

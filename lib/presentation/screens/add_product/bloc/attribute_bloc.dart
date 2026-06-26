@@ -35,6 +35,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
     on<UpdateGlobalPriceEvent>(_onUpdateGlobalPrice);
     on<UpdateGlobalCostPriceEvent>(_onUpdateGlobalCostPrice);
     on<UpdateGlobalStockEvent>(_onUpdateGlobalStock);
+    on<UpdateGlobalIsSellableEvent>(_onUpdateGlobalIsSellable);
   }
 
   Future<void> _onLoadAttributes(
@@ -312,6 +313,11 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
         .toList();
     emit(state.copyWith(
         globalStock: event.stock, generatedSkus: updatedSkus));
+  }
+
+  void _onUpdateGlobalIsSellable(
+      UpdateGlobalIsSellableEvent event, Emitter<AttributeState> emit) {
+    emit(state.copyWith(globalIsSellable: event.isSellable));
   }
 }
 

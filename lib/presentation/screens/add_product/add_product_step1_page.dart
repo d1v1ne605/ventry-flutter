@@ -8,14 +8,17 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
+import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_dropdown.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_image_picker.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/add_product_step2_page.dart' as ventry_step2;
+import 'package:ventry_flutter/presentation/screens/add_product/add_product_step2_page.dart'
+    as ventry_step2;
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_event.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
@@ -35,7 +38,8 @@ class AddProductStep1Page extends StatelessWidget {
           create: (context) => getIt<CategoryBloc>()..add(LoadCategories()),
         ),
         BlocProvider(
-          create: (context) => getIt<AttributeBloc>()..add(LoadAttributesEvent()),
+          create: (context) =>
+              getIt<AttributeBloc>()..add(LoadAttributesEvent()),
         ),
       ],
       child: const _AddProductStep1View(),
@@ -64,7 +68,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   final FocusNode _currencyFocus = FocusNode();
   final FocusNode _unitFocus = FocusNode();
   List<String> _imagePaths = [];
-  
+
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
@@ -89,7 +93,9 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSize.size16.r)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSize.size16.r),
+        ),
       ),
       backgroundColor: AppColors.surface,
       builder: (_) {
@@ -109,16 +115,28 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
                 ),
                 SizedBox(height: AppSize.size16.h),
                 ListTile(
-                  leading: Icon(Icons.camera_alt_outlined, color: AppColors.subtitle),
-                  title: Text(AppStrings.takeAPhoto, style: GoogleFonts.manrope(color: AppColors.heading)),
+                  leading: Icon(
+                    Icons.camera_alt_outlined,
+                    color: AppColors.subtitle,
+                  ),
+                  title: Text(
+                    AppStrings.takeAPhoto,
+                    style: GoogleFonts.manrope(color: AppColors.heading),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImage(ImageSource.camera);
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.photo_library_outlined, color: AppColors.subtitle),
-                  title: Text(AppStrings.chooseFromGallery, style: GoogleFonts.manrope(color: AppColors.heading)),
+                  leading: Icon(
+                    Icons.photo_library_outlined,
+                    color: AppColors.subtitle,
+                  ),
+                  title: Text(
+                    AppStrings.chooseFromGallery,
+                    style: GoogleFonts.manrope(color: AppColors.heading),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     _pickMultipleImages();
@@ -141,13 +159,35 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   }
 
   void _onNextPressed() {
+    if (_nameController.text.trim().isEmpty) {
+      AppSnackBar.showError(context, 'Product Name is required');
+      _nameFocus.requestFocus();
+      return;
+    }
+
     final attributeBloc = context.read<AttributeBloc>();
+    final partialParams = CreateProductParams(
+      name: _nameController.text.trim(),
+      description: _descController.text.trim().isEmpty
+          ? null
+          : _descController.text.trim(),
+      categoryUid: _selectedCategory?.uid,
+      currency: _currencyController.text.trim().isEmpty
+          ? null
+          : _currencyController.text.trim(),
+      unitOfMeasure: _unitController.text.trim().isEmpty
+          ? null
+          : _unitController.text.trim(),
+      imageUrl: _imagePaths.isNotEmpty ? _imagePaths.first : null,
+      skus: const [],
+    );
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: attributeBloc,
-          child: const ventry_step2.AddProductStep2Page(),
+          child: ventry_step2.AddProductStep2Page(params: partialParams),
         ),
       ),
     );
@@ -173,61 +213,62 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
       child: BlocListener<CategoryBloc, CategoryState>(
         listenWhen: (previous, current) {
           return previous.actionStatus != current.actionStatus &&
-                 current.actionStatus == CategoryActionStatus.success &&
-                 current.categories.length > previous.categories.length;
+              current.actionStatus == CategoryActionStatus.success &&
+              current.categories.length > previous.categories.length;
         },
         listener: (context, state) {
           if (state.categories.isNotEmpty) {
             setState(() {
               _selectedCategory = state.categories.first;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppStrings.selectedNewCategory(state.categories.first.name)),
-                behavior: SnackBarBehavior.floating,
-              ),
+            AppSnackBar.showSuccess(
+              context,
+              AppStrings.selectedNewCategory(state.categories.first.name),
             );
           }
         },
         child: Scaffold(
           backgroundColor: AppColors.screenBackground,
-        appBar: AppTopBar(
-          title: AppStrings.addProductTitle,
-          leadingWidget: GestureDetector(
-            onTap: _navigateBack,
-            child: Container(
-              color: Colors.transparent,
-              padding: EdgeInsets.all(AppSize.size8.r),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20.r,
-                color: AppColors.heading,
+          appBar: AppTopBar(
+            title: AppStrings.addProductTitle,
+            leadingWidget: GestureDetector(
+              onTap: _navigateBack,
+              child: Container(
+                color: Colors.transparent,
+                padding: EdgeInsets.all(AppSize.size8.r),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20.r,
+                  color: AppColors.heading,
+                ),
               ),
             ),
+            trailingWidget: SizedBox(width: 40.w, height: 40.h),
           ),
-          trailingWidget: SizedBox(width: 40.w, height: 40.h),
-        ),
-        body: _AddProductBody(
-          nameController: _nameController,
-          descController: _descController,
-          nameFocus: _nameFocus,
-          descFocus: _descFocus,
-          selectedCategory: _selectedCategory,
-          currencyController: _currencyController,
-          unitController: _unitController,
-          currencyFocus: _currencyFocus,
-          unitFocus: _unitFocus,
-          imagePaths: _imagePaths,
-          onCategorySelected: (val) => setState(() => _selectedCategory = val),
-          onImageTap: _showImagePickerBottomSheet,
-          onRemoveImage: (index) => setState(() => _imagePaths.removeAt(index)),
-        ),
-        bottomNavigationBar: AddProductBottomBar(
-          onCancel: _navigateBack,
-          onNext: _onNextPressed,
+          body: _AddProductBody(
+            nameController: _nameController,
+            descController: _descController,
+            nameFocus: _nameFocus,
+            descFocus: _descFocus,
+            selectedCategory: _selectedCategory,
+            currencyController: _currencyController,
+            unitController: _unitController,
+            currencyFocus: _currencyFocus,
+            unitFocus: _unitFocus,
+            imagePaths: _imagePaths,
+            onCategorySelected: (val) =>
+                setState(() => _selectedCategory = val),
+            onImageTap: _showImagePickerBottomSheet,
+            onRemoveImage: (index) =>
+                setState(() => _imagePaths.removeAt(index)),
+          ),
+          bottomNavigationBar: AddProductBottomBar(
+            onCancel: _navigateBack,
+            onNext: _onNextPressed,
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
@@ -330,7 +371,6 @@ class _AddProductBody extends StatelessWidget {
                   hintText: AppStrings.addProductNameHint,
                   controller: nameController,
                   focusNode: nameFocus,
-                  textInputAction: TextInputAction.next,
                   isRequired: true,
                 ),
                 SizedBox(height: AppSize.size16.h),
@@ -398,7 +438,6 @@ class _AddProductBody extends StatelessWidget {
                   hintText: AppStrings.currencyHint,
                   controller: currencyController,
                   focusNode: currencyFocus,
-                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(
@@ -406,7 +445,6 @@ class _AddProductBody extends StatelessWidget {
                   hintText: AppStrings.unitHint,
                   controller: unitController,
                   focusNode: unitFocus,
-                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(

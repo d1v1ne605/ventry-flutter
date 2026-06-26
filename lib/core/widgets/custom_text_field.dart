@@ -28,6 +28,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final FocusNode? focusNode;
   final bool isRequired;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -46,6 +47,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputAction,
     this.focusNode,
     this.isRequired = false,
+    this.keyboardType,
   });
 
   @override
@@ -142,6 +144,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         maxLines: widget.maxLines,
         minLines: widget.minLines,
         textInputAction: widget.textInputAction,
+        keyboardType: widget.keyboardType,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: AppTextStyles.inputHint,

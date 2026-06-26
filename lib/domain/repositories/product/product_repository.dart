@@ -10,6 +10,8 @@ abstract class ProductRepository {
 
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid);
 
+  Future<Either<Failure, String?>> getLatestGeneratedSkuCode();
+
   /// Creates a new product (SPU + SKUs). Returns [ProductEntity] on success.
   /// After success, the caller (Bloc) is responsible for dispatching [LoadSkus]
   /// to refresh the list — Single Responsibility Principle.

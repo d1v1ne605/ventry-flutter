@@ -1,18 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
-import 'package:uuid/uuid.dart';
 
 class VariantOptionValue extends Equatable {
   final String value;
   final String? uid;
   final bool isNew;
 
-  const VariantOptionValue({
-    required this.value,
-    this.uid,
-    this.isNew = false,
-  });
+  const VariantOptionValue({required this.value, this.uid, this.isNew = false});
 
   @override
   List<Object?> get props => [value, uid, isNew];
@@ -23,7 +18,7 @@ class VariantOptionGroup extends Equatable {
   final String name;
   final String? attributeUid;
   final List<VariantOptionValue> values;
-  
+
   const VariantOptionGroup({
     required this.id,
     required this.name,
@@ -40,7 +35,9 @@ class VariantOptionGroup extends Equatable {
     return VariantOptionGroup(
       id: id,
       name: name ?? this.name,
-      attributeUid: clearAttributeUid ? null : (attributeUid ?? this.attributeUid),
+      attributeUid: clearAttributeUid
+          ? null
+          : (attributeUid ?? this.attributeUid),
       values: values ?? this.values,
     );
   }
@@ -89,7 +86,15 @@ class GeneratedSku extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, skuCode, barcode, price, costPrice, stock, options];
+  List<Object?> get props => [
+    name,
+    skuCode,
+    barcode,
+    price,
+    costPrice,
+    stock,
+    options,
+  ];
 }
 
 class AttributeState extends Equatable {
@@ -101,6 +106,7 @@ class AttributeState extends Equatable {
   final double globalPrice;
   final double globalCostPrice;
   final int globalStock;
+  final bool globalIsSellable;
 
   const AttributeState({
     this.status = BaseStatus.initial,
@@ -111,6 +117,7 @@ class AttributeState extends Equatable {
     this.globalPrice = 0.0,
     this.globalCostPrice = 0.0,
     this.globalStock = 0,
+    this.globalIsSellable = true,
   });
 
   AttributeState copyWith({
@@ -122,6 +129,7 @@ class AttributeState extends Equatable {
     double? globalPrice,
     double? globalCostPrice,
     int? globalStock,
+    bool? globalIsSellable,
   }) {
     return AttributeState(
       status: status ?? this.status,
@@ -132,18 +140,20 @@ class AttributeState extends Equatable {
       globalPrice: globalPrice ?? this.globalPrice,
       globalCostPrice: globalCostPrice ?? this.globalCostPrice,
       globalStock: globalStock ?? this.globalStock,
+      globalIsSellable: globalIsSellable ?? this.globalIsSellable,
     );
   }
 
   @override
   List<Object?> get props => [
-        status,
-        localAttributes,
-        variantGroups,
-        generatedSkus,
-        errorMessage,
-        globalPrice,
-        globalCostPrice,
-        globalStock,
-      ];
+    status,
+    localAttributes,
+    variantGroups,
+    generatedSkus,
+    errorMessage,
+    globalPrice,
+    globalCostPrice,
+    globalStock,
+    globalIsSellable,
+  ];
 }

@@ -6,6 +6,7 @@ part 'create_product_request.g.dart';
 
 @freezed
 class CreateProductRequest with _$CreateProductRequest {
+  @JsonSerializable(includeIfNull: false)
   const factory CreateProductRequest({
     required String name,
     String? categoryUid,

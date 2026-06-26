@@ -8,12 +8,14 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
 
 class PriceAndInventorySection extends StatefulWidget {
   const PriceAndInventorySection({super.key});
 
   @override
-  State<PriceAndInventorySection> createState() => _PriceAndInventorySectionState();
+  State<PriceAndInventorySection> createState() =>
+      _PriceAndInventorySectionState();
 }
 
 class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
@@ -58,6 +60,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           hintText: AppStrings.sellingPriceHint,
           controller: _sellingPriceController,
           textInputAction: TextInputAction.next,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           onChanged: (val) {
             final price = double.tryParse(val) ?? 0.0;
             context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
@@ -69,9 +72,12 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           hintText: AppStrings.costPriceHint,
           controller: _costPriceController,
           textInputAction: TextInputAction.next,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           onChanged: (val) {
             final costPrice = double.tryParse(val) ?? 0.0;
-            context.read<AttributeBloc>().add(UpdateGlobalCostPriceEvent(costPrice));
+            context.read<AttributeBloc>().add(
+              UpdateGlobalCostPriceEvent(costPrice),
+            );
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -80,10 +86,40 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           hintText: AppStrings.stockQuantityHint,
           controller: _stockController,
           textInputAction: TextInputAction.done,
+          keyboardType: TextInputType.number,
           onChanged: (val) {
             final stock = int.tryParse(val) ?? 0;
             context.read<AttributeBloc>().add(UpdateGlobalStockEvent(stock));
           },
+        ),
+        SizedBox(height: AppSize.size16.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Is Sellable',
+              style: GoogleFonts.manrope(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.heading,
+              ),
+            ),
+            BlocBuilder<AttributeBloc, AttributeState>(
+              buildWhen: (prev, curr) =>
+                  prev.globalIsSellable != curr.globalIsSellable,
+              builder: (context, state) {
+                return Switch(
+                  value: state.globalIsSellable,
+                  activeColor: AppColors.primary,
+                  onChanged: (val) {
+                    context.read<AttributeBloc>().add(
+                      UpdateGlobalIsSellableEvent(val),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ],
     );

@@ -16,4 +16,7 @@ class AppAssets {
   // Icons - UI
   static const String icChevronRight = 'assets/icons/ic_chevron_right.svg';
   static const String icTrash = 'assets/icons/ic_trash.svg';
+
+  // Images
+  static const String imgPlaceHolder = 'assets/images/img_place_holder.png';
 }

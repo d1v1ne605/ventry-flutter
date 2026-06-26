@@ -11,11 +11,15 @@ class AddProductBottomBar extends StatelessWidget {
     required this.onCancel,
     required this.onNext,
     this.leftButtonText,
+    this.rightButtonText,
+    this.showRightIcon = true,
   });
 
   final VoidCallback onCancel;
   final VoidCallback onNext;
   final String? leftButtonText;
+  final String? rightButtonText;
+  final bool showRightIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,11 @@ class AddProductBottomBar extends StatelessWidget {
         children: [
           _CancelButton(onTap: onCancel, text: leftButtonText),
           SizedBox(width: AppSize.size12.w),
-          Expanded(child: _NextButton(onTap: onNext)),
+          Expanded(child: _NextButton(
+            onTap: onNext, 
+            text: rightButtonText,
+            showIcon: showRightIcon,
+          )),
         ],
       ),
     );
@@ -81,9 +89,15 @@ class _CancelButton extends StatelessWidget {
 }
 
 class _NextButton extends StatelessWidget {
-  const _NextButton({required this.onTap});
+  const _NextButton({
+    required this.onTap,
+    this.text,
+    this.showIcon = true,
+  });
 
   final VoidCallback onTap;
+  final String? text;
+  final bool showIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +113,17 @@ class _NextButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              AppStrings.addProductNext,
+              text ?? AppStrings.addProductNext,
               style: GoogleFonts.manrope(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
             ),
-            SizedBox(width: AppSize.size8.w),
-            Icon(Icons.chevron_right_rounded, size: 20.r, color: Colors.white),
+            if (showIcon) ...[
+              SizedBox(width: AppSize.size8.w),
+              Icon(Icons.chevron_right_rounded, size: 20.r, color: Colors.white),
+            ],
           ],
         ),
       ),

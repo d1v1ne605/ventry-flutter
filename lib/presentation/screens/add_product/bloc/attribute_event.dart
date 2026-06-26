@@ -99,3 +99,11 @@ class UpdateGlobalStockEvent extends AttributeEvent {
   @override
   List<Object?> get props => [stock];
 }
+
+class UpdateGlobalIsSellableEvent extends AttributeEvent {
+  final bool isSellable;
+  const UpdateGlobalIsSellableEvent(this.isSellable);
+  
+  @override
+  List<Object?> get props => [isSellable];
+}

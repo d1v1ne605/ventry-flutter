@@ -143,6 +143,7 @@ class AppStrings {
   static const String addProductImageHint = 'Tap to upload an image';
   static const String addProductCancel = 'Cancel';
   static const String addProductNext = 'Next';
+  static const String saveAndComplete = 'Save & Complete';
   static const String createNewCategory = 'Create New Category';
 
   static const String uploadImage = 'Upload Image';

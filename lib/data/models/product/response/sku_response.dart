@@ -20,8 +20,8 @@ class SkuResponse with _$SkuResponse {
     required int version,
     required SkuSpuResponse spu,
     @Default([]) List<Map<String, dynamic>> attributes,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _SkuResponse;
 
   factory SkuResponse.fromJson(Map<String, dynamic> json) =>

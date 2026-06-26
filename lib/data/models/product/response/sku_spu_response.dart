@@ -7,8 +7,8 @@ part 'sku_spu_response.g.dart';
 class SkuSpuResponse with _$SkuSpuResponse {
   const factory SkuSpuResponse({
     required String uid,
-    required String name,
-    required String status,
+    String? name,
+    String? status,
   }) = _SkuSpuResponse;
 
   factory SkuSpuResponse.fromJson(Map<String, dynamic> json) =>
