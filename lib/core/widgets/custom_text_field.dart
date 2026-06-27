@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/app_size.dart';
 import '../theme/app_colors.dart';
@@ -29,6 +30,7 @@ class CustomTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final bool isRequired;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -48,6 +50,7 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
     this.isRequired = false,
     this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -119,10 +122,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return Container(
       decoration: BoxDecoration(
-        color: widget.enabled ? AppColors.inputFill : AppColors.inputFill.withOpacity(0.5),
+        color: widget.enabled
+            ? AppColors.inputFill
+            : AppColors.inputFill.withOpacity(0.5),
         borderRadius: BorderRadius.circular(AppSize.size8.r),
         border: Border.all(
-          color: widget.enabled ? AppColors.inputBorder : AppColors.inputBorder.withOpacity(0.5),
+          color: widget.enabled
+              ? AppColors.inputBorder
+              : AppColors.inputBorder.withOpacity(0.5),
           width: AppSize.size1,
         ),
         boxShadow: const [
@@ -145,6 +152,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         minLines: widget.minLines,
         textInputAction: widget.textInputAction,
         keyboardType: widget.keyboardType,
+        inputFormatters: widget.inputFormatters,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: AppTextStyles.inputHint,

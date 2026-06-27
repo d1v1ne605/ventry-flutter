@@ -69,21 +69,24 @@ class CategoryBloc extends BaseViewModel<CategoryEvent, CategoryState> {
     SearchCategories event,
     Emitter<CategoryState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, failure: null, searchKeyword: event.query));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        failure: null,
+        searchKeyword: event.query,
+      ),
+    );
 
-    final result = await _getCategoriesUseCase(event.query.isEmpty ? null : event.query);
+    final result = await _getCategoriesUseCase(
+      event.query.isEmpty ? null : event.query,
+    );
 
     result.fold(
       (failure) {
         emit(state.copyWith(isLoading: false, failure: failure));
       },
       (categories) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            categories: categories,
-          ),
-        );
+        emit(state.copyWith(isLoading: false, categories: categories));
       },
     );
   }
@@ -195,7 +198,9 @@ class CategoryBloc extends BaseViewModel<CategoryEvent, CategoryState> {
         );
       },
       (deletedUid) {
-        final updatedList = state.categories.where((c) => c.uid != deletedUid).toList();
+        final updatedList = state.categories
+            .where((c) => c.uid != deletedUid)
+            .toList();
 
         emit(
           state.copyWith(

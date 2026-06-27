@@ -56,14 +56,13 @@ class QuickAddImageUpload extends StatelessWidget {
               for (int i = 1; i < imagePaths.length; i++) ...[
                 ImagePreviewItem(
                   imagePath: imagePaths[i],
-                  onRemove: onRemoveImage != null ? () => onRemoveImage!(i) : null,
+                  onRemove: onRemoveImage != null
+                      ? () => onRemoveImage!(i)
+                      : null,
                 ),
                 SizedBox(width: 12.w),
               ],
-              GestureDetector(
-                onTap: onTap,
-                child: const AddMoreBox(),
-              ),
+              GestureDetector(onTap: onTap, child: const AddMoreBox()),
               // Show a couple of empty boxes if there are very few images
               if (imagePaths.length <= 1) ...[
                 SizedBox(width: 12.w),

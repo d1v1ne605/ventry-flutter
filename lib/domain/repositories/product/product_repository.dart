@@ -15,5 +15,7 @@ abstract class ProductRepository {
   /// Creates a new product (SPU + SKUs). Returns [ProductEntity] on success.
   /// After success, the caller (Bloc) is responsible for dispatching [LoadSkus]
   /// to refresh the list — Single Responsibility Principle.
-  Future<Either<Failure, ProductEntity>> createProduct(CreateProductParams params);
+  Future<Either<Failure, ProductEntity>> createProduct(
+    CreateProductParams params,
+  );
 }

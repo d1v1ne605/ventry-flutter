@@ -70,7 +70,9 @@ class QuickAddCurrencyDropdown extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? selectedCurrency!.displayName : 'Select Currency',
+                    hasSelection
+                        ? selectedCurrency!.displayName
+                        : 'Select Currency',
                     style: GoogleFonts.manrope(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,

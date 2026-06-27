@@ -49,9 +49,11 @@ class ErrorInterceptor extends Interceptor {
         handler.next(
           _attachFailure(
             err,
-            ServerFailure(errorMessage != _serverErrorMessage 
-                ? errorMessage 
-                : 'Session expired. Please login again'),
+            ServerFailure(
+              errorMessage != _serverErrorMessage
+                  ? errorMessage
+                  : 'Session expired. Please login again',
+            ),
           ),
         );
         break;

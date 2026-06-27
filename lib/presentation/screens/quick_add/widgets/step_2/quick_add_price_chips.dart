@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 /// Quick suggestion price chips shown below the Selling Price field.
 class QuickAddPriceChips extends StatelessWidget {
@@ -17,8 +18,7 @@ class QuickAddPriceChips extends StatelessWidget {
 
   /// Helper to format number with comma separator (e.g. 100000 -> 100,000)
   String _formatNumber(int val) {
-    final RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    return val.toString().replaceAllMapped(reg, (Match m) => '${m[1]},');
+    return AppFormatters.formatPrice(val);
   }
 
   @override

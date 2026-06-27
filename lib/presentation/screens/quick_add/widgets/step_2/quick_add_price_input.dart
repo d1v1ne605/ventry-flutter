@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
@@ -21,6 +22,7 @@ class QuickAddPriceInput extends StatefulWidget {
     this.statusText,
     this.focusNode,
     this.nextFocusNode,
+    this.inputFormatters,
   });
 
   final String label;
@@ -30,6 +32,7 @@ class QuickAddPriceInput extends StatefulWidget {
   final String? statusText;
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<QuickAddPriceInput> createState() => _QuickAddPriceInputState();
@@ -111,8 +114,11 @@ class _QuickAddPriceInputState extends State<QuickAddPriceInput> {
                   controller: widget.controller,
                   focusNode: _focus,
                   textAlign: TextAlign.end,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   textInputAction: TextInputAction.next,
+                  inputFormatters: widget.inputFormatters,
                   onSubmitted: (_) => widget.nextFocusNode?.requestFocus(),
                   style: GoogleFonts.manrope(
                     fontSize: 14.sp,

@@ -41,11 +41,11 @@ class CategoryState extends Equatable {
 
   @override
   List<Object?> get props => [
-        categories,
-        isLoading,
-        isSubmitting,
-        searchKeyword,
-        failure,
-        actionStatus,
-      ];
+    categories,
+    isLoading,
+    isSubmitting,
+    searchKeyword,
+    failure,
+    actionStatus,
+  ];
 }

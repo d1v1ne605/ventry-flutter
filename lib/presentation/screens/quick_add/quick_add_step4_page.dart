@@ -8,6 +8,7 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_4/quick_add_step4_body.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_4/quick_add_step4_bottom_bar.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 /// Quick Add — Step 4: "Review & Confirm".
 ///
@@ -89,8 +90,8 @@ class _QuickAddStep4PageState extends State<QuickAddStep4Page> {
           materialText: 'Mesh, Aluminum',
           variantsCount: 4,
           statusText: 'Ready to Sync',
-          sellingPriceText: '1,000,000 VND',
-          costPriceText: '800,000 VND',
+          sellingPriceText: '${AppFormatters.formatPrice(1000000)} VND',
+          costPriceText: '${AppFormatters.formatPrice(800000)} VND',
           marginText: '20%',
           initialStockText: '100 Pieces',
           lowStockAlertText: '10 Pieces',

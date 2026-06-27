@@ -12,6 +12,7 @@ import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_2/qui
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_2/quick_add_price_chips.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_2/quick_add_price_input.dart';
 import 'package:ventry_flutter/presentation/screens/quick_add/widgets/step_2/quick_add_unit_dropdown.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 /// Body content of Quick Add Step 2 (Price & Inventory form).
 class QuickAddStep2Body extends StatelessWidget {
@@ -111,6 +112,7 @@ class QuickAddStep2Body extends StatelessWidget {
                   statusText: AppStrings.quickAddStep2Required,
                   focusNode: priceFocus,
                   nextFocusNode: costFocus,
+                  inputFormatters: [CurrencyTextInputFormatter()],
                 ),
                 SizedBox(height: AppSize.size8.h),
 
@@ -118,7 +120,7 @@ class QuickAddStep2Body extends StatelessWidget {
                 QuickAddPriceChips(
                   suggestions: const [100000, 250000, 500000],
                   onTap: (val) {
-                    priceController.text = val.toString();
+                    priceController.text = AppFormatters.formatPrice(val);
                     priceFocus.unfocus();
                   },
                 ),
@@ -133,6 +135,7 @@ class QuickAddStep2Body extends StatelessWidget {
                   statusText: AppStrings.quickAddStep2Optional,
                   focusNode: costFocus,
                   nextFocusNode: quantityFocus,
+                  inputFormatters: [CurrencyTextInputFormatter()],
                 ),
                 SizedBox(height: AppSize.size4.h),
                 Text(
@@ -171,7 +174,10 @@ class QuickAddStep2Body extends StatelessWidget {
                   hintText: '0',
                   focusNode: quantityFocus,
                   statusText: AppStrings.quickAddStep2Required,
-                  keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    signed: false,
+                    decimal: false,
+                  ),
                   textInputAction: TextInputAction.done,
                 ),
                 SizedBox(height: AppSize.size14.h),

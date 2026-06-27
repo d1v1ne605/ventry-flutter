@@ -6,6 +6,7 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 /// Single SKU row card in the product catalog list.
 ///
@@ -98,20 +99,6 @@ class _ProductImage extends StatelessWidget {
   }
 }
 
-class _PlaceholderIcon extends StatelessWidget {
-  const _PlaceholderIcon({required this.isOut});
-
-  final bool isOut;
-
-  @override
-  Widget build(BuildContext context) {
-    return Icon(
-      Icons.inventory_2_outlined,
-      size: 28.r,
-      color: isOut ? AppColors.textMuted : AppColors.navInactive,
-    );
-  }
-}
 
 class _ProductInfo extends StatelessWidget {
   const _ProductInfo({required this.sku});
@@ -163,7 +150,7 @@ class _ProductInfo extends StatelessWidget {
             const Spacer(),
             if (sku.sellingPrice != null)
               Text(
-                '\$${sku.sellingPrice!.toStringAsFixed(2)}',
+                AppFormatters.formatPrice(sku.sellingPrice!),
                 style: isOut
                     ? AppTextStyles.productPrice.copyWith(
                         color: AppColors.textMuted,

@@ -11,6 +11,7 @@ import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_b
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/edit_variant_bottom_sheet.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 class SkuPreviewSection extends StatelessWidget {
   const SkuPreviewSection({super.key});
@@ -69,9 +70,7 @@ class SkuPreviewSection extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSize.size16.h),
-              ...skus.map(
-                (sku) => _buildPreviewItem(context, sku),
-              ),
+              ...skus.map((sku) => _buildPreviewItem(context, sku)),
             ],
           ),
         );
@@ -79,10 +78,7 @@ class SkuPreviewSection extends StatelessWidget {
     );
   }
 
-  Widget _buildPreviewItem(
-    BuildContext context,
-    GeneratedSku sku,
-  ) {
+  Widget _buildPreviewItem(BuildContext context, GeneratedSku sku) {
     return Container(
       margin: EdgeInsets.only(bottom: AppSize.size8.h),
       padding: EdgeInsets.all(AppSize.size12.r),
@@ -108,7 +104,9 @@ class SkuPreviewSection extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      AppStrings.priceLabel(sku.price.toStringAsFixed(2)),
+                      AppStrings.priceLabel(
+                        AppFormatters.formatPrice(sku.price),
+                      ),
                       style: GoogleFonts.manrope(
                         fontSize: 12.sp,
                         color: AppColors.subtitle,
@@ -137,15 +135,15 @@ class SkuPreviewSection extends StatelessWidget {
                   sku: sku,
                   onSave: (skuCode, barcode, costPrice, price, stock) {
                     context.read<AttributeBloc>().add(
-                          UpdateGeneratedSkuEvent(
-                            skuName: sku.name,
-                            skuCode: skuCode,
-                            barcode: barcode,
-                            costPrice: costPrice,
-                            price: price,
-                            stock: stock,
-                          ),
-                        );
+                      UpdateGeneratedSkuEvent(
+                        skuName: sku.name,
+                        skuCode: skuCode,
+                        barcode: barcode,
+                        costPrice: costPrice,
+                        price: price,
+                        stock: stock,
+                      ),
+                    );
                   },
                 ),
               );
@@ -160,7 +158,9 @@ class SkuPreviewSection extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              context.read<AttributeBloc>().add(RemoveGeneratedSkuEvent(sku.name));
+              context.read<AttributeBloc>().add(
+                RemoveGeneratedSkuEvent(sku.name),
+              );
             },
             icon: SvgPicture.asset(
               AppAssets.icTrash,

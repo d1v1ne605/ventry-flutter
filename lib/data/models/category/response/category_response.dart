@@ -20,9 +20,8 @@ class CategoryResponse with _$CategoryResponse {
 
 @freezed
 class DeleteCategoryResponse with _$DeleteCategoryResponse {
-  const factory DeleteCategoryResponse({
-    required String uid,
-  }) = _DeleteCategoryResponse;
+  const factory DeleteCategoryResponse({required String uid}) =
+      _DeleteCategoryResponse;
 
   factory DeleteCategoryResponse.fromJson(Map<String, dynamic> json) =>
       _$DeleteCategoryResponseFromJson(json);

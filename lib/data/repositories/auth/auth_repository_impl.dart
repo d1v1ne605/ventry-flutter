@@ -47,10 +47,10 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final response = await _authApi.login(request);
       await _localDataSource.saveAccessToken(response.accessToken);
-      
+
       final userEntity = response.user.toEntity();
       _updateUser(userEntity);
-      
+
       return Right(userEntity);
     } on DioException catch (e) {
       return Left(e.toFailure());

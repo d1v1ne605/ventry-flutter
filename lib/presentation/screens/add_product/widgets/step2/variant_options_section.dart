@@ -18,7 +18,11 @@ class VariantOptionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<AttributeBloc, AttributeState, List<VariantOptionGroup>>(
+    return BlocSelector<
+      AttributeBloc,
+      AttributeState,
+      List<VariantOptionGroup>
+    >(
       selector: (state) => state.variantGroups,
       builder: (context, variantGroups) {
         return Column(
@@ -101,7 +105,8 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
   @override
   void didUpdateWidget(covariant _OptionGroupItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.group.name != widget.group.name && _nameController.text != widget.group.name) {
+    if (oldWidget.group.name != widget.group.name &&
+        _nameController.text != widget.group.name) {
       _nameController.text = widget.group.name;
     }
   }
@@ -116,11 +121,15 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
   }
 
   void _onNameSubmitted(String text) {
-    context.read<AttributeBloc>().add(UpdateVariantGroupNameEvent(widget.group.id, text));
+    context.read<AttributeBloc>().add(
+      UpdateVariantGroupNameEvent(widget.group.id, text),
+    );
   }
 
   void _onValueSubmitted(String text) {
-    context.read<AttributeBloc>().add(AddVariantOptionValueEvent(widget.group.id, text));
+    context.read<AttributeBloc>().add(
+      AddVariantOptionValueEvent(widget.group.id, text),
+    );
     _valueController.clear();
   }
 
@@ -142,45 +151,56 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
                 textEditingController: _nameController,
                 focusNode: _nameFocusNode,
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty) return const Iterable<AttributeEntity>.empty();
-                  return attributes.where((attr) => attr.name.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                  if (textEditingValue.text.isEmpty)
+                    return const Iterable<AttributeEntity>.empty();
+                  return attributes.where(
+                    (attr) => attr.name.toLowerCase().contains(
+                      textEditingValue.text.toLowerCase(),
+                    ),
+                  );
                 },
                 displayStringForOption: (option) => option.name,
                 onSelected: (option) {
                   _onNameSubmitted(option.name);
                 },
-                fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                  return CustomTextField(
-                    label: AppStrings.optionNameLabel,
-                    hintText: AppStrings.optionNameHint,
-                    controller: controller,
-                    focusNode: focusNode,
-                    onSubmitted: (text) {
-                      onFieldSubmitted();
-                      _onNameSubmitted(text);
-                    },
-                    topTrailing: Padding(
-                      padding: const EdgeInsets.only(bottom: AppSize.size4),
-                      child: GestureDetector(
-                        onTap: () {
-                          context.read<AttributeBloc>().add(RemoveVariantGroupEvent(widget.group.id));
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                      return CustomTextField(
+                        label: AppStrings.optionNameLabel,
+                        hintText: AppStrings.optionNameHint,
+                        controller: controller,
+                        focusNode: focusNode,
+                        onSubmitted: (text) {
+                          onFieldSubmitted();
+                          _onNameSubmitted(text);
                         },
-                        child: SvgPicture.asset(
-                          AppAssets.icTrash,
-                          height: AppSize.size16.h,
-                          width: AppSize.size16.w,
+                        topTrailing: Padding(
+                          padding: const EdgeInsets.only(bottom: AppSize.size4),
+                          child: GestureDetector(
+                            onTap: () {
+                              context.read<AttributeBloc>().add(
+                                RemoveVariantGroupEvent(widget.group.id),
+                              );
+                            },
+                            child: SvgPicture.asset(
+                              AppAssets.icTrash,
+                              height: AppSize.size16.h,
+                              width: AppSize.size16.w,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
                 optionsViewBuilder: (context, onSelected, options) {
                   return Align(
                     alignment: Alignment.topLeft,
                     child: Material(
                       elevation: 4.0,
                       child: Container(
-                        constraints: BoxConstraints(maxHeight: 200.h, maxWidth: 300.w),
+                        constraints: BoxConstraints(
+                          maxHeight: 200.h,
+                          maxWidth: 300.w,
+                        ),
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
@@ -208,40 +228,51 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
           BlocSelector<AttributeBloc, AttributeState, List<AttributeEntity>>(
             selector: (state) => state.localAttributes,
             builder: (context, attributes) {
-              final activeAttribute = attributes.where((a) => a.uid == widget.group.attributeUid).firstOrNull;
-              
+              final activeAttribute = attributes
+                  .where((a) => a.uid == widget.group.attributeUid)
+                  .firstOrNull;
+
               return RawAutocomplete<String>(
                 textEditingController: _valueController,
                 focusNode: _valueFocusNode,
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (activeAttribute == null || textEditingValue.text.isEmpty) return const Iterable<String>.empty();
+                  if (activeAttribute == null || textEditingValue.text.isEmpty)
+                    return const Iterable<String>.empty();
                   return activeAttribute.values
                       .map((v) => v.value)
-                      .where((v) => v.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                      .where(
+                        (v) => v.toLowerCase().contains(
+                          textEditingValue.text.toLowerCase(),
+                        ),
+                      );
                 },
                 onSelected: (option) {
                   _onValueSubmitted(option);
                 },
-                fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                  return CustomTextField(
-                    label: AppStrings.optionValuesLabel,
-                    hintText: AppStrings.optionValuesHint,
-                    controller: controller,
-                    focusNode: focusNode,
-                    enabled: widget.group.attributeUid != null,
-                    onSubmitted: (text) {
-                      onFieldSubmitted();
-                      _onValueSubmitted(text);
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                      return CustomTextField(
+                        label: AppStrings.optionValuesLabel,
+                        hintText: AppStrings.optionValuesHint,
+                        controller: controller,
+                        focusNode: focusNode,
+                        enabled: widget.group.attributeUid != null,
+                        onSubmitted: (text) {
+                          onFieldSubmitted();
+                          _onValueSubmitted(text);
+                        },
+                      );
                     },
-                  );
-                },
                 optionsViewBuilder: (context, onSelected, options) {
                   return Align(
                     alignment: Alignment.topLeft,
                     child: Material(
                       elevation: 4.0,
                       child: Container(
-                        constraints: BoxConstraints(maxHeight: 200.h, maxWidth: 300.w),
+                        constraints: BoxConstraints(
+                          maxHeight: 200.h,
+                          maxWidth: 300.w,
+                        ),
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
@@ -264,13 +295,15 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
               );
             },
           ),
-          
+
           if (widget.group.values.isNotEmpty) ...[
             SizedBox(height: AppSize.size8.h),
             Wrap(
               spacing: AppSize.size8.w,
               runSpacing: AppSize.size8.h,
-              children: widget.group.values.map((v) => _buildChip(context, widget.group.id, v)).toList(),
+              children: widget.group.values
+                  .map((v) => _buildChip(context, widget.group.id, v))
+                  .toList(),
             ),
           ],
         ],
@@ -278,7 +311,11 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
     );
   }
 
-  Widget _buildChip(BuildContext context, String groupId, VariantOptionValue value) {
+  Widget _buildChip(
+    BuildContext context,
+    String groupId,
+    VariantOptionValue value,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: AppSize.size12.w,
@@ -303,7 +340,9 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
           SizedBox(width: AppSize.size4.w),
           GestureDetector(
             onTap: () {
-              context.read<AttributeBloc>().add(RemoveVariantOptionValueEvent(groupId, value));
+              context.read<AttributeBloc>().add(
+                RemoveVariantOptionValueEvent(groupId, value),
+              );
             },
             child: Icon(Icons.close, size: 14.r, color: AppColors.primary),
           ),

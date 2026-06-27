@@ -9,6 +9,7 @@ import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 class PriceAndInventorySection extends StatefulWidget {
   const PriceAndInventorySection({super.key});
@@ -19,9 +20,28 @@ class PriceAndInventorySection extends StatefulWidget {
 }
 
 class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
-  final TextEditingController _sellingPriceController = TextEditingController();
-  final TextEditingController _costPriceController = TextEditingController();
-  final TextEditingController _stockController = TextEditingController();
+  late final TextEditingController _sellingPriceController;
+  late final TextEditingController _costPriceController;
+  late final TextEditingController _stockController;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<AttributeBloc>().state;
+    _sellingPriceController = TextEditingController(
+      text: state.globalPrice > 0
+          ? AppFormatters.formatPrice(state.globalPrice)
+          : '',
+    );
+    _costPriceController = TextEditingController(
+      text: state.globalCostPrice > 0
+          ? AppFormatters.formatPrice(state.globalCostPrice)
+          : '',
+    );
+    _stockController = TextEditingController(
+      text: state.globalStock > 0 ? state.globalStock.toString() : '',
+    );
+  }
 
   @override
   void dispose() {
@@ -56,28 +76,28 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
         ),
         SizedBox(height: AppSize.size16.h),
         CustomTextField(
-          label: AppStrings.quickAddStep2SellingPriceLabel,
-          hintText: AppStrings.sellingPriceHint,
-          controller: _sellingPriceController,
-          textInputAction: TextInputAction.next,
+          label: AppStrings.quickAddStep2CostPriceLabel,
+          hintText: AppStrings.costPriceHint,
+          controller: _costPriceController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [CurrencyTextInputFormatter()],
           onChanged: (val) {
-            final price = double.tryParse(val) ?? 0.0;
-            context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
+            final costPrice = AppFormatters.parsePrice(val);
+            context.read<AttributeBloc>().add(
+              UpdateGlobalCostPriceEvent(costPrice),
+            );
           },
         ),
         SizedBox(height: AppSize.size16.h),
         CustomTextField(
-          label: AppStrings.quickAddStep2CostPriceLabel,
-          hintText: AppStrings.costPriceHint,
-          controller: _costPriceController,
-          textInputAction: TextInputAction.next,
+          label: AppStrings.quickAddStep2SellingPriceLabel,
+          hintText: AppStrings.sellingPriceHint,
+          controller: _sellingPriceController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [CurrencyTextInputFormatter()],
           onChanged: (val) {
-            final costPrice = double.tryParse(val) ?? 0.0;
-            context.read<AttributeBloc>().add(
-              UpdateGlobalCostPriceEvent(costPrice),
-            );
+            final price = AppFormatters.parsePrice(val);
+            context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
           },
         ),
         SizedBox(height: AppSize.size16.h),

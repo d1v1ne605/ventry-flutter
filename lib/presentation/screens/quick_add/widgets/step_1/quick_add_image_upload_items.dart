@@ -94,10 +94,7 @@ class ImagePreviewItem extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppSize.size8.r),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(imagePath, fit: BoxFit.cover),
           ),
         ),
         if (onRemove != null)
@@ -151,11 +148,7 @@ class AddMoreBox extends StatelessWidget {
           dashGap: 3,
         ),
         child: Center(
-          child: Icon(
-            Icons.add_rounded,
-            size: 24.r,
-            color: AppColors.primary,
-          ),
+          child: Icon(Icons.add_rounded, size: 24.r, color: AppColors.primary),
         ),
       ),
     );

@@ -12,9 +12,7 @@ abstract class ProductApi {
   factory ProductApi(Dio dio, {String baseUrl}) = _ProductApi;
 
   @POST('/products')
-  Future<ProductResponse> createProduct(
-    @Body() CreateProductRequest request,
-  );
+  Future<ProductResponse> createProduct(@Body() CreateProductRequest request);
 
   @GET('/skus')
   Future<SkuListResponse> getSkus({
@@ -28,9 +26,7 @@ abstract class ProductApi {
   });
 
   @GET('/skus/{skuUid}')
-  Future<SkuResponse> getSkuByUid(
-    @Path('skuUid') String skuUid,
-  );
+  Future<SkuResponse> getSkuByUid(@Path('skuUid') String skuUid);
 
   @GET('/skus/generated-code/latest')
   Future<dynamic> getLatestGeneratedSkuCode();

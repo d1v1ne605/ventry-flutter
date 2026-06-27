@@ -34,16 +34,15 @@ class CategoryListItem extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Icon(Icons.category, color: AppColors.primary, size: AppSize.size20.w), // Placeholder for category icon
+              child: Icon(
+                Icons.category,
+                color: AppColors.primary,
+                size: AppSize.size20.w,
+              ), // Placeholder for category icon
             ),
           ),
           SizedBox(width: AppSize.size16.w),
-          Expanded(
-            child: Text(
-              category.name,
-              style: AppTextStyles.label,
-            ),
-          ),
+          Expanded(child: Text(category.name, style: AppTextStyles.label)),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,7 +58,11 @@ class CategoryListItem extends StatelessWidget {
                     ),
                   );
                 },
-                icon: Icon(Icons.edit, color: const Color(0xFF0284C7), size: AppSize.size20.w),
+                icon: Icon(
+                  Icons.edit,
+                  color: const Color(0xFF0284C7),
+                  size: AppSize.size20.w,
+                ),
                 splashRadius: AppSize.size20.r,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -71,32 +74,56 @@ class CategoryListItem extends StatelessWidget {
                     context: context,
                     builder: (dialogContext) => AlertDialog(
                       backgroundColor: AppColors.surface,
-                      title: Text(AppStrings.categoryDeleteTitle, style: AppTextStyles.sectionHeading),
-                      content: Text(AppStrings.categoryDeleteConfirm(category.name), style: AppTextStyles.body),
+                      title: Text(
+                        AppStrings.categoryDeleteTitle,
+                        style: AppTextStyles.sectionHeading,
+                      ),
+                      content: Text(
+                        AppStrings.categoryDeleteConfirm(category.name),
+                        style: AppTextStyles.body,
+                      ),
                       actions: [
                         TextButton(
-                          onPressed: () => Navigator.of(dialogContext).pop(false),
-                          child: Text(AppStrings.categoryCancelButton, style: AppTextStyles.buttonText.copyWith(color: AppColors.heading)),
+                          onPressed: () =>
+                              Navigator.of(dialogContext).pop(false),
+                          child: Text(
+                            AppStrings.categoryCancelButton,
+                            style: AppTextStyles.buttonText.copyWith(
+                              color: AppColors.heading,
+                            ),
+                          ),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.of(dialogContext).pop(true),
-                          child: Text(AppStrings.categoryDeleteButton, style: AppTextStyles.buttonText.copyWith(color: const Color(0xFFEF4444))),
+                          onPressed: () =>
+                              Navigator.of(dialogContext).pop(true),
+                          child: Text(
+                            AppStrings.categoryDeleteButton,
+                            style: AppTextStyles.buttonText.copyWith(
+                              color: const Color(0xFFEF4444),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   );
 
                   if (confirm == true && context.mounted) {
-                    context.read<CategoryBloc>().add(DeleteCategory(category.uid));
+                    context.read<CategoryBloc>().add(
+                      DeleteCategory(category.uid),
+                    );
                   }
                 },
-                icon: Icon(Icons.delete_outline, color: const Color(0xFFEF4444), size: AppSize.size20.w),
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: const Color(0xFFEF4444),
+                  size: AppSize.size20.w,
+                ),
                 splashRadius: AppSize.size20.r,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

@@ -6,13 +6,16 @@ import 'package:ventry_flutter/domain/entities/attribute/attribute_value_entity.
 abstract class AttributeRepository {
   /// Fetch from local DB
   Future<Either<Failure, List<AttributeEntity>>> getLocalAttributes();
-  
+
   /// Sync from Remote API to local DB
   Future<Either<Failure, void>> syncAttributes();
-  
+
   /// Create a new Attribute on remote and sync local
   Future<Either<Failure, AttributeEntity>> createAttribute(String name);
-  
+
   /// Create a new Attribute Value on remote and sync local
-  Future<Either<Failure, AttributeValueEntity>> createAttributeValue(String attributeUid, String value);
+  Future<Either<Failure, AttributeValueEntity>> createAttributeValue(
+    String attributeUid,
+    String value,
+  );
 }

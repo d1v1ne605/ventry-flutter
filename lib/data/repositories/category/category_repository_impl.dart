@@ -17,7 +17,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
   CategoryRepositoryImpl(this._categoryApi);
 
   @override
-  Future<Either<Failure, List<CategoryEntity>>> getCategories({String? search}) async {
+  Future<Either<Failure, List<CategoryEntity>>> getCategories({
+    String? search,
+  }) async {
     try {
       final response = await _categoryApi.getCategories(search: search);
       final entities = response.map((e) => e.toEntity()).toList();
@@ -66,7 +68,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<Either<Failure, CategoryEntity>> getCategoryByUid(String categoryUid) async {
+  Future<Either<Failure, CategoryEntity>> getCategoryByUid(
+    String categoryUid,
+  ) async {
     try {
       final response = await _categoryApi.getCategoryByUid(categoryUid);
       return Right(response.toEntity());

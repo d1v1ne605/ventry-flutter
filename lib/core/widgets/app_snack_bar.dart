@@ -41,10 +41,7 @@ abstract class AppSnackBar {
 enum _AppSnackBarType { success, error }
 
 class _AppSnackBarContent extends StatelessWidget {
-  const _AppSnackBarContent({
-    required this.type,
-    required this.message,
-  });
+  const _AppSnackBarContent({required this.type, required this.message});
 
   final _AppSnackBarType type;
   final String message;
@@ -53,13 +50,18 @@ class _AppSnackBarContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSuccess = type == _AppSnackBarType.success;
 
-    final backgroundColor =
-        isSuccess ? const Color(0xFF022C22) : const Color(0xFF2D0A0A);
-    final borderColor =
-        isSuccess ? const Color(0xFF059669) : const Color(0xFFDC2626);
-    final iconColor =
-        isSuccess ? const Color(0xFF34D399) : const Color(0xFFF87171);
-    final iconData = isSuccess ? Icons.check_circle_rounded : Icons.error_rounded;
+    final backgroundColor = isSuccess
+        ? const Color(0xFF022C22)
+        : const Color(0xFF2D0A0A);
+    final borderColor = isSuccess
+        ? const Color(0xFF059669)
+        : const Color(0xFFDC2626);
+    final iconColor = isSuccess
+        ? const Color(0xFF34D399)
+        : const Color(0xFFF87171);
+    final iconData = isSuccess
+        ? Icons.check_circle_rounded
+        : Icons.error_rounded;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
@@ -85,11 +87,7 @@ class _AppSnackBarContent extends StatelessWidget {
               color: iconColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              iconData,
-              color: iconColor,
-              size: 20.sp,
-            ),
+            child: Icon(iconData, color: iconColor, size: 20.sp),
           ),
           SizedBox(width: 12.w),
           // Message

@@ -70,7 +70,9 @@ class QuickAddUnitDropdown extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? selectedUnit!.name : 'Select Unit of Measure',
+                    hasSelection
+                        ? selectedUnit!.name
+                        : 'Select Unit of Measure',
                     style: GoogleFonts.manrope(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,

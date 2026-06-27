@@ -8,6 +8,7 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
 class EditVariantBottomSheet extends StatefulWidget {
   final GeneratedSku sku;
@@ -44,11 +45,13 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
     _barcodeController = TextEditingController(text: widget.sku.barcode);
     _costPriceController = TextEditingController(
       text: widget.sku.costPrice > 0
-          ? widget.sku.costPrice.toStringAsFixed(2)
+          ? AppFormatters.formatPrice(widget.sku.costPrice)
           : '',
     );
     _sellingPriceController = TextEditingController(
-      text: widget.sku.price > 0 ? widget.sku.price.toStringAsFixed(2) : '',
+      text: widget.sku.price > 0
+          ? AppFormatters.formatPrice(widget.sku.price)
+          : '',
     );
     _stockController = TextEditingController(
       text: widget.sku.stock > 0 ? widget.sku.stock.toString() : '',
@@ -68,9 +71,12 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
   void _handleSave() {
     final skuCode = _skuCodeController.text.trim();
     final barcode = _barcodeController.text.trim();
-    final costPrice = double.tryParse(_costPriceController.text.trim()) ?? 0.0;
-    final sellingPrice =
-        double.tryParse(_sellingPriceController.text.trim()) ?? 0.0;
+    final costPrice = AppFormatters.parsePrice(
+      _costPriceController.text.trim(),
+    );
+    final sellingPrice = AppFormatters.parsePrice(
+      _sellingPriceController.text.trim(),
+    );
     final stock = int.tryParse(_stockController.text.trim()) ?? 0;
 
     widget.onSave(skuCode, barcode, costPrice, sellingPrice, stock);
@@ -145,7 +151,10 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                         label: AppStrings.quickAddStep2CostPriceLabel,
                         hintText: AppStrings.editVariantPriceHint,
                         controller: _costPriceController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [CurrencyTextInputFormatter()],
                       ),
                     ),
                     SizedBox(width: AppSize.size16.w),
@@ -154,7 +163,10 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                         label: AppStrings.quickAddStep2SellingPriceLabel,
                         hintText: AppStrings.editVariantPriceHint,
                         controller: _sellingPriceController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [CurrencyTextInputFormatter()],
                       ),
                     ),
                   ],

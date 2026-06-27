@@ -70,33 +70,31 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Leading menu button
-            leadingWidget ?? _BarIconButton(
-              iconPath: AppAssets.icMenu,
-              iconWidth: 18.w,
-              iconHeight: 12.h,
-              onTap: onMenuTap,
-            ),
+              children: [
+                // Leading menu button
+                leadingWidget ??
+                    _BarIconButton(
+                      iconPath: AppAssets.icMenu,
+                      iconWidth: 18.w,
+                      iconHeight: 12.h,
+                      onTap: onMenuTap,
+                    ),
 
-            // Title
-            Text(
-              title.toUpperCase(),
-              style: AppTextStyles.topBarTitle,
-            ),
+                // Title
+                Text(title.toUpperCase(), style: AppTextStyles.topBarTitle),
 
-            // Trailing action button
-            trailingWidget ??
-                (actionIcon != null && actionIcon!.isNotEmpty
-                    ? _BarIconButton(
-                        iconPath: actionIcon!,
-                        iconWidth: 18.w,
-                        iconHeight: 18.h,
-                        onTap: onActionTap,
-                      )
-                    : SizedBox(width: 40.w, height: 40.h)),
-          ],
-        ),
+                // Trailing action button
+                trailingWidget ??
+                    (actionIcon != null && actionIcon!.isNotEmpty
+                        ? _BarIconButton(
+                            iconPath: actionIcon!,
+                            iconWidth: 18.w,
+                            iconHeight: 18.h,
+                            onTap: onActionTap,
+                          )
+                        : SizedBox(width: 40.w, height: 40.h)),
+              ],
+            ),
           ),
         ),
       ),

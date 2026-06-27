@@ -112,7 +112,9 @@ class ReviewBasicDetailsCard extends StatelessWidget {
                             const TextSpan(text: 'SKU '),
                             TextSpan(
                               text: sku,
-                              style: const TextStyle(fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),
@@ -140,7 +142,9 @@ class ReviewBasicDetailsCard extends StatelessWidget {
                             const TextSpan(text: 'CATEGORY '),
                             TextSpan(
                               text: category,
-                              style: const TextStyle(fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),

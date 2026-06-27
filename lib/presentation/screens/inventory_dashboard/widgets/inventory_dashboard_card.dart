@@ -29,10 +29,7 @@ class InventoryCardData {
 /// - Title + subtitle text in the center (fills available width)
 /// - A muted chevron on the right
 class InventoryDashboardCard extends StatelessWidget {
-  const InventoryDashboardCard({
-    super.key,
-    required this.data,
-  });
+  const InventoryDashboardCard({super.key, required this.data});
 
   final InventoryCardData data;
 
@@ -100,10 +97,7 @@ class _CardIconContainer extends StatelessWidget {
         iconPath,
         width: 20.r,
         height: 20.r,
-        colorFilter: const ColorFilter.mode(
-          Color(0xFF00685F),
-          BlendMode.srcIn,
-        ),
+        colorFilter: const ColorFilter.mode(Color(0xFF00685F), BlendMode.srcIn),
       ),
     );
   }
@@ -123,10 +117,7 @@ class _CardTextBlock extends StatelessWidget {
       children: [
         Text(data.title, style: AppTextStyles.cardTitle),
         SizedBox(height: AppSize.size4.h),
-        Text(
-          data.subtitle,
-          style: AppTextStyles.bodyManrope,
-        ),
+        Text(data.subtitle, style: AppTextStyles.bodyManrope),
       ],
     );
   }

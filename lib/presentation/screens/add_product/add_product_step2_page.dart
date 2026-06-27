@@ -32,84 +32,93 @@ class AddProductStep2Page extends StatelessWidget {
       create: (_) => getIt<ProductCatalogBloc>(),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
-      child: Scaffold(
-        backgroundColor: AppColors.screenBackground,
-        appBar: AppTopBar(
-          title: AppStrings.addProductTitle,
-          leadingWidget: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              color: Colors.transparent,
-              padding: EdgeInsets.all(AppSize.size8.r),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20.r,
-                color: AppColors.heading,
+        child: Scaffold(
+          backgroundColor: AppColors.screenBackground,
+          appBar: AppTopBar(
+            title: AppStrings.addProductTitle,
+            leadingWidget: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                color: Colors.transparent,
+                padding: EdgeInsets.all(AppSize.size8.r),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20.r,
+                  color: AppColors.heading,
+                ),
               ),
             ),
+            trailingWidget: SizedBox(width: 40.w, height: 40.h),
           ),
-          trailingWidget: SizedBox(width: 40.w, height: 40.h),
-        ),
-        body: const _AddProductStep2Body(),
-        bottomNavigationBar: Builder(
-          builder: (context) {
-            return AddProductBottomBar(
-              leftButtonText: AppStrings.quickAddBack,
-              onCancel: () => Navigator.of(context).pop(),
-              rightButtonText: AppStrings.saveAndComplete,
-              showRightIcon: false,
-              onNext: () {
-                final attrState = context.read<AttributeBloc>().state;
-                final skus = attrState.generatedSkus.map((e) {
-                  final uids = e.options
-                      .map((opt) => opt.uid)
-                      .whereType<String>()
-                      .toList();
+          body: const _AddProductStep2Body(),
+          bottomNavigationBar: Builder(
+            builder: (context) {
+              return AddProductBottomBar(
+                leftButtonText: AppStrings.quickAddBack,
+                onCancel: () => Navigator.of(context).pop(),
+                rightButtonText: AppStrings.saveAndComplete,
+                showRightIcon: false,
+                onNext: () {
+                  final attrState = context.read<AttributeBloc>().state;
+                  final skus = attrState.generatedSkus.map((e) {
+                    final uids = e.options
+                        .map((opt) => opt.uid)
+                        .whereType<String>()
+                        .toList();
 
-                  return CreateSkuParams(
-                    skuCode: e.skuCode.trim().isEmpty ? null : e.skuCode.trim(),
-                    barCode: e.barcode.trim().isEmpty ? null : e.barcode.trim(),
-                    sellingPrice: e.price,
-                    costPrice: e.costPrice,
-                    stockQuantity: e.stock,
-                    minStockQuantity: 0,
-                    isSellable: attrState.globalIsSellable,
-                    attributeValueUids: uids,
+                    return CreateSkuParams(
+                      skuCode: e.skuCode.trim().isEmpty
+                          ? null
+                          : e.skuCode.trim(),
+                      barCode: e.barcode.trim().isEmpty
+                          ? null
+                          : e.barcode.trim(),
+                      sellingPrice: e.price,
+                      costPrice: e.costPrice,
+                      stockQuantity: e.stock,
+                      minStockQuantity: 0,
+                      isSellable: attrState.globalIsSellable,
+                      attributeValueUids: uids,
+                    );
+                  }).toList();
+
+                  if (skus.isEmpty) {
+                    skus.add(
+                      CreateSkuParams(
+                        skuCode: null, // Auto-generated in Bloc
+                        barCode: null,
+                        sellingPrice: attrState.globalPrice,
+                        costPrice: attrState.globalCostPrice,
+                        stockQuantity: attrState.globalStock,
+                        minStockQuantity: 0,
+                        isSellable: attrState.globalIsSellable,
+                        attributeValueUids: const [],
+                      ),
+                    );
+                  }
+
+                  final finalParams = CreateProductParams(
+                    name: params.name,
+                    categoryUid: params.categoryUid,
+                    description: params.description,
+                    brand: params.brand,
+                    imageUrl: params.imageUrl,
+                    currency: params.currency,
+                    unitOfMeasure: params.unitOfMeasure,
+                    globalAttributeValueUids: params.globalAttributeValueUids,
+                    skus: skus,
                   );
-                }).toList();
 
-                if (skus.isEmpty) {
-                  skus.add(CreateSkuParams(
-                    skuCode: null, // Auto-generated in Bloc
-                    barCode: null,
-                    sellingPrice: attrState.globalPrice,
-                    costPrice: attrState.globalCostPrice,
-                    stockQuantity: attrState.globalStock,
-                    minStockQuantity: 0,
-                    isSellable: attrState.globalIsSellable,
-                    attributeValueUids: const [],
-                  ));
-                }
-                
-                final finalParams = CreateProductParams(
-                  name: params.name,
-                  categoryUid: params.categoryUid,
-                  description: params.description,
-                  brand: params.brand,
-                  imageUrl: params.imageUrl,
-                  currency: params.currency,
-                  unitOfMeasure: params.unitOfMeasure,
-                  globalAttributeValueUids: params.globalAttributeValueUids,
-                  skus: skus,
-                );
-
-                context.read<ProductCatalogBloc>().add(CreateProduct(finalParams));
-              },
-            );
-          }
+                  context.read<ProductCatalogBloc>().add(
+                    CreateProduct(finalParams),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
@@ -136,8 +145,12 @@ class _AddProductStep2Body extends StatelessWidget {
             if (state.actionStatus == ProductCatalogActionStatus.success) {
               AppSnackBar.showSuccess(context, 'Product created successfully!');
               Navigator.of(context).popUntil((route) => route.isFirst);
-            } else if (state.actionStatus == ProductCatalogActionStatus.failure) {
-              AppSnackBar.showError(context, state.failure?.message ?? 'Failed to create product');
+            } else if (state.actionStatus ==
+                ProductCatalogActionStatus.failure) {
+              AppSnackBar.showError(
+                context,
+                state.failure?.message ?? 'Failed to create product',
+              );
             }
           },
         ),

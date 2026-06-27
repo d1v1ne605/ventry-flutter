@@ -42,8 +42,11 @@ class QuickAddAttributesList extends StatelessWidget {
 
         // List of Attribute Rows
         ...attributes.map((attr) {
-          final kCtrl = keyControllers[attr.id] ?? TextEditingController(text: attr.key);
-          final vCtrl = valueControllers[attr.id] ?? TextEditingController(text: attr.value);
+          final kCtrl =
+              keyControllers[attr.id] ?? TextEditingController(text: attr.key);
+          final vCtrl =
+              valueControllers[attr.id] ??
+              TextEditingController(text: attr.value);
           return QuickAddAttributeRow(
             keyController: kCtrl,
             valueController: vCtrl,
@@ -63,19 +66,12 @@ class QuickAddAttributesList extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(AppSize.size8.r),
-              border: Border.all(
-                color: AppColors.primary,
-                width: 1.5,
-              ),
+              border: Border.all(color: AppColors.primary, width: 1.5),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.add_rounded,
-                  size: 20.r,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.add_rounded, size: 20.r, color: AppColors.primary),
                 SizedBox(width: AppSize.size4.w),
                 Text(
                   AppStrings.quickAddStep3AddAttributeButton,

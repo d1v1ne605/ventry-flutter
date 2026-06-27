@@ -53,8 +53,12 @@ class ProductCatalogState extends Equatable {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       skus: skus ?? this.skus,
       searchKeyword: searchKeyword ?? this.searchKeyword,
-      filterStatus: clearFilterStatus ? null : (filterStatus ?? this.filterStatus),
-      isStockAlert: clearStockAlert ? null : (isStockAlert ?? this.isStockAlert),
+      filterStatus: clearFilterStatus
+          ? null
+          : (filterStatus ?? this.filterStatus),
+      isStockAlert: clearStockAlert
+          ? null
+          : (isStockAlert ?? this.isStockAlert),
       total: total ?? this.total,
       page: page ?? this.page,
       totalPages: totalPages ?? this.totalPages,
@@ -65,16 +69,16 @@ class ProductCatalogState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        isSubmitting,
-        skus,
-        searchKeyword,
-        filterStatus,
-        isStockAlert,
-        total,
-        page,
-        totalPages,
-        failure,
-        actionStatus,
-      ];
+    isLoading,
+    isSubmitting,
+    skus,
+    searchKeyword,
+    filterStatus,
+    isStockAlert,
+    total,
+    page,
+    totalPages,
+    failure,
+    actionStatus,
+  ];
 }

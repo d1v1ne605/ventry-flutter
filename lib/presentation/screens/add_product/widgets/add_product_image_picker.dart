@@ -63,7 +63,9 @@ class AddProductImagePicker extends StatelessWidget {
         // Calculate width for 4 items per row
         final itemWidth = (constraints.maxWidth - (spacing * 3)) / 4;
 
-        final secondaryCount = imagePaths.length > 1 ? imagePaths.length - 1 : 0;
+        final secondaryCount = imagePaths.length > 1
+            ? imagePaths.length - 1
+            : 0;
         // Always show at least 4 boxes total
         final totalBoxes = secondaryCount >= 4 ? secondaryCount + 1 : 4;
 
@@ -73,7 +75,11 @@ class AddProductImagePicker extends StatelessWidget {
           children: List.generate(totalBoxes, (index) {
             final imageIndex = index + 1;
             if (imageIndex < imagePaths.length) {
-              return _buildImageCard(imageIndex, width: itemWidth, height: itemWidth);
+              return _buildImageCard(
+                imageIndex,
+                width: itemWidth,
+                height: itemWidth,
+              );
             } else {
               return _buildDashedBox(
                 width: itemWidth,
@@ -110,8 +116,11 @@ class AddProductImagePicker extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.add_photo_alternate_outlined,
-                  size: iconSize, color: AppColors.subtitle),
+              Icon(
+                Icons.add_photo_alternate_outlined,
+                size: iconSize,
+                color: AppColors.subtitle,
+              ),
               if (text != null) ...[
                 SizedBox(height: AppSize.size4.h),
                 Text(
@@ -130,7 +139,11 @@ class AddProductImagePicker extends StatelessWidget {
     );
   }
 
-  Widget _buildImageCard(int index, {required double width, required double height}) {
+  Widget _buildImageCard(
+    int index, {
+    required double width,
+    required double height,
+  }) {
     return Stack(
       clipBehavior: Clip.none,
       children: [

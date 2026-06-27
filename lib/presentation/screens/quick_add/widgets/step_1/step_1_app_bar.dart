@@ -69,10 +69,7 @@ class Step1AppBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(height: AppSize.size12.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            child: _SegmentedToggle(
-              mode: mode,
-              onModeChanged: onModeChanged,
-            ),
+            child: _SegmentedToggle(mode: mode, onModeChanged: onModeChanged),
           ),
         ],
       ),
@@ -84,10 +81,7 @@ class Step1AppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _SegmentedToggle extends StatelessWidget {
-  const _SegmentedToggle({
-    required this.mode,
-    required this.onModeChanged,
-  });
+  const _SegmentedToggle({required this.mode, required this.onModeChanged});
 
   final AddProductMode mode;
   final void Function(AddProductMode) onModeChanged;
@@ -149,7 +143,7 @@ class _ToggleTab extends StatelessWidget {
                     color: Colors.black.withValues(alpha: 0.05),
                     offset: const Offset(0, 1),
                     blurRadius: 2,
-                  )
+                  ),
                 ]
               : null,
         ),

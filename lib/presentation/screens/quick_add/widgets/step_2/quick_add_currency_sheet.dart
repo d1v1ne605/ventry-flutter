@@ -64,16 +64,20 @@ class QuickAddCurrencySheet extends StatelessWidget {
                       curr.displayName,
                       style: GoogleFonts.manrope(
                         fontSize: 14.sp,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: isSelected
                             ? AppColors.primary
                             : AppColors.heading,
                       ),
                     ),
                     trailing: isSelected
-                        ? Icon(Icons.check_rounded,
-                            color: AppColors.primary, size: 20.r)
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: AppColors.primary,
+                            size: 20.r,
+                          )
                         : null,
                   );
                 },

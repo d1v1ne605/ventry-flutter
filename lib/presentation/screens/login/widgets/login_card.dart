@@ -17,10 +17,7 @@ class LoginCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSize.size12.r),
-        border: Border.all(
-          color: AppColors.inputBorder,
-          width: AppSize.size1,
-        ),
+        border: Border.all(color: AppColors.inputBorder, width: AppSize.size1),
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(

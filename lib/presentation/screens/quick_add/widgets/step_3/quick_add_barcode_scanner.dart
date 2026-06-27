@@ -68,7 +68,9 @@ class _QuickAddBarcodeScannerState extends State<QuickAddBarcodeScanner> {
                   color: AppColors.inputFill,
                   borderRadius: BorderRadius.circular(AppSize.size8.r),
                   border: Border.all(
-                    color: _hasFocus ? AppColors.primary : AppColors.inputBorder,
+                    color: _hasFocus
+                        ? AppColors.primary
+                        : AppColors.inputBorder,
                     width: _hasFocus ? 1.5 : 1.0,
                   ),
                 ),

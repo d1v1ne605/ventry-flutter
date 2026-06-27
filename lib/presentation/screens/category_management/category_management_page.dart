@@ -30,7 +30,8 @@ class _CategoryManagementView extends StatefulWidget {
   const _CategoryManagementView();
 
   @override
-  State<_CategoryManagementView> createState() => _CategoryManagementViewState();
+  State<_CategoryManagementView> createState() =>
+      _CategoryManagementViewState();
 }
 
 class _CategoryManagementViewState extends State<_CategoryManagementView> {
@@ -49,7 +50,11 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
       appBar: AppTopBar(
         title: AppStrings.categoryManagementTitle.toUpperCase(),
         leadingWidget: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.heading, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: AppColors.heading,
+            size: 20,
+          ),
           onPressed: () => context.pop(),
         ),
         trailingWidget: SizedBox(width: AppSize.size48.w),
@@ -60,15 +65,25 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
             children: [
               // Search Bar
               Padding(
-                padding: EdgeInsets.fromLTRB(AppSize.size24.w, AppSize.size24.h, AppSize.size24.w, AppSize.size16.h),
+                padding: EdgeInsets.fromLTRB(
+                  AppSize.size24.w,
+                  AppSize.size24.h,
+                  AppSize.size24.w,
+                  AppSize.size16.h,
+                ),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w, vertical: AppSize.size14.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSize.size16.w,
+                    vertical: AppSize.size14.h,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.searchBarFill,
                     borderRadius: BorderRadius.circular(AppSize.size8.r),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x0F000000), // inset 0px 2px 4px 0px rgba(0, 0, 0, 0.06)
+                        color: Color(
+                          0x0F000000,
+                        ), // inset 0px 2px 4px 0px rgba(0, 0, 0, 0.06)
                         offset: Offset(0, 2),
                         blurRadius: 4,
                         blurStyle: BlurStyle.inner,
@@ -77,13 +92,19 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.search, color: AppColors.subtitle, size: AppSize.size20.w),
+                      Icon(
+                        Icons.search,
+                        color: AppColors.subtitle,
+                        size: AppSize.size20.w,
+                      ),
                       SizedBox(width: AppSize.size8.w),
                       Expanded(
                         child: TextField(
                           controller: _searchController,
                           onChanged: (query) {
-                            context.read<CategoryBloc>().add(SearchCategories(query));
+                            context.read<CategoryBloc>().add(
+                              SearchCategories(query),
+                            );
                           },
                           decoration: InputDecoration(
                             hintText: AppStrings.categorySearchHint,
@@ -113,25 +134,37 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
                   builder: (context, state) {
                     if (state.isLoading) {
                       return const Center(
-                        child: CircularProgressIndicator(color: AppColors.primary),
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
                       );
                     }
 
                     if (state.categories.isEmpty) {
                       return Center(
                         child: Text(
-                          state.searchKeyword.isEmpty ? AppStrings.categoryEmpty : AppStrings.categoryNoResults,
+                          state.searchKeyword.isEmpty
+                              ? AppStrings.categoryEmpty
+                              : AppStrings.categoryNoResults,
                           style: AppTextStyles.searchHint,
                         ),
                       );
                     }
 
                     return ListView.separated(
-                      padding: EdgeInsets.fromLTRB(AppSize.size24.w, AppSize.size8.h, AppSize.size24.w, 96.h),
+                      padding: EdgeInsets.fromLTRB(
+                        AppSize.size24.w,
+                        AppSize.size8.h,
+                        AppSize.size24.w,
+                        96.h,
+                      ),
                       itemCount: state.categories.length,
-                      separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 12.h),
                       itemBuilder: (context, index) {
-                        return CategoryListItem(category: state.categories[index]);
+                        return CategoryListItem(
+                          category: state.categories[index],
+                        );
                       },
                     );
                   },
@@ -165,7 +198,11 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
                     boxShadow: AppColors.cardShadows,
                   ),
                   child: Center(
-                    child: Icon(Icons.add, color: Colors.white, size: AppSize.size24.w),
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: AppSize.size24.w,
+                    ),
                   ),
                 ),
               ),
