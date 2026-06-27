@@ -21,7 +21,8 @@ class ReviewSupplierBarcodeCard extends StatefulWidget {
   final FocusNode? focusNode;
 
   @override
-  State<ReviewSupplierBarcodeCard> createState() => _ReviewSupplierBarcodeCardState();
+  State<ReviewSupplierBarcodeCard> createState() =>
+      _ReviewSupplierBarcodeCardState();
 }
 
 class _ReviewSupplierBarcodeCardState extends State<ReviewSupplierBarcodeCard> {
@@ -60,10 +61,7 @@ class _ReviewSupplierBarcodeCardState extends State<ReviewSupplierBarcodeCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Left warning accent bar
-              Container(
-                width: 4.w,
-                color: warningColor,
-              ),
+              Container(width: 4.w, color: warningColor),
 
               // Content Area
               Expanded(
@@ -148,7 +146,9 @@ class _ReviewSupplierBarcodeCardState extends State<ReviewSupplierBarcodeCard> {
                             ),
                             decoration: BoxDecoration(
                               color: warningColor,
-                              borderRadius: BorderRadius.circular(AppSize.size4.r),
+                              borderRadius: BorderRadius.circular(
+                                AppSize.size4.r,
+                              ),
                             ),
                             child: Text(
                               'MISSING',

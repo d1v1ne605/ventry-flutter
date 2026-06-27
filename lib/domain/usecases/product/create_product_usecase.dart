@@ -7,7 +7,8 @@ import 'package:ventry_flutter/domain/repositories/product/product_repository.da
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
 
 @lazySingleton
-class CreateProductUseCase implements UseCase<ProductEntity, CreateProductParams> {
+class CreateProductUseCase
+    implements UseCase<ProductEntity, CreateProductParams> {
   final ProductRepository _repository;
 
   const CreateProductUseCase(this._repository);

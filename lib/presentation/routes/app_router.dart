@@ -11,6 +11,7 @@ import '../screens/quick_add/quick_add_step2_page.dart';
 import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
 import '../screens/category_management/category_management_page.dart';
+import '../screens/test_scanner/test_scanner_page.dart';
 import '../../injection.dart';
 import 'auth_notifier.dart';
 import 'router_constants.dart';
@@ -106,6 +107,11 @@ final router = GoRouter(
       path: RouterPath.addProduct,
       name: RouterName.addProduct,
       builder: (context, state) => const AddProductStep1Page(),
+    ),
+    GoRoute(
+      path: RouterPath.testScanner,
+      name: RouterName.testScanner,
+      builder: (context, state) => const TestScannerPage(),
     ),
   ],
 );

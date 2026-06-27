@@ -37,11 +37,7 @@ class LoggingInterceptor extends Interceptor {
     'creditCard',
   };
 
-  static const _sensitiveHeaderKeys = {
-    'authorization',
-    'cookie',
-    'set-cookie',
-  };
+  static const _sensitiveHeaderKeys = {'authorization', 'cookie', 'set-cookie'};
 
   // Tracks request send time for duration calculation
   final _requestTimes = <String, DateTime>{};
@@ -96,7 +92,9 @@ class LoggingInterceptor extends Interceptor {
     // Response body (masked)
     final data = response.data;
     if (data != null) {
-      buffer.writeln('│ Body   : ${_formatBody(data, isSensitiveContext: true)}');
+      buffer.writeln(
+        '│ Body   : ${_formatBody(data, isSensitiveContext: true)}',
+      );
     }
 
     buffer.write('└────────────────────────────────────────────');
@@ -132,11 +130,7 @@ class LoggingInterceptor extends Interceptor {
 
     buffer.write('└────────────────────────────────────────────');
 
-    _logger.error(
-      buffer.toString(),
-      error: err,
-      stackTrace: err.stackTrace,
-    );
+    _logger.error(buffer.toString(), error: err, stackTrace: err.stackTrace);
     handler.next(err);
   }
 
@@ -190,16 +184,16 @@ class LoggingInterceptor extends Interceptor {
       for (final entry in map.entries)
         entry.key: _sensitiveBodyKeys.contains(entry.key) || isSensitiveContext
             ? (isSensitiveContext && !_sensitiveBodyKeys.contains(entry.key)
-                ? (entry.value is Map
-                    ? _maskBodyMap(
-                        entry.value as Map<String, dynamic>,
-                        isSensitiveContext: true,
-                      )
-                    : entry.value)
-                : '***')
+                  ? (entry.value is Map
+                        ? _maskBodyMap(
+                            entry.value as Map<String, dynamic>,
+                            isSensitiveContext: true,
+                          )
+                        : entry.value)
+                  : '***')
             : (entry.value is Map<String, dynamic>
-                ? _maskBodyMap(entry.value as Map<String, dynamic>)
-                : entry.value),
+                  ? _maskBodyMap(entry.value as Map<String, dynamic>)
+                  : entry.value),
     };
   }
 

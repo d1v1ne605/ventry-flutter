@@ -15,18 +15,18 @@ enum AppNavItem {
   account;
 
   String get label => switch (this) {
-        AppNavItem.sales => AppStrings.navSales,
-        AppNavItem.inventory => AppStrings.navInventory,
-        AppNavItem.partners => AppStrings.navPartners,
-        AppNavItem.account => AppStrings.navAccount,
-      };
+    AppNavItem.sales => AppStrings.navSales,
+    AppNavItem.inventory => AppStrings.navInventory,
+    AppNavItem.partners => AppStrings.navPartners,
+    AppNavItem.account => AppStrings.navAccount,
+  };
 
   String get iconPath => switch (this) {
-        AppNavItem.sales => AppAssets.icSales,
-        AppNavItem.inventory => AppAssets.icInventory,
-        AppNavItem.partners => AppAssets.icPartners,
-        AppNavItem.account => AppAssets.icAccount,
-      };
+    AppNavItem.sales => AppAssets.icSales,
+    AppNavItem.inventory => AppAssets.icInventory,
+    AppNavItem.partners => AppAssets.icPartners,
+    AppNavItem.account => AppAssets.icAccount,
+  };
 }
 
 /// Reusable bottom navigation bar matching the Figma "BottomNavBar" design.
@@ -53,9 +53,7 @@ class AppBottomNavBar extends StatelessWidget {
           topLeft: Radius.circular(AppSize.size12.r),
           topRight: Radius.circular(AppSize.size12.r),
         ),
-        border: Border(
-          top: BorderSide(color: AppColors.divider, width: 1),
-        ),
+        border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0D0F172A), // rgba(15, 23, 42, 0.05)
@@ -69,11 +67,13 @@ class AppBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: AppNavItem.values
-            .map((item) => _NavItemWidget(
-                  item: item,
-                  isActive: item == currentItem,
-                  onTap: () => onItemTapped(item),
-                ))
+            .map(
+              (item) => _NavItemWidget(
+                item: item,
+                isActive: item == currentItem,
+                onTap: () => onItemTapped(item),
+              ),
+            )
             .toList(),
       ),
     );
@@ -94,8 +94,9 @@ class _NavItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor =
-        isActive ? AppColors.primary : AppColors.navInactive;
+    final Color iconColor = isActive
+        ? AppColors.primary
+        : AppColors.navInactive;
 
     return GestureDetector(
       onTap: onTap,

@@ -22,7 +22,8 @@ class UpdateCategoryParams extends Equatable {
 }
 
 @lazySingleton
-class UpdateCategoryUseCase implements UseCase<CategoryEntity, UpdateCategoryParams> {
+class UpdateCategoryUseCase
+    implements UseCase<CategoryEntity, UpdateCategoryParams> {
   final CategoryRepository _repository;
 
   const UpdateCategoryUseCase(this._repository);

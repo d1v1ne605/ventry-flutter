@@ -67,7 +67,11 @@ class _InventoryDashboardBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InventoryHeaderSection(onScannerTap: () {}),
+          InventoryHeaderSection(
+            onScannerTap: () {
+              context.push(RouterPath.testScanner);
+            },
+          ),
           SizedBox(height: AppSize.size24.h),
           _CardList(cards: cards),
         ],

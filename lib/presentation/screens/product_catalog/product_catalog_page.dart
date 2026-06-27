@@ -16,6 +16,7 @@ import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/prod
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_catalog_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_filter_chips.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_search_bar.dart';
+import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 
 /// Product Catalog screen wrapped in [BlocProvider].
 /// Removed AppBottomNavBar — handled by MainLayout (ShellRoute).
@@ -47,31 +48,50 @@ class _ProductCatalogViewState extends State<_ProductCatalogView> {
     super.dispose();
   }
 
+  Future<void> _handleBarcodeScan() async {
+    final result = await showBarcodeScanner(context);
+    if (result != null && result.isNotEmpty) {
+      _searchController.text = result;
+      if (mounted) {
+        context.read<ProductCatalogBloc>().add(SearchSkus(result));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.screenBackground,
       appBar: ProductCatalogTopBar(
         title: AppStrings.productCatalogPageTitle,
-        onBarcodeTap: () {},
+        onBarcodeTap: _handleBarcodeScan,
       ),
-      body: _ProductCatalogBody(searchController: _searchController),
+      body: _ProductCatalogBody(
+        searchController: _searchController,
+        onQrTap: _handleBarcodeScan,
+      ),
       floatingActionButton: const _AddProductFab(),
     );
   }
 }
 
 class _ProductCatalogBody extends StatelessWidget {
-  const _ProductCatalogBody({required this.searchController});
+  const _ProductCatalogBody({
+    required this.searchController,
+    required this.onQrTap,
+  });
 
   final TextEditingController searchController;
+  final VoidCallback onQrTap;
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverToBoxAdapter(child: _StickyHeader(controller: searchController)),
+        SliverToBoxAdapter(
+          child: _StickyHeader(controller: searchController, onQrTap: onQrTap),
+        ),
         BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
           buildWhen: (prev, curr) =>
               prev.isLoading != curr.isLoading || prev.skus != curr.skus,
@@ -110,9 +130,10 @@ class _ProductCatalogBody extends StatelessWidget {
 }
 
 class _StickyHeader extends StatelessWidget {
-  const _StickyHeader({required this.controller});
+  const _StickyHeader({required this.controller, required this.onQrTap});
 
   final TextEditingController controller;
+  final VoidCallback onQrTap;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +152,7 @@ class _StickyHeader extends StatelessWidget {
             controller: controller,
             onChanged: (query) =>
                 context.read<ProductCatalogBloc>().add(SearchSkus(query)),
-            onQrTap: () {},
+            onQrTap: onQrTap,
             onFilterTap: () {},
           ),
           SizedBox(height: AppSize.size16.h),

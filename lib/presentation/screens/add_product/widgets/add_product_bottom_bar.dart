@@ -41,11 +41,13 @@ class AddProductBottomBar extends StatelessWidget {
         children: [
           _CancelButton(onTap: onCancel, text: leftButtonText),
           SizedBox(width: AppSize.size12.w),
-          Expanded(child: _NextButton(
-            onTap: onNext, 
-            text: rightButtonText,
-            showIcon: showRightIcon,
-          )),
+          Expanded(
+            child: _NextButton(
+              onTap: onNext,
+              text: rightButtonText,
+              showIcon: showRightIcon,
+            ),
+          ),
         ],
       ),
     );
@@ -89,11 +91,7 @@ class _CancelButton extends StatelessWidget {
 }
 
 class _NextButton extends StatelessWidget {
-  const _NextButton({
-    required this.onTap,
-    this.text,
-    this.showIcon = true,
-  });
+  const _NextButton({required this.onTap, this.text, this.showIcon = true});
 
   final VoidCallback onTap;
   final String? text;
@@ -122,7 +120,11 @@ class _NextButton extends StatelessWidget {
             ),
             if (showIcon) ...[
               SizedBox(width: AppSize.size8.w),
-              Icon(Icons.chevron_right_rounded, size: 20.r, color: Colors.white),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20.r,
+                color: Colors.white,
+              ),
             ],
           ],
         ),

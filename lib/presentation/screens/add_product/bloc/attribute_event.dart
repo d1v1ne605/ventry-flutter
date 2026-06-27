@@ -73,13 +73,20 @@ class UpdateGeneratedSkuEvent extends AttributeEvent {
   });
 
   @override
-  List<Object?> get props => [skuName, skuCode, barcode, price, costPrice, stock];
+  List<Object?> get props => [
+    skuName,
+    skuCode,
+    barcode,
+    price,
+    costPrice,
+    stock,
+  ];
 }
 
 class UpdateGlobalPriceEvent extends AttributeEvent {
   final double price;
   const UpdateGlobalPriceEvent(this.price);
-  
+
   @override
   List<Object?> get props => [price];
 }
@@ -87,7 +94,7 @@ class UpdateGlobalPriceEvent extends AttributeEvent {
 class UpdateGlobalCostPriceEvent extends AttributeEvent {
   final double costPrice;
   const UpdateGlobalCostPriceEvent(this.costPrice);
-  
+
   @override
   List<Object?> get props => [costPrice];
 }
@@ -95,7 +102,7 @@ class UpdateGlobalCostPriceEvent extends AttributeEvent {
 class UpdateGlobalStockEvent extends AttributeEvent {
   final int stock;
   const UpdateGlobalStockEvent(this.stock);
-  
+
   @override
   List<Object?> get props => [stock];
 }
@@ -103,7 +110,23 @@ class UpdateGlobalStockEvent extends AttributeEvent {
 class UpdateGlobalIsSellableEvent extends AttributeEvent {
   final bool isSellable;
   const UpdateGlobalIsSellableEvent(this.isSellable);
-  
+
   @override
   List<Object?> get props => [isSellable];
+}
+
+class UpdateGlobalSkuCodeEvent extends AttributeEvent {
+  final String skuCode;
+  const UpdateGlobalSkuCodeEvent(this.skuCode);
+
+  @override
+  List<Object?> get props => [skuCode];
+}
+
+class UpdateGlobalBarcodeEvent extends AttributeEvent {
+  final String barcode;
+  const UpdateGlobalBarcodeEvent(this.barcode);
+
+  @override
+  List<Object?> get props => [barcode];
 }

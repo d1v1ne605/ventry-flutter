@@ -36,7 +36,8 @@ class ProductRepositoryImpl implements ProductRepository {
           total: response.meta?.total ?? response.pagination?.total ?? 0,
           page: response.meta?.page ?? response.pagination?.page ?? 1,
           limit: response.meta?.limit ?? response.pagination?.limit ?? 20,
-          totalPages: response.meta?.totalPages ?? response.pagination?.totalPages ?? 0,
+          totalPages:
+              response.meta?.totalPages ?? response.pagination?.totalPages ?? 0,
         ),
       );
     } on DioException catch (e) {

@@ -149,18 +149,19 @@ class AppStrings {
   static const String uploadImage = 'Upload Image';
   static const String takeAPhoto = 'Take a photo';
   static const String chooseFromGallery = 'Choose from gallery';
-  static String selectedNewCategory(String name) => 'Selected new category: $name';
+  static String selectedNewCategory(String name) =>
+      'Selected new category: $name';
   static const String currencyHint = 'e.g. USD, EUR, VND';
   static const String unitHint = 'e.g. Pieces, Boxes';
-  
+
   static const String addProductProgress2 = 'Step 2 of 3';
   static const String priceAndSkuVariants = 'Price & SKU Variants';
-  
+
   static const String skuPreview = 'SKU Preview';
   static String skuVariantsCount(int count) => '$count Variants';
   static String priceLabel(String price) => 'Price: \$$price';
   static String stockLabel(int stock) => 'Stock: $stock';
-  
+
   static const String editVariant = 'Edit Variant';
   static const String skuInfo = 'SKU Info : ';
   static const String skuCodeLabel = 'SKU Code';
@@ -177,7 +178,7 @@ class AppStrings {
   static const String optionNameHint = 'e.g. Color';
   static const String optionValuesLabel = 'Option Values';
   static const String optionValuesHint = 'Type and press enter...';
-  
+
   static const String sellingPriceHint = 'e.g. 10.00';
   static const String costPriceHint = 'e.g. 5.00';
   static const String stockQuantityHint = '0';

@@ -4,9 +4,5 @@ class ProductAttribute {
   String key;
   String value;
 
-  ProductAttribute({
-    required this.id,
-    this.key = '',
-    this.value = '',
-  });
+  ProductAttribute({required this.id, this.key = '', this.value = ''});
 }

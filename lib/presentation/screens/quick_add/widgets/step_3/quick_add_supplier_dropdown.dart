@@ -70,7 +70,9 @@ class QuickAddSupplierDropdown extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    hasSelection ? selectedSupplier!.name : 'Select a supplier...',
+                    hasSelection
+                        ? selectedSupplier!.name
+                        : 'Select a supplier...',
                     style: GoogleFonts.manrope(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,

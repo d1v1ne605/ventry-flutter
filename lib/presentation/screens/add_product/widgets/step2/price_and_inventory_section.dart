@@ -9,6 +9,8 @@ import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/core/utils/app_formatters.dart';
+import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 
 class PriceAndInventorySection extends StatefulWidget {
   const PriceAndInventorySection({super.key});
@@ -19,12 +21,37 @@ class PriceAndInventorySection extends StatefulWidget {
 }
 
 class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
-  final TextEditingController _sellingPriceController = TextEditingController();
-  final TextEditingController _costPriceController = TextEditingController();
-  final TextEditingController _stockController = TextEditingController();
+  late final TextEditingController _sellingPriceController;
+  late final TextEditingController _costPriceController;
+  late final TextEditingController _stockController;
+  late final TextEditingController _skuCodeController;
+  late final TextEditingController _barcodeController;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<AttributeBloc>().state;
+    _skuCodeController = TextEditingController(text: state.globalSkuCode);
+    _barcodeController = TextEditingController(text: state.globalBarcode);
+    _sellingPriceController = TextEditingController(
+      text: state.globalPrice > 0
+          ? AppFormatters.formatPrice(state.globalPrice)
+          : '',
+    );
+    _costPriceController = TextEditingController(
+      text: state.globalCostPrice > 0
+          ? AppFormatters.formatPrice(state.globalCostPrice)
+          : '',
+    );
+    _stockController = TextEditingController(
+      text: state.globalStock > 0 ? state.globalStock.toString() : '',
+    );
+  }
 
   @override
   void dispose() {
+    _skuCodeController.dispose();
+    _barcodeController.dispose();
     _sellingPriceController.dispose();
     _costPriceController.dispose();
     _stockController.dispose();
@@ -56,14 +83,38 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
         ),
         SizedBox(height: AppSize.size16.h),
         CustomTextField(
-          label: AppStrings.quickAddStep2SellingPriceLabel,
-          hintText: AppStrings.sellingPriceHint,
-          controller: _sellingPriceController,
-          textInputAction: TextInputAction.next,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          label: 'SKU Code',
+          hintText: 'e.g. ABC',
+          controller: _skuCodeController,
           onChanged: (val) {
-            final price = double.tryParse(val) ?? 0.0;
-            context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
+            context.read<AttributeBloc>().add(UpdateGlobalSkuCodeEvent(val));
+          },
+        ),
+        SizedBox(height: AppSize.size16.h),
+        CustomTextField(
+          label: 'Barcode',
+          hintText: 'e.g. 123456789',
+          controller: _barcodeController,
+          suffixIcon: IconButton(
+            onPressed: () async {
+              final result = await showBarcodeScanner(context);
+              if (result != null && result.isNotEmpty) {
+                _barcodeController.text = result;
+                if (context.mounted) {
+                  context.read<AttributeBloc>().add(
+                    UpdateGlobalBarcodeEvent(result),
+                  );
+                }
+              }
+            },
+            icon: Icon(
+              Icons.qr_code_scanner,
+              color: AppColors.primary,
+              size: 20.r,
+            ),
+          ),
+          onChanged: (val) {
+            context.read<AttributeBloc>().add(UpdateGlobalBarcodeEvent(val));
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -71,13 +122,25 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           label: AppStrings.quickAddStep2CostPriceLabel,
           hintText: AppStrings.costPriceHint,
           controller: _costPriceController,
-          textInputAction: TextInputAction.next,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [CurrencyTextInputFormatter()],
           onChanged: (val) {
-            final costPrice = double.tryParse(val) ?? 0.0;
+            final costPrice = AppFormatters.parsePrice(val);
             context.read<AttributeBloc>().add(
               UpdateGlobalCostPriceEvent(costPrice),
             );
+          },
+        ),
+        SizedBox(height: AppSize.size16.h),
+        CustomTextField(
+          label: AppStrings.quickAddStep2SellingPriceLabel,
+          hintText: AppStrings.sellingPriceHint,
+          controller: _sellingPriceController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [CurrencyTextInputFormatter()],
+          onChanged: (val) {
+            final price = AppFormatters.parsePrice(val);
+            context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
           },
         ),
         SizedBox(height: AppSize.size16.h),

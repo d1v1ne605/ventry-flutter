@@ -17,7 +17,8 @@ class CreateCategoryParams extends Equatable {
 }
 
 @lazySingleton
-class CreateCategoryUseCase implements UseCase<CategoryEntity, CreateCategoryParams> {
+class CreateCategoryUseCase
+    implements UseCase<CategoryEntity, CreateCategoryParams> {
   final CategoryRepository _repository;
 
   const CreateCategoryUseCase(this._repository);

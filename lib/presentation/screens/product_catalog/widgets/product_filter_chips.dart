@@ -5,11 +5,7 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 
 /// Filter tab option for the product catalog.
-enum ProductFilter {
-  totalStock,
-  lowStock,
-  outOfStock;
-}
+enum ProductFilter { totalStock, lowStock, outOfStock }
 
 /// Horizontally scrollable filter chip row.
 ///

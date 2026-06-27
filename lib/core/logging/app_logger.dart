@@ -25,9 +25,5 @@ abstract class AppLogger {
 
   /// Log exceptions and failures.
   /// Use for: API failures, repository exceptions, unhandled runtime errors.
-  void error(
-    String message, {
-    Object? error,
-    StackTrace? stackTrace,
-  });
+  void error(String message, {Object? error, StackTrace? stackTrace});
 }

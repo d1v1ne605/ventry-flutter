@@ -58,7 +58,7 @@ class AddVariantBottomSheet extends StatelessWidget {
             ],
           ),
           SizedBox(height: AppSize.size24.h),
-          
+
           Flexible(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -86,7 +86,7 @@ class AddVariantBottomSheet extends StatelessWidget {
                   SizedBox(height: AppSize.size24.h),
                   const Divider(color: AppColors.divider),
                   SizedBox(height: AppSize.size24.h),
-                  
+
                   Text(
                     AppStrings.logisticsAndPricing,
                     style: GoogleFonts.manrope(
@@ -146,7 +146,7 @@ class AddVariantBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          
+
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(

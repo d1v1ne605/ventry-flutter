@@ -27,11 +27,13 @@ class ProductSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _SearchField(
-          controller: controller,
-          onChanged: onChanged,
-          onQrTap: onQrTap,
-        )),
+        Expanded(
+          child: _SearchField(
+            controller: controller,
+            onChanged: onChanged,
+            onQrTap: onQrTap,
+          ),
+        ),
         SizedBox(width: AppSize.size8.w),
         _FilterButton(onTap: onFilterTap),
       ],
@@ -59,11 +61,7 @@ class _SearchField extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(width: 12.w),
-          Icon(
-            Icons.search_rounded,
-            color: AppColors.navInactive,
-            size: 20.r,
-          ),
+          Icon(Icons.search_rounded, color: AppColors.navInactive, size: 20.r),
           SizedBox(width: 8.w),
           Expanded(
             child: TextField(

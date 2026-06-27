@@ -78,5 +78,13 @@ class SkuQueryParams extends Equatable {
   });
 
   @override
-  List<Object?> get props => [search, categoryUid, status, isSellable, isStockAlert, page, limit];
+  List<Object?> get props => [
+    search,
+    categoryUid,
+    status,
+    isSellable,
+    isStockAlert,
+    page,
+    limit,
+  ];
 }

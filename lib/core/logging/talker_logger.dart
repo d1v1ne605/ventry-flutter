@@ -26,11 +26,7 @@ class TalkerLogger implements AppLogger {
   }
 
   @override
-  void error(
-    String message, {
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
+  void error(String message, {Object? error, StackTrace? stackTrace}) {
     _talker.error(message, error, stackTrace);
   }
 }

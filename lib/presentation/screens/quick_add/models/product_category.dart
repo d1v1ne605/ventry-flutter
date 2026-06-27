@@ -17,5 +17,3 @@ class ProductCategory {
     ProductCategory(id: 'other', name: 'Other'),
   ];
 }
-
-

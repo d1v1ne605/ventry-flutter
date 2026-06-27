@@ -12,10 +12,7 @@ import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 /// Shows the dashboard title, subtitle, and the floating scanner button.
 /// Matches the Figma "Header Section" frame layout.
 class InventoryHeaderSection extends StatelessWidget {
-  const InventoryHeaderSection({
-    super.key,
-    this.onScannerTap,
-  });
+  const InventoryHeaderSection({super.key, this.onScannerTap});
 
   final VoidCallback? onScannerTap;
 
@@ -88,10 +85,7 @@ class _ScannerButton extends StatelessWidget {
           AppAssets.icScanner,
           width: 22.w,
           height: 18.h,
-          colorFilter: const ColorFilter.mode(
-            Colors.white,
-            BlendMode.srcIn,
-          ),
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
         ),
       ),
     );

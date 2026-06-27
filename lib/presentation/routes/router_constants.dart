@@ -11,6 +11,7 @@ abstract final class RouterPath {
   static const String quickAddStep4 = '/quick-add-step4';
   static const String categoryManagement = '/category-management';
   static const String addProduct = '/add-product';
+  static const String testScanner = '/test-scanner';
 }
 
 abstract final class RouterName {
@@ -27,4 +28,5 @@ abstract final class RouterName {
   static const String addProduct = 'addProduct';
   static const String categoryManagement = 'categoryManagement';
   static const String skuDetail = 'skuDetail';
+  static const String testScanner = 'testScanner';
 }

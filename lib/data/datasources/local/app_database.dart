@@ -40,22 +40,22 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 }
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'ventry_app.sqlite'));
-    
+
     // Also work around limitations on old Android versions
     if (Platform.isAndroid) {
       applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
     }
-    
+
     return NativeDatabase.createInBackground(file);
   });
 }
