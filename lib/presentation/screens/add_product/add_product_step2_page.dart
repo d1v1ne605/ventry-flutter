@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
@@ -48,7 +50,20 @@ class AddProductStep2Page extends StatelessWidget {
                 ),
               ),
             ),
-            trailingWidget: SizedBox(width: 40.w, height: 40.h),
+            trailingWidget: GestureDetector(
+              onTap: () {
+                context.goNamed(RouterName.productCatalog);
+              },
+              child: Container(
+                color: Colors.transparent,
+                padding: EdgeInsets.all(AppSize.size8.r),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 24.r,
+                  color: AppColors.heading,
+                ),
+              ),
+            ),
           ),
           body: const _AddProductStep2Body(),
           bottomNavigationBar: Builder(

@@ -9,6 +9,7 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
+import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 
 class EditVariantBottomSheet extends StatefulWidget {
   final GeneratedSku sku;
@@ -83,6 +84,15 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
     Navigator.of(context).pop();
   }
 
+  Future<void> _scanBarcode() async {
+    final result = await showBarcodeScanner(context);
+    if (result != null && result.isNotEmpty) {
+      setState(() {
+        _barcodeController.text = result;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -127,13 +137,16 @@ class _EditVariantBottomSheetState extends State<EditVariantBottomSheet> {
                   label: AppStrings.barcodeLabel,
                   hintText: AppStrings.barcodeHint,
                   controller: _barcodeController,
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(AppSize.size12.r),
-                    child: SvgPicture.asset(
-                      AppAssets.icScanner,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.primary,
-                        BlendMode.srcIn,
+                  suffixIcon: GestureDetector(
+                    onTap: _scanBarcode,
+                    child: Padding(
+                      padding: EdgeInsets.all(AppSize.size12.r),
+                      child: SvgPicture.asset(
+                        AppAssets.icScanner,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.primary,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),

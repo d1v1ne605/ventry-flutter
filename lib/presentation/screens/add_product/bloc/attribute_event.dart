@@ -114,3 +114,19 @@ class UpdateGlobalIsSellableEvent extends AttributeEvent {
   @override
   List<Object?> get props => [isSellable];
 }
+
+class UpdateGlobalSkuCodeEvent extends AttributeEvent {
+  final String skuCode;
+  const UpdateGlobalSkuCodeEvent(this.skuCode);
+
+  @override
+  List<Object?> get props => [skuCode];
+}
+
+class UpdateGlobalBarcodeEvent extends AttributeEvent {
+  final String barcode;
+  const UpdateGlobalBarcodeEvent(this.barcode);
+
+  @override
+  List<Object?> get props => [barcode];
+}

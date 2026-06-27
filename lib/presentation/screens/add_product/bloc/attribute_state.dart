@@ -107,6 +107,8 @@ class AttributeState extends Equatable {
   final double globalCostPrice;
   final int globalStock;
   final bool globalIsSellable;
+  final String globalSkuCode;
+  final String globalBarcode;
 
   const AttributeState({
     this.status = BaseStatus.initial,
@@ -118,6 +120,8 @@ class AttributeState extends Equatable {
     this.globalCostPrice = 0.0,
     this.globalStock = 0,
     this.globalIsSellable = true,
+    this.globalSkuCode = '',
+    this.globalBarcode = '',
   });
 
   AttributeState copyWith({
@@ -130,6 +134,8 @@ class AttributeState extends Equatable {
     double? globalCostPrice,
     int? globalStock,
     bool? globalIsSellable,
+    String? globalSkuCode,
+    String? globalBarcode,
   }) {
     return AttributeState(
       status: status ?? this.status,
@@ -141,6 +147,8 @@ class AttributeState extends Equatable {
       globalCostPrice: globalCostPrice ?? this.globalCostPrice,
       globalStock: globalStock ?? this.globalStock,
       globalIsSellable: globalIsSellable ?? this.globalIsSellable,
+      globalSkuCode: globalSkuCode ?? this.globalSkuCode,
+      globalBarcode: globalBarcode ?? this.globalBarcode,
     );
   }
 
@@ -155,5 +163,7 @@ class AttributeState extends Equatable {
     globalCostPrice,
     globalStock,
     globalIsSellable,
+    globalSkuCode,
+    globalBarcode,
   ];
 }

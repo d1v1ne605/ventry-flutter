@@ -243,7 +243,18 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
                 ),
               ),
             ),
-            trailingWidget: SizedBox(width: 40.w, height: 40.h),
+            trailingWidget: GestureDetector(
+              onTap: _navigateBack,
+              child: Container(
+                color: Colors.transparent,
+                padding: EdgeInsets.all(AppSize.size8.r),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 24.r,
+                  color: AppColors.heading,
+                ),
+              ),
+            ),
           ),
           body: _AddProductBody(
             nameController: _nameController,

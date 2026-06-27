@@ -36,6 +36,8 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
     on<UpdateGlobalCostPriceEvent>(_onUpdateGlobalCostPrice);
     on<UpdateGlobalStockEvent>(_onUpdateGlobalStock);
     on<UpdateGlobalIsSellableEvent>(_onUpdateGlobalIsSellable);
+    on<UpdateGlobalSkuCodeEvent>(_onUpdateGlobalSkuCode);
+    on<UpdateGlobalBarcodeEvent>(_onUpdateGlobalBarcode);
   }
 
   Future<void> _onLoadAttributes(
@@ -290,7 +292,9 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
       combinations = newCombinations;
     }
 
-    final skus = combinations.map((combo) {
+    final skus = combinations.asMap().entries.map((entry) {
+      final index = entry.key;
+      final combo = entry.value;
       final name = combo.map((c) => c.value).join(' - ');
       final existingSku = state.generatedSkus
           .where((s) => s.name == name)
@@ -299,12 +303,27 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
       if (existingSku != null) {
         return existingSku.copyWith(options: combo);
       }
+
+      String newSkuCode = '';
+      if (state.globalSkuCode.isNotEmpty) {
+        newSkuCode = index == 0
+            ? state.globalSkuCode
+            : '${state.globalSkuCode}-${index + 1}';
+      }
+
+      String newBarcode = '';
+      if (combinations.length == 1 && state.globalBarcode.isNotEmpty) {
+        newBarcode = state.globalBarcode;
+      }
+
       return GeneratedSku(
         name: name,
         options: combo,
         price: state.globalPrice,
         costPrice: state.globalCostPrice,
         stock: state.globalStock,
+        skuCode: newSkuCode,
+        barcode: newBarcode,
       );
     }).toList();
 
@@ -396,5 +415,39 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
     Emitter<AttributeState> emit,
   ) {
     emit(state.copyWith(globalIsSellable: event.isSellable));
+  }
+
+  void _onUpdateGlobalSkuCode(
+    UpdateGlobalSkuCodeEvent event,
+    Emitter<AttributeState> emit,
+  ) {
+    final updatedSkus = state.generatedSkus.asMap().entries.map((entry) {
+      final index = entry.key;
+      final sku = entry.value;
+      final newCode = index == 0
+          ? event.skuCode
+          : '${event.skuCode}-${index + 1}';
+      return sku.copyWith(skuCode: newCode);
+    }).toList();
+
+    emit(
+      state.copyWith(globalSkuCode: event.skuCode, generatedSkus: updatedSkus),
+    );
+  }
+
+  void _onUpdateGlobalBarcode(
+    UpdateGlobalBarcodeEvent event,
+    Emitter<AttributeState> emit,
+  ) {
+    final updatedSkus = state.generatedSkus.map((sku) {
+      if (state.generatedSkus.length == 1) {
+        return sku.copyWith(barcode: event.barcode);
+      }
+      return sku;
+    }).toList();
+
+    emit(
+      state.copyWith(globalBarcode: event.barcode, generatedSkus: updatedSkus),
+    );
   }
 }
