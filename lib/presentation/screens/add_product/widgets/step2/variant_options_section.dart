@@ -9,9 +9,9 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 
 class VariantOptionsSection extends StatelessWidget {
   const VariantOptionsSection({super.key});
@@ -19,8 +19,8 @@ class VariantOptionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<
-      AttributeBloc,
-      AttributeState,
+      AddProductBloc,
+      AddProductState,
       List<VariantOptionGroup>
     >(
       selector: (state) => state.variantGroups,
@@ -49,7 +49,7 @@ class VariantOptionsSection extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () {
-                  context.read<AttributeBloc>().add(AddVariantGroupEvent());
+                  context.read<AddProductBloc>().add(AddVariantGroupEvent());
                 },
                 icon: Icon(Icons.add, size: 20.r, color: AppColors.primary),
                 label: Text(
@@ -121,13 +121,13 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
   }
 
   void _onNameSubmitted(String text) {
-    context.read<AttributeBloc>().add(
+    context.read<AddProductBloc>().add(
       UpdateVariantGroupNameEvent(widget.group.id, text),
     );
   }
 
   void _onValueSubmitted(String text) {
-    context.read<AttributeBloc>().add(
+    context.read<AddProductBloc>().add(
       AddVariantOptionValueEvent(widget.group.id, text),
     );
     _valueController.clear();
@@ -144,7 +144,7 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BlocSelector<AttributeBloc, AttributeState, List<AttributeEntity>>(
+          BlocSelector<AddProductBloc, AddProductState, List<AttributeEntity>>(
             selector: (state) => state.localAttributes,
             builder: (context, attributes) {
               return RawAutocomplete<AttributeEntity>(
@@ -178,7 +178,7 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
                           padding: const EdgeInsets.only(bottom: AppSize.size4),
                           child: GestureDetector(
                             onTap: () {
-                              context.read<AttributeBloc>().add(
+                              context.read<AddProductBloc>().add(
                                 RemoveVariantGroupEvent(widget.group.id),
                               );
                             },
@@ -225,7 +225,7 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
           ),
           SizedBox(height: AppSize.size12.h),
 
-          BlocSelector<AttributeBloc, AttributeState, List<AttributeEntity>>(
+          BlocSelector<AddProductBloc, AddProductState, List<AttributeEntity>>(
             selector: (state) => state.localAttributes,
             builder: (context, attributes) {
               final activeAttribute = attributes
@@ -340,7 +340,7 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
           SizedBox(width: AppSize.size4.w),
           GestureDetector(
             onTap: () {
-              context.read<AttributeBloc>().add(
+              context.read<AddProductBloc>().add(
                 RemoveVariantOptionValueEvent(groupId, value),
               );
             },

@@ -20,6 +20,10 @@ class _DescriptionCardState extends State<DescriptionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final description = widget.sku.spuDescription?.trim().isNotEmpty == true
+        ? widget.sku.spuDescription!.trim()
+        : AppStrings.notAvailable;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -63,10 +67,7 @@ class _DescriptionCardState extends State<DescriptionCard> {
                 AppSize.size16.w,
                 AppSize.size16.w,
               ),
-              child: Text(
-                AppStrings.notAvailable,
-                style: AppTextStyles.body,
-              ),
+              child: Text(description, style: AppTextStyles.body),
             ),
         ],
       ),

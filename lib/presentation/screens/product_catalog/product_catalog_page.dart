@@ -123,7 +123,7 @@ class _ProductCatalogBody extends StatelessWidget {
                   return ProductCard(
                     sku: sku,
                     onTap: () {
-                      ctx.goNamed(
+                      ctx.pushNamed(
                         RouterName.skuDetail,
                         pathParameters: {'skuUid': sku.uid},
                       );
@@ -236,7 +236,12 @@ class _AddProductFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push(RouterPath.addProduct),
+      onTap: () async {
+        final created = await context.push<bool>(RouterPath.addProduct);
+        if (context.mounted && created == true) {
+          context.read<ProductCatalogBloc>().add(const LoadSkus());
+        }
+      },
       child: Container(
         width: 56.r,
         height: 56.r,

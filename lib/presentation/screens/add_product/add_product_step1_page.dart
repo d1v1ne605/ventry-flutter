@@ -27,8 +27,8 @@ import 'package:ventry_flutter/presentation/screens/category_management/bloc/cat
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/add_category_bottom_sheet.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
 
 class AddProductStep1Page extends StatelessWidget {
   const AddProductStep1Page({super.key});
@@ -42,7 +42,7 @@ class AddProductStep1Page extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
-              getIt<AttributeBloc>()..add(LoadAttributesEvent()),
+              getIt<AddProductBloc>()..add(LoadAttributesEvent()),
         ),
         BlocProvider(create: (context) => getIt<AddProductImageUploadBloc>()),
       ],
@@ -168,7 +168,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
     }
   }
 
-  void _onNextPressed() {
+  Future<void> _onNextPressed() async {
     final imageState = context.read<AddProductImageUploadBloc>().state;
 
     if (imageState.isUploading) {
@@ -182,7 +182,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
       return;
     }
 
-    final attributeBloc = context.read<AttributeBloc>();
+    final addProductBloc = context.read<AddProductBloc>();
     final partialParams = CreateProductParams(
       name: _nameController.text.trim(),
       description: _descController.text.trim().isEmpty
@@ -199,15 +199,21 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
       skus: const [],
     );
 
-    Navigator.push(
+    final created = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
-          value: attributeBloc,
+          value: addProductBloc,
           child: ventry_step2.AddProductStep2Page(params: partialParams),
         ),
       ),
     );
+
+    if (!mounted || created != true) {
+      return;
+    }
+
+    context.pop(true);
   }
 
   @override

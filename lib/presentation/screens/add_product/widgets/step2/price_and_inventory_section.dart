@@ -6,9 +6,9 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 
@@ -30,7 +30,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
   @override
   void initState() {
     super.initState();
-    final state = context.read<AttributeBloc>().state;
+    final state = context.read<AddProductBloc>().state;
     _skuCodeController = TextEditingController(text: state.globalSkuCode);
     _barcodeController = TextEditingController(text: state.globalBarcode);
     _sellingPriceController = TextEditingController(
@@ -87,7 +87,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           hintText: 'e.g. ABC',
           controller: _skuCodeController,
           onChanged: (val) {
-            context.read<AttributeBloc>().add(UpdateGlobalSkuCodeEvent(val));
+            context.read<AddProductBloc>().add(UpdateGlobalSkuCodeEvent(val));
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -101,7 +101,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
               if (result != null && result.isNotEmpty) {
                 _barcodeController.text = result;
                 if (context.mounted) {
-                  context.read<AttributeBloc>().add(
+                  context.read<AddProductBloc>().add(
                     UpdateGlobalBarcodeEvent(result),
                   );
                 }
@@ -114,7 +114,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
             ),
           ),
           onChanged: (val) {
-            context.read<AttributeBloc>().add(UpdateGlobalBarcodeEvent(val));
+            context.read<AddProductBloc>().add(UpdateGlobalBarcodeEvent(val));
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -126,7 +126,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           inputFormatters: [CurrencyTextInputFormatter()],
           onChanged: (val) {
             final costPrice = AppFormatters.parsePrice(val);
-            context.read<AttributeBloc>().add(
+            context.read<AddProductBloc>().add(
               UpdateGlobalCostPriceEvent(costPrice),
             );
           },
@@ -140,7 +140,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           inputFormatters: [CurrencyTextInputFormatter()],
           onChanged: (val) {
             final price = AppFormatters.parsePrice(val);
-            context.read<AttributeBloc>().add(UpdateGlobalPriceEvent(price));
+            context.read<AddProductBloc>().add(UpdateGlobalPriceEvent(price));
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -152,7 +152,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
           keyboardType: TextInputType.number,
           onChanged: (val) {
             final stock = int.tryParse(val) ?? 0;
-            context.read<AttributeBloc>().add(UpdateGlobalStockEvent(stock));
+            context.read<AddProductBloc>().add(UpdateGlobalStockEvent(stock));
           },
         ),
         SizedBox(height: AppSize.size16.h),
@@ -167,7 +167,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
                 color: AppColors.heading,
               ),
             ),
-            BlocBuilder<AttributeBloc, AttributeState>(
+            BlocBuilder<AddProductBloc, AddProductState>(
               buildWhen: (prev, curr) =>
                   prev.globalIsSellable != curr.globalIsSellable,
               builder: (context, state) {
@@ -175,7 +175,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
                   value: state.globalIsSellable,
                   activeColor: AppColors.primary,
                   onChanged: (val) {
-                    context.read<AttributeBloc>().add(
+                    context.read<AddProductBloc>().add(
                       UpdateGlobalIsSellableEvent(val),
                     );
                   },

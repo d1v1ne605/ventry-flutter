@@ -32,6 +32,10 @@ class GeneralInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoryName = sku.spuCategoryName ?? AppStrings.notAvailable;
+    final unitOfMeasure = sku.spuUnitOfMeasure ?? AppStrings.notAvailable;
+    final currency = sku.spuCurrency ?? AppStrings.notAvailable;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -57,20 +61,14 @@ class GeneralInfoCard extends StatelessWidget {
             padding: EdgeInsets.all(AppSize.size16.w),
             child: Column(
               children: [
-                const _InfoRow(
-                  label: AppStrings.categoryLabel,
-                  value: AppStrings.notAvailable,
-                ),
+                _InfoRow(label: AppStrings.categoryLabel, value: categoryName),
                 SizedBox(height: AppSize.size16.h),
-                const _InfoRow(
+                _InfoRow(
                   label: AppStrings.unitOfMeasureLabel,
-                  value: AppStrings.notAvailable,
+                  value: unitOfMeasure,
                 ),
                 SizedBox(height: AppSize.size16.h),
-                const _InfoRow(
-                  label: AppStrings.currencyLabel,
-                  value: AppStrings.notAvailable,
-                ),
+                _InfoRow(label: AppStrings.currencyLabel, value: currency),
                 SizedBox(height: AppSize.size16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -8,22 +8,22 @@ import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 
 @injectable
-class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
+class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
   final GetLocalAttributesUseCase _getLocalAttributes;
   final SyncAttributesUseCase _syncAttributes;
   final CreateAttributeUseCase _createAttribute;
   final CreateAttributeValueUseCase _createAttributeValue;
 
-  AttributeBloc(
+  AddProductBloc(
     this._getLocalAttributes,
     this._syncAttributes,
     this._createAttribute,
     this._createAttributeValue,
-  ) : super(const AttributeState()) {
+  ) : super(const AddProductState()) {
     on<LoadAttributesEvent>(_onLoadAttributes);
     on<AddVariantGroupEvent>(_onAddVariantGroup);
     on<RemoveVariantGroupEvent>(_onRemoveVariantGroup);
@@ -42,7 +42,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   Future<void> _onLoadAttributes(
     LoadAttributesEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) async {
     emit(state.copyWith(status: BaseStatus.loading));
 
@@ -77,7 +77,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onAddVariantGroup(
     AddVariantGroupEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final newGroup = VariantOptionGroup(id: const Uuid().v4(), name: '');
     final updatedGroups = List<VariantOptionGroup>.from(state.variantGroups)
@@ -88,7 +88,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onRemoveVariantGroup(
     RemoveVariantGroupEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedGroups = state.variantGroups
         .where((g) => g.id != event.groupId)
@@ -99,7 +99,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   Future<void> _onUpdateVariantGroupName(
     UpdateVariantGroupNameEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) async {
     final groupIndex = state.variantGroups.indexWhere(
       (g) => g.id == event.groupId,
@@ -169,7 +169,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   Future<void> _onAddVariantOptionValue(
     AddVariantOptionValueEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) async {
     final groupIndex = state.variantGroups.indexWhere(
       (g) => g.id == event.groupId,
@@ -252,7 +252,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onRemoveVariantOptionValue(
     RemoveVariantOptionValueEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final groupIndex = state.variantGroups.indexWhere(
       (g) => g.id == event.groupId,
@@ -270,7 +270,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
   }
 
   void _generateSkus(
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
     List<VariantOptionGroup> groups,
   ) {
     final validGroups = groups.where((g) => g.values.isNotEmpty).toList();
@@ -332,7 +332,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onRemoveGeneratedSku(
     RemoveGeneratedSkuEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus
         .where((s) => s.name != event.skuName)
@@ -357,7 +357,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGeneratedSku(
     UpdateGeneratedSkuEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus.map((sku) {
       if (sku.name == event.skuName) {
@@ -377,7 +377,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGlobalPrice(
     UpdateGlobalPriceEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus
         .map((sku) => sku.copyWith(price: event.price))
@@ -387,7 +387,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGlobalCostPrice(
     UpdateGlobalCostPriceEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus
         .map((sku) => sku.copyWith(costPrice: event.costPrice))
@@ -402,7 +402,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGlobalStock(
     UpdateGlobalStockEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus
         .map((sku) => sku.copyWith(stock: event.stock))
@@ -412,14 +412,14 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGlobalIsSellable(
     UpdateGlobalIsSellableEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     emit(state.copyWith(globalIsSellable: event.isSellable));
   }
 
   void _onUpdateGlobalSkuCode(
     UpdateGlobalSkuCodeEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus.asMap().entries.map((entry) {
       final index = entry.key;
@@ -437,7 +437,7 @@ class AttributeBloc extends Bloc<AttributeEvent, AttributeState> {
 
   void _onUpdateGlobalBarcode(
     UpdateGlobalBarcodeEvent event,
-    Emitter<AttributeState> emit,
+    Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus.map((sku) {
       if (state.generatedSkus.length == 1) {

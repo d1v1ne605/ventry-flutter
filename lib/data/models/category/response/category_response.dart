@@ -10,8 +10,8 @@ class CategoryResponse with _$CategoryResponse {
     required String uid,
     required String name,
     String? imageUrl,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _CategoryResponse;
 
   factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
