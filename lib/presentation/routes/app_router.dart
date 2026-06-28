@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/layouts/main_layout.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/add_product_step1_page.dart';

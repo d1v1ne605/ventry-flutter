@@ -186,7 +186,7 @@ class ProductCatalogBloc
           costPrice: sku.costPrice,
           stockQuantity: sku.stockQuantity,
           minStockQuantity: sku.minStockQuantity,
-          imageUrls: sku.imageUrls,
+          imageKeys: sku.imageKeys,
           isSellable: sku.isSellable,
           attributeValueUids: sku.attributeValueUids,
         );
@@ -199,7 +199,7 @@ class ProductCatalogBloc
       categoryUid: event.params.categoryUid,
       description: event.params.description,
       brand: event.params.brand,
-      imageUrl: event.params.imageUrl,
+      imageKeys: event.params.imageKeys,
       currency: event.params.currency,
       unitOfMeasure: event.params.unitOfMeasure,
       globalAttributeValueUids: event.params.globalAttributeValueUids,

@@ -1,20 +1,31 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/constants/app_errors.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/core/network/dio_exception_extension.dart';
 import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart';
+import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
+import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 import 'package:ventry_flutter/domain/repositories/product/product_repository.dart';
 
 @LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
   final ProductApi _productApi;
+  static const List<String> _supportedMimeTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+  ];
 
   const ProductRepositoryImpl(this._productApi);
 
@@ -43,7 +54,7 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -55,7 +66,7 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -73,7 +84,52 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UploadedProductImageEntity>>> uploadProductImages(
+    List<UploadProductImageParams> params,
+  ) async {
+    try {
+      final uploadedImages = <UploadedProductImageEntity>[];
+
+      for (final param in params) {
+        if (!_supportedMimeTypes.contains(param.mimeType)) {
+          return Left(
+            ServerFailure(AppErrors.unsupportedImageFormat(param.mimeType)),
+          );
+        }
+
+        final file = File(param.filePath);
+        final fileSize = await file.length();
+        final presignedUpload = await _productApi.createPresignedUploadUrl(
+          CreatePresignedUploadRequest(
+            mimeType: param.mimeType,
+            fileSize: fileSize,
+          ),
+        );
+
+        await _uploadToPresignedUrl(
+          uploadUrl: presignedUpload.uploadUrl,
+          headers: presignedUpload.headers,
+          file: file,
+        );
+
+        uploadedImages.add(
+          UploadedProductImageEntity(
+            localPath: param.filePath,
+            objectKey: presignedUpload.objectKey,
+          ),
+        );
+      }
+
+      return Right(uploadedImages);
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.uploadProductImagesFailed));
     }
   }
 
@@ -87,7 +143,6 @@ class ProductRepositoryImpl implements ProductRepository {
         categoryUid: params.categoryUid,
         description: params.description,
         brand: params.brand,
-        imageKey: params.imageUrl,
         currency: params.currency,
         unitOfMeasure: params.unitOfMeasure,
         globalAttributeValueUids: params.globalAttributeValueUids,
@@ -100,6 +155,7 @@ class ProductRepositoryImpl implements ProductRepository {
           spuName: response.spu.name,
           brand: response.spu.brand,
           description: response.spu.description,
+          imageKey: response.spu.imageKey,
           imageUrl: response.spu.imageUrl,
           categoryUid: response.spu.categoryUid,
           currency: response.spu.currency,
@@ -113,7 +169,7 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -126,6 +182,7 @@ class ProductRepositoryImpl implements ProductRepository {
       costPrice: response.costPrice?.toDouble(),
       stockQuantity: response.stockQuantity,
       minStockQuantity: response.minStockQuantity,
+      imageKeys: List<String>.from(response.imageKeys),
       imageUrls: List<String>.from(response.imageUrls),
       status: response.status,
       isSellable: response.isSellable,
@@ -133,12 +190,15 @@ class ProductRepositoryImpl implements ProductRepository {
       spuUid: response.spu.uid,
       spuName: response.spu.name ?? 'Unknown',
       spuStatus: response.spu.status ?? 'UNKNOWN',
-      attributes: (response.attributes as List<dynamic>?)
-              ?.map((attr) => SkuAttributeEntity(
-                    uid: attr['uid'] as String? ?? '',
-                    attributeName: attr['attributeName'] as String? ?? '',
-                    value: attr['value'] as String? ?? '',
-                  ))
+      attributes:
+          (response.attributes as List<dynamic>?)
+              ?.map(
+                (attr) => SkuAttributeEntity(
+                  uid: attr['uid'] as String? ?? '',
+                  attributeName: attr['attributeName'] as String? ?? '',
+                  value: attr['value'] as String? ?? '',
+                ),
+              )
               .toList() ??
           [],
       createdAt: response.createdAt ?? DateTime.now(),
@@ -154,9 +214,30 @@ class ProductRepositoryImpl implements ProductRepository {
       costPrice: params.costPrice,
       stockQuantity: params.stockQuantity,
       minStockQuantity: params.minStockQuantity,
-      imageKeys: params.imageUrls,
+      imageKeys: params.imageKeys,
       isSellable: params.isSellable,
       attributeValueUids: params.attributeValueUids,
+    );
+  }
+
+  Future<void> _uploadToPresignedUrl({
+    required String uploadUrl,
+    required Map<String, String> headers,
+    required File file,
+  }) async {
+    final uploadDio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 300,
+      ),
+    );
+
+    await uploadDio.put<void>(
+      uploadUrl,
+      data: await file.readAsBytes(),
+      options: Options(headers: headers),
     );
   }
 }

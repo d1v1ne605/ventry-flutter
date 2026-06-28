@@ -8,6 +8,7 @@ class ProductEntity extends Equatable {
   final String spuName;
   final String? brand;
   final String? description;
+  final String? imageKey;
   final String? imageUrl;
   final String? categoryUid;
   final String? currency;
@@ -22,6 +23,7 @@ class ProductEntity extends Equatable {
     required this.spuName,
     this.brand,
     this.description,
+    this.imageKey,
     this.imageUrl,
     this.categoryUid,
     this.currency,

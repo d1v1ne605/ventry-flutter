@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/constants/app_errors.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_exception_extension.dart';
@@ -55,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -69,7 +70,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -83,7 +84,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 

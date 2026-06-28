@@ -12,6 +12,7 @@ class SkuEntity extends Equatable {
   final double? costPrice;
   final int stockQuantity;
   final int minStockQuantity;
+  final List<String> imageKeys;
   final List<String> imageUrls;
   final List<SkuAttributeEntity> attributes;
   final String status;
@@ -34,6 +35,7 @@ class SkuEntity extends Equatable {
     this.costPrice,
     required this.stockQuantity,
     required this.minStockQuantity,
+    this.imageKeys = const [],
     this.imageUrls = const [],
     this.attributes = const [],
     required this.status,
