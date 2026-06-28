@@ -7,7 +7,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 

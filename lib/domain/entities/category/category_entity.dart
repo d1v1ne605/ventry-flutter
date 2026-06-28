@@ -4,15 +4,15 @@ class CategoryEntity extends Equatable {
   final String uid;
   final String name;
   final String? imageUrl;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const CategoryEntity({
     required this.uid,
     required this.name,
     this.imageUrl,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   CategoryEntity copyWith({

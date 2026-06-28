@@ -157,11 +157,13 @@ class ProductRepositoryImpl implements ProductRepository {
           description: response.spu.description,
           imageKey: response.spu.imageKey,
           imageUrl: response.spu.imageUrl,
-          categoryUid: response.spu.categoryUid,
+          categoryUid: response.spu.category?.uid,
           currency: response.spu.currency,
           unitOfMeasure: response.spu.unitOfMeasure,
           status: response.spu.status,
-          skus: response.skus.map(_mapSkuToEntity).toList(),
+          skus: response.skus
+              .map((sku) => _mapSkuToEntity(sku, fallbackSpu: response.spu))
+              .toList(),
           createdAt: response.spu.createdAt,
           updatedAt: response.spu.updatedAt,
         ),
@@ -173,7 +175,9 @@ class ProductRepositoryImpl implements ProductRepository {
     }
   }
 
-  SkuEntity _mapSkuToEntity(dynamic response) {
+  SkuEntity _mapSkuToEntity(dynamic response, {dynamic fallbackSpu}) {
+    final spu = response.spu ?? fallbackSpu;
+
     return SkuEntity(
       uid: response.uid,
       skuCode: response.skuCode,
@@ -187,9 +191,13 @@ class ProductRepositoryImpl implements ProductRepository {
       status: response.status,
       isSellable: response.isSellable,
       version: response.version,
-      spuUid: response.spu.uid,
-      spuName: response.spu.name ?? 'Unknown',
-      spuStatus: response.spu.status ?? 'UNKNOWN',
+      spuUid: spu?.uid ?? '',
+      spuName: spu?.name ?? 'Unknown',
+      spuStatus: spu?.status ?? 'UNKNOWN',
+      spuDescription: spu?.description,
+      spuCategoryName: spu?.category?.name,
+      spuCurrency: spu?.currency,
+      spuUnitOfMeasure: spu?.unitOfMeasure,
       attributes:
           (response.attributes as List<dynamic>?)
               ?.map(

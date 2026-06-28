@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:ventry_flutter/data/models/category/response/category_response.dart';
 
 part 'sku_spu_response.freezed.dart';
 part 'sku_spu_response.g.dart';
@@ -9,6 +10,10 @@ class SkuSpuResponse with _$SkuSpuResponse {
     required String uid,
     String? name,
     String? status,
+    String? currency,
+    String? unitOfMeasure,
+    String? description,
+    CategoryResponse? category,
   }) = _SkuSpuResponse;
 
   factory SkuSpuResponse.fromJson(Map<String, dynamic> json) =>

@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 
-abstract class AttributeEvent extends Equatable {
-  const AttributeEvent();
+abstract class AddProductEvent extends Equatable {
+  const AddProductEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class LoadAttributesEvent extends AttributeEvent {}
+class LoadAttributesEvent extends AddProductEvent {}
 
-class AddVariantGroupEvent extends AttributeEvent {}
+class AddVariantGroupEvent extends AddProductEvent {}
 
-class RemoveVariantGroupEvent extends AttributeEvent {
+class RemoveVariantGroupEvent extends AddProductEvent {
   final String groupId;
   const RemoveVariantGroupEvent(this.groupId);
 
@@ -20,7 +20,7 @@ class RemoveVariantGroupEvent extends AttributeEvent {
   List<Object?> get props => [groupId];
 }
 
-class UpdateVariantGroupNameEvent extends AttributeEvent {
+class UpdateVariantGroupNameEvent extends AddProductEvent {
   final String groupId;
   final String name;
   const UpdateVariantGroupNameEvent(this.groupId, this.name);
@@ -29,7 +29,7 @@ class UpdateVariantGroupNameEvent extends AttributeEvent {
   List<Object?> get props => [groupId, name];
 }
 
-class AddVariantOptionValueEvent extends AttributeEvent {
+class AddVariantOptionValueEvent extends AddProductEvent {
   final String groupId;
   final String value;
   const AddVariantOptionValueEvent(this.groupId, this.value);
@@ -38,7 +38,7 @@ class AddVariantOptionValueEvent extends AttributeEvent {
   List<Object?> get props => [groupId, value];
 }
 
-class RemoveVariantOptionValueEvent extends AttributeEvent {
+class RemoveVariantOptionValueEvent extends AddProductEvent {
   final String groupId;
   final VariantOptionValue value;
   const RemoveVariantOptionValueEvent(this.groupId, this.value);
@@ -47,7 +47,7 @@ class RemoveVariantOptionValueEvent extends AttributeEvent {
   List<Object?> get props => [groupId, value];
 }
 
-class RemoveGeneratedSkuEvent extends AttributeEvent {
+class RemoveGeneratedSkuEvent extends AddProductEvent {
   final String skuName;
   const RemoveGeneratedSkuEvent(this.skuName);
 
@@ -55,7 +55,7 @@ class RemoveGeneratedSkuEvent extends AttributeEvent {
   List<Object?> get props => [skuName];
 }
 
-class UpdateGeneratedSkuEvent extends AttributeEvent {
+class UpdateGeneratedSkuEvent extends AddProductEvent {
   final String skuName;
   final String skuCode;
   final String barcode;
@@ -83,7 +83,7 @@ class UpdateGeneratedSkuEvent extends AttributeEvent {
   ];
 }
 
-class UpdateGlobalPriceEvent extends AttributeEvent {
+class UpdateGlobalPriceEvent extends AddProductEvent {
   final double price;
   const UpdateGlobalPriceEvent(this.price);
 
@@ -91,7 +91,7 @@ class UpdateGlobalPriceEvent extends AttributeEvent {
   List<Object?> get props => [price];
 }
 
-class UpdateGlobalCostPriceEvent extends AttributeEvent {
+class UpdateGlobalCostPriceEvent extends AddProductEvent {
   final double costPrice;
   const UpdateGlobalCostPriceEvent(this.costPrice);
 
@@ -99,7 +99,7 @@ class UpdateGlobalCostPriceEvent extends AttributeEvent {
   List<Object?> get props => [costPrice];
 }
 
-class UpdateGlobalStockEvent extends AttributeEvent {
+class UpdateGlobalStockEvent extends AddProductEvent {
   final int stock;
   const UpdateGlobalStockEvent(this.stock);
 
@@ -107,7 +107,7 @@ class UpdateGlobalStockEvent extends AttributeEvent {
   List<Object?> get props => [stock];
 }
 
-class UpdateGlobalIsSellableEvent extends AttributeEvent {
+class UpdateGlobalIsSellableEvent extends AddProductEvent {
   final bool isSellable;
   const UpdateGlobalIsSellableEvent(this.isSellable);
 
@@ -115,7 +115,7 @@ class UpdateGlobalIsSellableEvent extends AttributeEvent {
   List<Object?> get props => [isSellable];
 }
 
-class UpdateGlobalSkuCodeEvent extends AttributeEvent {
+class UpdateGlobalSkuCodeEvent extends AddProductEvent {
   final String skuCode;
   const UpdateGlobalSkuCodeEvent(this.skuCode);
 
@@ -123,7 +123,7 @@ class UpdateGlobalSkuCodeEvent extends AttributeEvent {
   List<Object?> get props => [skuCode];
 }
 
-class UpdateGlobalBarcodeEvent extends AttributeEvent {
+class UpdateGlobalBarcodeEvent extends AddProductEvent {
   final String barcode;
   const UpdateGlobalBarcodeEvent(this.barcode);
 

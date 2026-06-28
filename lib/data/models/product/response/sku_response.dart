@@ -19,7 +19,7 @@ class SkuResponse with _$SkuResponse {
     required String status,
     required bool isSellable,
     required int version,
-    required SkuSpuResponse spu,
+    SkuSpuResponse? spu,
     @Default([]) List<Map<String, dynamic>> attributes,
     DateTime? createdAt,
     DateTime? updatedAt,

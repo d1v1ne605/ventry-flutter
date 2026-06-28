@@ -14,8 +14,8 @@ import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/pr
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/sku_preview_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/variant_options_section.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_bloc.dart';
@@ -74,7 +74,7 @@ class AddProductStep2Page extends StatelessWidget {
                 rightButtonText: AppStrings.saveAndComplete,
                 showRightIcon: false,
                 onNext: () {
-                  final attrState = context.read<AttributeBloc>().state;
+                  final attrState = context.read<AddProductBloc>().state;
                   final skus = attrState.generatedSkus.map((e) {
                     final uids = e.options
                         .map((opt) => opt.uid)
@@ -146,7 +146,7 @@ class _AddProductStep2Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<AttributeBloc, AttributeState>(
+        BlocListener<AddProductBloc, AddProductState>(
           listenWhen: (previous, current) =>
               previous.status != current.status &&
               current.status == BaseStatus.failure,
@@ -164,7 +164,7 @@ class _AddProductStep2Body extends StatelessWidget {
                 context,
                 AppStrings.addProductCreatedSuccess,
               );
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              context.pop(true);
             } else if (state.actionStatus ==
                 ProductCatalogActionStatus.failure) {
               AppSnackBar.showError(

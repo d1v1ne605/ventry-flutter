@@ -7,9 +7,9 @@ import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_event.dart';
-import 'package:ventry_flutter/presentation/screens/add_product/bloc/attribute_state.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/edit_variant_bottom_sheet.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 
@@ -18,7 +18,7 @@ class SkuPreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<AttributeBloc, AttributeState, List<GeneratedSku>>(
+    return BlocSelector<AddProductBloc, AddProductState, List<GeneratedSku>>(
       selector: (state) => state.generatedSkus,
       builder: (context, skus) {
         if (skus.isEmpty) return const SizedBox();
@@ -134,7 +134,7 @@ class SkuPreviewSection extends StatelessWidget {
                 builder: (ctx) => EditVariantBottomSheet(
                   sku: sku,
                   onSave: (skuCode, barcode, costPrice, price, stock) {
-                    context.read<AttributeBloc>().add(
+                    context.read<AddProductBloc>().add(
                       UpdateGeneratedSkuEvent(
                         skuName: sku.name,
                         skuCode: skuCode,
@@ -158,7 +158,7 @@ class SkuPreviewSection extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              context.read<AttributeBloc>().add(
+              context.read<AddProductBloc>().add(
                 RemoveGeneratedSkuEvent(sku.name),
               );
             },

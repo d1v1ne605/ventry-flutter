@@ -97,7 +97,7 @@ class GeneratedSku extends Equatable {
   ];
 }
 
-class AttributeState extends Equatable {
+class AddProductState extends Equatable {
   final BaseStatus status;
   final List<AttributeEntity> localAttributes;
   final List<VariantOptionGroup> variantGroups;
@@ -110,7 +110,7 @@ class AttributeState extends Equatable {
   final String globalSkuCode;
   final String globalBarcode;
 
-  const AttributeState({
+  const AddProductState({
     this.status = BaseStatus.initial,
     this.localAttributes = const [],
     this.variantGroups = const [],
@@ -124,7 +124,7 @@ class AttributeState extends Equatable {
     this.globalBarcode = '',
   });
 
-  AttributeState copyWith({
+  AddProductState copyWith({
     BaseStatus? status,
     List<AttributeEntity>? localAttributes,
     List<VariantOptionGroup>? variantGroups,
@@ -137,7 +137,7 @@ class AttributeState extends Equatable {
     String? globalSkuCode,
     String? globalBarcode,
   }) {
-    return AttributeState(
+    return AddProductState(
       status: status ?? this.status,
       localAttributes: localAttributes ?? this.localAttributes,
       variantGroups: variantGroups ?? this.variantGroups,
