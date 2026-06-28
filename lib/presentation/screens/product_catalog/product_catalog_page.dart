@@ -118,8 +118,18 @@ class _ProductCatalogBody extends StatelessWidget {
               sliver: SliverList.separated(
                 itemCount: state.skus.length,
                 separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                itemBuilder: (_, i) =>
-                    ProductCard(sku: state.skus[i], onTap: () {}),
+                itemBuilder: (ctx, i) {
+                  final sku = state.skus[i];
+                  return ProductCard(
+                    sku: sku,
+                    onTap: () {
+                      ctx.goNamed(
+                        RouterName.skuDetail,
+                        pathParameters: {'skuUid': sku.uid},
+                      );
+                    },
+                  );
+                },
               ),
             );
           },

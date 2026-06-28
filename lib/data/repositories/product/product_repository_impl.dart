@@ -87,7 +87,7 @@ class ProductRepositoryImpl implements ProductRepository {
         categoryUid: params.categoryUid,
         description: params.description,
         brand: params.brand,
-        imageUrl: params.imageUrl,
+        imageKey: params.imageUrl,
         currency: params.currency,
         unitOfMeasure: params.unitOfMeasure,
         globalAttributeValueUids: params.globalAttributeValueUids,
@@ -133,6 +133,14 @@ class ProductRepositoryImpl implements ProductRepository {
       spuUid: response.spu.uid,
       spuName: response.spu.name ?? 'Unknown',
       spuStatus: response.spu.status ?? 'UNKNOWN',
+      attributes: (response.attributes as List<dynamic>?)
+              ?.map((attr) => SkuAttributeEntity(
+                    uid: attr['uid'] as String? ?? '',
+                    attributeName: attr['attributeName'] as String? ?? '',
+                    value: attr['value'] as String? ?? '',
+                  ))
+              .toList() ??
+          [],
       createdAt: response.createdAt ?? DateTime.now(),
       updatedAt: response.updatedAt ?? DateTime.now(),
     );
@@ -146,7 +154,7 @@ class ProductRepositoryImpl implements ProductRepository {
       costPrice: params.costPrice,
       stockQuantity: params.stockQuantity,
       minStockQuantity: params.minStockQuantity,
-      imageUrls: params.imageUrls,
+      imageKeys: params.imageUrls,
       isSellable: params.isSellable,
       attributeValueUids: params.attributeValueUids,
     );
