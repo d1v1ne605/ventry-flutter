@@ -4,6 +4,8 @@ import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
+import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 
 abstract class ProductRepository {
   Future<Either<Failure, SkuListEntity>> getSkus(SkuQueryParams params);
@@ -11,6 +13,10 @@ abstract class ProductRepository {
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid);
 
   Future<Either<Failure, String?>> getLatestGeneratedSkuCode();
+
+  Future<Either<Failure, List<UploadedProductImageEntity>>> uploadProductImages(
+    List<UploadProductImageParams> params,
+  );
 
   /// Creates a new product (SPU + SKUs). Returns [ProductEntity] on success.
   /// After success, the caller (Bloc) is responsible for dispatching [LoadSkus]

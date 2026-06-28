@@ -15,6 +15,9 @@ import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_event.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_state.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_dropdown.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_image_picker.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/add_product_step2_page.dart'
@@ -41,6 +44,7 @@ class AddProductStep1Page extends StatelessWidget {
           create: (context) =>
               getIt<AttributeBloc>()..add(LoadAttributesEvent()),
         ),
+        BlocProvider(create: (context) => getIt<AddProductImageUploadBloc>()),
       ],
       child: const _AddProductStep1View(),
     );
@@ -67,25 +71,31 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
 
   final FocusNode _currencyFocus = FocusNode();
   final FocusNode _unitFocus = FocusNode();
-  List<String> _imagePaths = [];
 
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source);
+    final uploadBloc = context.read<AddProductImageUploadBloc>();
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 85,
+      maxWidth: 1600,
+      maxHeight: 1600,
+    );
     if (image != null) {
-      setState(() {
-        _imagePaths.add(image.path);
-      });
+      uploadBloc.add(UploadAddProductImagesEvent([image]));
     }
   }
 
   Future<void> _pickMultipleImages() async {
-    final List<XFile> images = await _picker.pickMultiImage();
+    final uploadBloc = context.read<AddProductImageUploadBloc>();
+    final List<XFile> images = await _picker.pickMultiImage(
+      imageQuality: 85,
+      maxWidth: 1600,
+      maxHeight: 1600,
+    );
     if (images.isNotEmpty) {
-      setState(() {
-        _imagePaths.addAll(images.map((e) => e.path));
-      });
+      uploadBloc.add(UploadAddProductImagesEvent(images));
     }
   }
 
@@ -159,8 +169,15 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   }
 
   void _onNextPressed() {
+    final imageState = context.read<AddProductImageUploadBloc>().state;
+
+    if (imageState.isUploading) {
+      AppSnackBar.showError(context, AppStrings.addProductUploadInProgress);
+      return;
+    }
+
     if (_nameController.text.trim().isEmpty) {
-      AppSnackBar.showError(context, 'Product Name is required');
+      AppSnackBar.showError(context, AppStrings.addProductNameRequired);
       _nameFocus.requestFocus();
       return;
     }
@@ -178,7 +195,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
       unitOfMeasure: _unitController.text.trim().isEmpty
           ? null
           : _unitController.text.trim(),
-      imageUrl: _imagePaths.isNotEmpty ? _imagePaths.first : null,
+      imageKeys: imageState.images.map((image) => image.objectKey).toList(),
       skus: const [],
     );
 
@@ -210,23 +227,35 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
-      child: BlocListener<CategoryBloc, CategoryState>(
-        listenWhen: (previous, current) {
-          return previous.actionStatus != current.actionStatus &&
-              current.actionStatus == CategoryActionStatus.success &&
-              current.categories.length > previous.categories.length;
-        },
-        listener: (context, state) {
-          if (state.categories.isNotEmpty) {
-            setState(() {
-              _selectedCategory = state.categories.first;
-            });
-            AppSnackBar.showSuccess(
-              context,
-              AppStrings.selectedNewCategory(state.categories.first.name),
-            );
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<CategoryBloc, CategoryState>(
+            listenWhen: (previous, current) {
+              return previous.actionStatus != current.actionStatus &&
+                  current.actionStatus == CategoryActionStatus.success &&
+                  current.categories.length > previous.categories.length;
+            },
+            listener: (context, state) {
+              if (state.categories.isNotEmpty) {
+                setState(() {
+                  _selectedCategory = state.categories.first;
+                });
+                AppSnackBar.showSuccess(
+                  context,
+                  AppStrings.selectedNewCategory(state.categories.first.name),
+                );
+              }
+            },
+          ),
+          BlocListener<AddProductImageUploadBloc, AddProductImageUploadState>(
+            listenWhen: (previous, current) =>
+                previous.errorMessage != current.errorMessage &&
+                current.errorMessage != null,
+            listener: (context, state) {
+              AppSnackBar.showError(context, state.errorMessage!);
+            },
+          ),
+        ],
         child: Scaffold(
           backgroundColor: AppColors.screenBackground,
           appBar: AppTopBar(
@@ -256,23 +285,35 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
               ),
             ),
           ),
-          body: _AddProductBody(
-            nameController: _nameController,
-            descController: _descController,
-            nameFocus: _nameFocus,
-            descFocus: _descFocus,
-            selectedCategory: _selectedCategory,
-            currencyController: _currencyController,
-            unitController: _unitController,
-            currencyFocus: _currencyFocus,
-            unitFocus: _unitFocus,
-            imagePaths: _imagePaths,
-            onCategorySelected: (val) =>
-                setState(() => _selectedCategory = val),
-            onImageTap: _showImagePickerBottomSheet,
-            onRemoveImage: (index) =>
-                setState(() => _imagePaths.removeAt(index)),
-          ),
+          body:
+              BlocBuilder<
+                AddProductImageUploadBloc,
+                AddProductImageUploadState
+              >(
+                builder: (context, imageState) {
+                  return _AddProductBody(
+                    nameController: _nameController,
+                    descController: _descController,
+                    nameFocus: _nameFocus,
+                    descFocus: _descFocus,
+                    selectedCategory: _selectedCategory,
+                    currencyController: _currencyController,
+                    unitController: _unitController,
+                    currencyFocus: _currencyFocus,
+                    unitFocus: _unitFocus,
+                    imagePaths: imageState.images
+                        .map((image) => image.localPath)
+                        .toList(),
+                    isUploadingImages: imageState.isUploading,
+                    onCategorySelected: (val) =>
+                        setState(() => _selectedCategory = val),
+                    onImageTap: _showImagePickerBottomSheet,
+                    onRemoveImage: (index) => context
+                        .read<AddProductImageUploadBloc>()
+                        .add(RemoveAddProductImageEvent(index)),
+                  );
+                },
+              ),
           bottomNavigationBar: AddProductBottomBar(
             onCancel: _navigateBack,
             onNext: _onNextPressed,
@@ -295,6 +336,7 @@ class _AddProductBody extends StatelessWidget {
     required this.unitFocus,
     required this.selectedCategory,
     required this.imagePaths,
+    required this.isUploadingImages,
     required this.onCategorySelected,
     required this.onImageTap,
     required this.onRemoveImage,
@@ -310,6 +352,7 @@ class _AddProductBody extends StatelessWidget {
   final FocusNode unitFocus;
   final CategoryEntity? selectedCategory;
   final List<String> imagePaths;
+  final bool isUploadingImages;
   final void Function(CategoryEntity) onCategorySelected;
   final VoidCallback onImageTap;
   final void Function(int) onRemoveImage;
@@ -471,6 +514,7 @@ class _AddProductBody extends StatelessWidget {
                 AddProductImagePicker(
                   label: AppStrings.addProductImageLabel,
                   imagePaths: imagePaths,
+                  isUploading: isUploadingImages,
                   onTap: onImageTap,
                   onRemoveImage: onRemoveImage,
                 ),

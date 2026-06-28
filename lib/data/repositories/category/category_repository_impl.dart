@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/constants/app_errors.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/core/network/dio_exception_extension.dart';
 import 'package:ventry_flutter/data/datasources/remote/category/category_api.dart';
@@ -27,7 +28,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -43,7 +44,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return const Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure(AppErrors.unexpected));
     }
   }
 
@@ -61,7 +62,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return Right(response.toEntity());
     } catch (e) {
       if (e is DioException) {
-        return Left(ServerFailure(e.message ?? 'Unknown Error'));
+        return Left(ServerFailure(e.message ?? AppErrors.unknown));
       }
       return Left(ServerFailure(e.toString()));
     }
@@ -76,7 +77,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return Right(response.toEntity());
     } catch (e) {
       if (e is DioException) {
-        return Left(ServerFailure(e.message ?? 'Unknown Error'));
+        return Left(ServerFailure(e.message ?? AppErrors.unknown));
       }
       return Left(ServerFailure(e.toString()));
     }
@@ -89,7 +90,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return Right(response.uid);
     } catch (e) {
       if (e is DioException) {
-        return Left(ServerFailure(e.message ?? 'Unknown Error'));
+        return Left(ServerFailure(e.message ?? AppErrors.unknown));
       }
       return Left(ServerFailure(e.toString()));
     }

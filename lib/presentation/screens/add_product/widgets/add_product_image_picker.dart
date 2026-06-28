@@ -13,12 +13,14 @@ class AddProductImagePicker extends StatelessWidget {
     required this.label,
     required this.imagePaths,
     required this.onTap,
+    this.isUploading = false,
     this.onRemoveImage,
   });
 
   final String label;
   final List<String> imagePaths;
   final VoidCallback onTap;
+  final bool isUploading;
   final void Function(int index)? onRemoveImage;
 
   @override
@@ -38,6 +40,14 @@ class AddProductImagePicker extends StatelessWidget {
         _buildPrimaryImage(),
         SizedBox(height: AppSize.size12.h),
         _buildSecondaryRow(),
+        if (isUploading) ...[
+          SizedBox(height: AppSize.size12.h),
+          LinearProgressIndicator(
+            minHeight: 4.h,
+            backgroundColor: AppColors.divider,
+            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+          ),
+        ],
       ],
     );
   }
@@ -175,7 +185,7 @@ class AddProductImagePicker extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),

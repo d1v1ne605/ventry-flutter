@@ -92,6 +92,7 @@ class AddProductStep2Page extends StatelessWidget {
                       costPrice: e.costPrice,
                       stockQuantity: e.stock,
                       minStockQuantity: 0,
+                      imageKeys: params.imageKeys,
                       isSellable: attrState.globalIsSellable,
                       attributeValueUids: uids,
                     );
@@ -106,6 +107,7 @@ class AddProductStep2Page extends StatelessWidget {
                         costPrice: attrState.globalCostPrice,
                         stockQuantity: attrState.globalStock,
                         minStockQuantity: 0,
+                        imageKeys: params.imageKeys,
                         isSellable: attrState.globalIsSellable,
                         attributeValueUids: const [],
                       ),
@@ -117,7 +119,7 @@ class AddProductStep2Page extends StatelessWidget {
                     categoryUid: params.categoryUid,
                     description: params.description,
                     brand: params.brand,
-                    imageUrl: params.imageUrl,
+                    imageKeys: params.imageKeys,
                     currency: params.currency,
                     unitOfMeasure: params.unitOfMeasure,
                     globalAttributeValueUids: params.globalAttributeValueUids,
@@ -158,13 +160,16 @@ class _AddProductStep2Body extends StatelessWidget {
           listenWhen: (prev, curr) => prev.actionStatus != curr.actionStatus,
           listener: (context, state) {
             if (state.actionStatus == ProductCatalogActionStatus.success) {
-              AppSnackBar.showSuccess(context, 'Product created successfully!');
+              AppSnackBar.showSuccess(
+                context,
+                AppStrings.addProductCreatedSuccess,
+              );
               Navigator.of(context).popUntil((route) => route.isFirst);
             } else if (state.actionStatus ==
                 ProductCatalogActionStatus.failure) {
               AppSnackBar.showError(
                 context,
-                state.failure?.message ?? 'Failed to create product',
+                state.failure?.message ?? AppStrings.addProductCreateFailed,
               );
             }
           },

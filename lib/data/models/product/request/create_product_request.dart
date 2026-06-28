@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
 
@@ -12,7 +14,6 @@ class CreateProductRequest with _$CreateProductRequest {
     String? categoryUid,
     String? description,
     String? brand,
-    String? imageKey,
     String? currency,
     String? unitOfMeasure,
     @Default([]) List<String> globalAttributeValueUids,

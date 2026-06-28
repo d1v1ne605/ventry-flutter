@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/response/product_response.dart';
+import 'package:ventry_flutter/data/models/product/response/presigned_upload_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_list_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_response.dart';
 
@@ -30,4 +32,9 @@ abstract class ProductApi {
 
   @GET('/skus/generated-code/latest')
   Future<dynamic> getLatestGeneratedSkuCode();
+
+  @POST('/media/uploads/presigned-url')
+  Future<PresignedUploadResponse> createPresignedUploadUrl(
+    @Body() CreatePresignedUploadRequest request,
+  );
 }

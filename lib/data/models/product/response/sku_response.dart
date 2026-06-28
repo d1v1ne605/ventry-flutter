@@ -14,6 +14,7 @@ class SkuResponse with _$SkuResponse {
     double? costPrice,
     required int stockQuantity,
     required int minStockQuantity,
+    @Default([]) List<String> imageKeys,
     @Default([]) List<String> imageUrls,
     required String status,
     required bool isSellable,

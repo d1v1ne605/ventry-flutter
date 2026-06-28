@@ -149,6 +149,12 @@ class AppStrings {
   static const String uploadImage = 'Upload Image';
   static const String takeAPhoto = 'Take a photo';
   static const String chooseFromGallery = 'Choose from gallery';
+  static const String addProductUploadInProgress =
+      'Please wait until image upload completes';
+  static const String addProductNameRequired = 'Product Name is required';
+  static const String addProductCreatedSuccess =
+      'Product created successfully!';
+  static const String addProductCreateFailed = 'Failed to create product';
   static String selectedNewCategory(String name) =>
       'Selected new category: $name';
   static const String currencyHint = 'e.g. USD, EUR, VND';

@@ -10,6 +10,7 @@ class SpuResponse with _$SpuResponse {
     required String name,
     String? brand,
     String? description,
+    String? imageKey,
     String? imageUrl,
     String? categoryUid,
     String? currency,
