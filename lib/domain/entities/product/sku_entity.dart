@@ -13,6 +13,7 @@ class SkuEntity extends Equatable {
   final int stockQuantity;
   final int minStockQuantity;
   final List<String> imageUrls;
+  final List<SkuAttributeEntity> attributes;
   final String status;
   final bool isSellable;
   final int version;
@@ -34,6 +35,7 @@ class SkuEntity extends Equatable {
     required this.stockQuantity,
     required this.minStockQuantity,
     this.imageUrls = const [],
+    this.attributes = const [],
     required this.status,
     required this.isSellable,
     required this.version,
@@ -64,4 +66,19 @@ enum SkuStockStatus {
   outOfStock;
 
   bool get isOutOfStock => this == SkuStockStatus.outOfStock;
+}
+
+class SkuAttributeEntity extends Equatable {
+  final String uid;
+  final String attributeName;
+  final String value;
+
+  const SkuAttributeEntity({
+    required this.uid,
+    required this.attributeName,
+    required this.value,
+  });
+
+  @override
+  List<Object?> get props => [uid, attributeName, value];
 }

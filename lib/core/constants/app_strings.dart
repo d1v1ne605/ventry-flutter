@@ -196,6 +196,25 @@ class AppStrings {
   static const String priceZeroHint = '0.00';
   static const String unitPcsHint = 'pcs';
   static const String saveVariant = 'Save Variant';
+
+  // ── Sku Details ──────────────────────────────────────────────────────────────
+  static const String skuDetailsTitle = 'SKU Details';
+  static const String editVariantButton = 'Edit Variant';
+  static const String quickAdjustButton = 'Quick Adjust';
+  static const String currentStockLabel = 'Current Stock';
+  static const String inTransitLabel = 'In Transit';
+  static const String reservedLabel = 'Reserved';
+  static const String generalInfoTitle = 'General Info';
+  static const String categoryLabel = 'Category';
+  static const String unitOfMeasureLabel = 'Unit of Measure';
+  static const String currencyLabel = 'Currency';
+  static const String isSellableLabel = 'Is Sellable';
+  static const String costPriceLabel = 'Cost Price';
+  static const String sellingPriceLabel = 'Selling Price';
+  static const String marginLabel = 'Margin';
+  static const String attributesTitle = 'Attributes';
+  static const String descriptionTitle = 'Description';
+  static const String notAvailable = 'N/A';
 }
 
 /// Login screen string tokens.

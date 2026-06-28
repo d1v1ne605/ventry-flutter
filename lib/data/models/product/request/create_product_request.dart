@@ -12,7 +12,7 @@ class CreateProductRequest with _$CreateProductRequest {
     String? categoryUid,
     String? description,
     String? brand,
-    String? imageUrl,
+    String? imageKey,
     String? currency,
     String? unitOfMeasure,
     @Default([]) List<String> globalAttributeValueUids,

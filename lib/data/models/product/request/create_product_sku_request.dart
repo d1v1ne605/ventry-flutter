@@ -13,7 +13,7 @@ class CreateProductSkuRequest with _$CreateProductSkuRequest {
     double? costPrice,
     int? stockQuantity,
     int? minStockQuantity,
-    @Default([]) List<String> imageUrls,
+    @Default([]) List<String> imageKeys,
     @Default(true) bool isSellable,
     @Default([]) List<String> attributeValueUids,
   }) = _CreateProductSkuRequest;
