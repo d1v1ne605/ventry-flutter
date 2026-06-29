@@ -13,7 +13,8 @@ import 'package:ventry_flutter/data/models/product/request/create_product_sku_re
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
 import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 import 'package:ventry_flutter/domain/repositories/product/product_repository.dart';
@@ -30,10 +31,13 @@ class ProductRepositoryImpl implements ProductRepository {
   const ProductRepositoryImpl(this._productApi);
 
   @override
-  Future<Either<Failure, SkuListEntity>> getSkus(SkuQueryParams params) async {
+  Future<Either<Failure, SkuSpuGroupListEntity>> getSkus(
+    SkuQueryParams params,
+  ) async {
     try {
       final response = await _productApi.getSkus(
         search: params.search,
+        spuUid: params.spuUid,
         categoryUid: params.categoryUid,
         status: params.status,
         isSellable: params.isSellable,
@@ -41,20 +45,35 @@ class ProductRepositoryImpl implements ProductRepository {
         page: params.page,
         limit: params.limit,
       );
-      final meta = response.meta ?? response.pagination;
-      final total = response.total ?? meta?.total ?? 0;
-      final page = response.page ?? meta?.page ?? params.page;
-      final limit = response.limit ?? meta?.limit ?? params.limit;
+      final meta = response.pagination;
+      final total = meta.total;
+      final page = meta.page;
+      final limit = meta.limit;
       final totalPages = _resolveTotalPages(
-        responseTotalPages: response.totalPages,
-        metadataTotalPages: meta?.totalPages,
+        responseTotalPages: null,
+        metadataTotalPages: meta.totalPages,
         total: total,
         limit: limit,
       );
 
       return Right(
-        SkuListEntity(
-          items: response.items.map(_mapSkuToEntity).toList(),
+        SkuSpuGroupListEntity(
+          items: response.items
+              .map(
+                (group) => SkuSpuGroupEntity(
+                  spuUid: group.spu.uid,
+                  spuName: group.spu.name ?? '',
+                  spuStatus: group.spu.status ?? 'UNKNOWN',
+                  categoryName: group.spu.category?.name,
+                  categoryImageUrl: group.spu.category?.imageUrl,
+                  skus: group.skus
+                      .map(
+                        (sku) => _mapSkuToEntity(sku, fallbackSpu: group.spu),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList(),
           total: total,
           page: page,
           limit: limit,

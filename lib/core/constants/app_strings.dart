@@ -127,6 +127,8 @@ class AppStrings {
   static const String outOfStock = 'Out';
   static const String skuPrefix = 'SKU: ';
   static const String addProduct = 'Add Product';
+  static String variantCount(int count) =>
+      count == 1 ? '$count Variant' : '$count Variants';
 
   // ── Add Product ──────────────────────────────────────────────────────────────
   static const String addProductTitle = 'Add Product';
@@ -205,6 +207,10 @@ class AppStrings {
 
   // ── Sku Details ──────────────────────────────────────────────────────────────
   static const String skuDetailsTitle = 'SKU Details';
+  static const String spuVariantsTitle = 'Product Variants';
+  static const String variantsListTitle = 'Related Variants';
+  static const String noVariantsFound = 'No variants found for this product.';
+  static const String stockShortLabel = 'Stock';
   static const String editVariantButton = 'Edit Variant';
   static const String quickAdjustButton = 'Quick Adjust';
   static const String currentStockLabel = 'Current Stock';

@@ -5,24 +5,24 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 
-/// Single SKU row card in the product catalog list.
+/// SPU group card in the product catalog list.
 ///
-/// Visual behaviour per [SkuStockStatus]:
+/// Visual behaviour per [SkuSpuGroupStockStatus]:
 /// - **inStock**    → no left border, green badge
 /// - **lowStock**   → amber left border accent, orange badge
 /// - **outOfStock** → red left border accent, muted text, pink badge
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key, required this.sku, this.onTap});
+  const ProductCard({super.key, required this.group, this.onTap});
 
-  final SkuEntity sku;
+  final SkuSpuGroupEntity group;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final bool isOut = sku.stockStatus.isOutOfStock;
+    final bool isOut = group.stockStatus.isOutOfStock;
     final Color? leftBorderColor = _resolveLeftBorderColor();
 
     return GestureDetector(
@@ -54,9 +54,9 @@ class ProductCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _ProductImage(imageUrl: sku.primaryImageUrl, isOut: isOut),
+              _ProductImage(imageUrl: group.primaryImageUrl, isOut: isOut),
               SizedBox(width: AppSize.size12.w),
-              Expanded(child: _ProductInfo(sku: sku)),
+              Expanded(child: _ProductInfo(group: group)),
             ],
           ),
         ),
@@ -64,10 +64,10 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Color? _resolveLeftBorderColor() => switch (sku.stockStatus) {
-    SkuStockStatus.inStock => null,
-    SkuStockStatus.lowStock => AppColors.lowStockBorder,
-    SkuStockStatus.outOfStock => AppColors.outOfStockBorder,
+  Color? _resolveLeftBorderColor() => switch (group.stockStatus) {
+    SkuSpuGroupStockStatus.inStock => null,
+    SkuSpuGroupStockStatus.lowStock => AppColors.lowStockBorder,
+    SkuSpuGroupStockStatus.outOfStock => AppColors.outOfStockBorder,
   };
 }
 
@@ -99,15 +99,16 @@ class _ProductImage extends StatelessWidget {
   }
 }
 
-
 class _ProductInfo extends StatelessWidget {
-  const _ProductInfo({required this.sku});
+  const _ProductInfo({required this.group});
 
-  final SkuEntity sku;
+  final SkuSpuGroupEntity group;
 
   @override
   Widget build(BuildContext context) {
-    final bool isOut = sku.stockStatus.isOutOfStock;
+    final representativeSku = group.summarySku;
+    final bool isOut = group.stockStatus.isOutOfStock;
+    final skuCode = representativeSku?.skuCode ?? representativeSku?.uid;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,47 +119,123 @@ class _ProductInfo extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                sku.spuName,
+                group.spuName,
                 style: isOut
                     ? AppTextStyles.productNameMuted
                     : AppTextStyles.productName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                softWrap: true,
               ),
             ),
             SizedBox(width: AppSize.size8.w),
-            _StockBadge(status: sku.stockStatus, count: sku.stockQuantity),
+            _StockBadge(group: group),
           ],
         ),
-        if (sku.skuCode != null) ...[
+        if (group.attributeSummaries.isNotEmpty) ...[
           SizedBox(height: AppSize.size4.h),
-          Text(
-            sku.skuCode!,
-            style: AppTextStyles.productMeta,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          _AttributeChips(attributes: group.attributeSummaries),
         ],
         SizedBox(height: AppSize.size6.h),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (sku.skuCode != null)
-              _SkuChip(skuCode: sku.skuCode!)
-            else
-              _SkuChip(skuCode: sku.uid.substring(0, 8)),
-            const Spacer(),
-            if (sku.sellingPrice != null)
-              Text(
-                AppFormatters.formatPrice(sku.sellingPrice!),
-                style: isOut
-                    ? AppTextStyles.productPrice.copyWith(
-                        color: AppColors.textMuted,
-                      )
-                    : AppTextStyles.productPrice,
-              ),
-          ],
+        _SkuPriceRow(
+          skuCode: skuCode,
+          price: group.minSellingPrice,
+          isOut: isOut,
         ),
+        if (group.variantCount > 1) ...[
+          SizedBox(height: AppSize.size10.h),
+          _VariantCount(count: group.variantCount),
+        ],
+      ],
+    );
+  }
+}
+
+class _AttributeChips extends StatelessWidget {
+  const _AttributeChips({required this.attributes});
+
+  final List<SkuSpuGroupAttributeSummary> attributes;
+
+  @override
+  Widget build(BuildContext context) {
+    if (attributes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Wrap(
+          spacing: AppSize.size4.w,
+          runSpacing: AppSize.size4.h,
+          children: attributes.map((attribute) {
+            return _AttributeChip(
+              label: attribute.value,
+              maxWidth: constraints.maxWidth,
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class _AttributeChip extends StatelessWidget {
+  const _AttributeChip({required this.label, required this.maxWidth});
+
+  final String label;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+        decoration: BoxDecoration(
+          color: AppColors.skuChipFill,
+          borderRadius: BorderRadius.circular(5.r),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.productMeta,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+        ),
+      ),
+    );
+  }
+}
+
+class _SkuPriceRow extends StatelessWidget {
+  const _SkuPriceRow({
+    required this.skuCode,
+    required this.price,
+    required this.isOut,
+  });
+
+  final String? skuCode;
+  final double? price;
+  final bool isOut;
+
+  @override
+  Widget build(BuildContext context) {
+    if (skuCode == null && price == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (skuCode != null)
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: _SkuChip(skuCode: skuCode!),
+            ),
+          )
+        else
+          const Spacer(),
+        if (skuCode != null && price != null) SizedBox(width: AppSize.size8.w),
+        if (price != null) _PriceLabel(price: price!, isOut: isOut),
       ],
     );
   }
@@ -180,20 +257,42 @@ class _SkuChip extends StatelessWidget {
       child: Text(
         '${AppStrings.skuPrefix}$skuCode',
         style: AppTextStyles.skuChip,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
       ),
     );
   }
 }
 
-class _StockBadge extends StatelessWidget {
-  const _StockBadge({required this.status, required this.count});
+class _PriceLabel extends StatelessWidget {
+  const _PriceLabel({required this.price, required this.isOut});
 
-  final SkuStockStatus status;
-  final int count;
+  final double price;
+  final bool isOut;
 
   @override
   Widget build(BuildContext context) {
-    final cfg = _BadgeConfig.fromStatus(status, count);
+    return Text(
+      AppFormatters.formatPrice(price),
+      style: isOut
+          ? AppTextStyles.productPrice.copyWith(color: AppColors.textMuted)
+          : AppTextStyles.productPrice,
+      maxLines: 1,
+      overflow: TextOverflow.visible,
+      softWrap: false,
+    );
+  }
+}
+
+class _StockBadge extends StatelessWidget {
+  const _StockBadge({required this.group});
+
+  final SkuSpuGroupEntity group;
+
+  @override
+  Widget build(BuildContext context) {
+    final cfg = _BadgeConfig.fromGroup(group);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: AppSize.size3.h),
@@ -223,6 +322,31 @@ class _StockBadge extends StatelessWidget {
   }
 }
 
+class _VariantCount extends StatelessWidget {
+  const _VariantCount({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          AppStrings.variantCount(count),
+          style: AppTextStyles.productMeta.copyWith(color: AppColors.subtitle),
+        ),
+        SizedBox(width: AppSize.size4.w),
+        Icon(
+          Icons.chevron_right_rounded,
+          size: AppSize.size20.r,
+          color: AppColors.subtitle,
+        ),
+      ],
+    );
+  }
+}
+
 class _BadgeConfig {
   const _BadgeConfig({
     required this.fill,
@@ -236,21 +360,21 @@ class _BadgeConfig {
   final Color textColor;
   final String label;
 
-  factory _BadgeConfig.fromStatus(SkuStockStatus status, int count) {
-    return switch (status) {
-      SkuStockStatus.inStock => _BadgeConfig(
+  factory _BadgeConfig.fromGroup(SkuSpuGroupEntity group) {
+    return switch (group.stockStatus) {
+      SkuSpuGroupStockStatus.inStock => _BadgeConfig(
         fill: AppColors.inStockBadgeFill,
         dotColor: AppColors.inStockDot,
         textColor: AppColors.inStockBadgeText,
-        label: '${AppStrings.inStock}: $count',
+        label: '${AppStrings.inStock}: ${group.totalStock}',
       ),
-      SkuStockStatus.lowStock => _BadgeConfig(
+      SkuSpuGroupStockStatus.lowStock => _BadgeConfig(
         fill: AppColors.lowStockBadgeFill,
         dotColor: AppColors.lowStockDot,
         textColor: AppColors.lowStockBadgeText,
-        label: '${AppStrings.lowStock}: $count',
+        label: '${AppStrings.lowStock}: ${group.lowStockCount}',
       ),
-      SkuStockStatus.outOfStock => _BadgeConfig(
+      SkuSpuGroupStockStatus.outOfStock => _BadgeConfig(
         fill: AppColors.outOfStockBadgeFill,
         dotColor: AppColors.outOfStockDot,
         textColor: AppColors.outOfStockBadgeText,
