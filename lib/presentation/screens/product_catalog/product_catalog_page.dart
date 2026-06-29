@@ -40,12 +40,46 @@ class _ProductCatalogView extends StatefulWidget {
 }
 
 class _ProductCatalogViewState extends State<_ProductCatalogView> {
+  static const double _loadMoreScrollThreshold = 240;
+
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    _requestLoadMoreIfNeeded();
+  }
+
+  void _requestLoadMoreIfNeeded() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
+    final state = context.read<ProductCatalogBloc>().state;
+    if (state.isLoading || state.isLoadingMore || !state.hasNextPage) {
+      return;
+    }
+
+    final extentAfter = _scrollController.position.extentAfter;
+    final shouldLoadMore = extentAfter <= _loadMoreScrollThreshold.h;
+
+    if (shouldLoadMore) {
+      context.read<ProductCatalogBloc>().add(const LoadMoreSkus());
+    }
   }
 
   Future<void> _handleBarcodeScan() async {
@@ -69,6 +103,7 @@ class _ProductCatalogViewState extends State<_ProductCatalogView> {
       body: _ProductCatalogBody(
         searchController: _searchController,
         onQrTap: _handleBarcodeScan,
+        scrollController: _scrollController,
       ),
       floatingActionButton: const _AddProductFab(),
     );
@@ -79,14 +114,17 @@ class _ProductCatalogBody extends StatelessWidget {
   const _ProductCatalogBody({
     required this.searchController,
     required this.onQrTap,
+    required this.scrollController,
   });
 
   final TextEditingController searchController;
   final VoidCallback onQrTap;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: scrollController,
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(
@@ -94,7 +132,9 @@ class _ProductCatalogBody extends StatelessWidget {
         ),
         BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
           buildWhen: (prev, curr) =>
-              prev.isLoading != curr.isLoading || prev.skus != curr.skus,
+              prev.isLoading != curr.isLoading ||
+              prev.isLoadingMore != curr.isLoadingMore ||
+              prev.skus != curr.skus,
           builder: (context, state) {
             if (state.isLoading) {
               return const SliverFillRemaining(
@@ -115,21 +155,35 @@ class _ProductCatalogBody extends StatelessWidget {
                 AppSize.size16.w,
                 96.h,
               ),
-              sliver: SliverList.separated(
-                itemCount: state.skus.length,
-                separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                itemBuilder: (ctx, i) {
-                  final sku = state.skus[i];
-                  return ProductCard(
-                    sku: sku,
-                    onTap: () {
-                      ctx.pushNamed(
-                        RouterName.skuDetail,
-                        pathParameters: {'skuUid': sku.uid},
-                      );
-                    },
-                  );
-                },
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (ctx, i) {
+                    if (i >= state.skus.length) {
+                      return const _LoadMoreIndicator();
+                    }
+
+                    final sku = state.skus[i];
+                    final isLastDataItem = i == state.skus.length - 1;
+
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: isLastDataItem && !state.isLoadingMore
+                            ? 0
+                            : 12.h,
+                      ),
+                      child: ProductCard(
+                        sku: sku,
+                        onTap: () {
+                          ctx.pushNamed(
+                            RouterName.skuDetail,
+                            pathParameters: {'skuUid': sku.uid},
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  childCount: state.skus.length + (state.isLoadingMore ? 1 : 0),
+                ),
               ),
             );
           },
@@ -225,6 +279,27 @@ class _EmptyState extends StatelessWidget {
           SizedBox(height: 16.h),
           Text(AppStrings.productCatalogEmpty, style: AppTextStyles.searchHint),
         ],
+      ),
+    );
+  }
+}
+
+class _LoadMoreIndicator extends StatelessWidget {
+  const _LoadMoreIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: AppSize.size16.h),
+      child: Center(
+        child: SizedBox(
+          width: AppSize.size20.r,
+          height: AppSize.size20.r,
+          child: const CircularProgressIndicator(
+            strokeWidth: 2.4,
+            color: AppColors.primary,
+          ),
+        ),
       ),
     );
   }

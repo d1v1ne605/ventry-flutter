@@ -41,14 +41,24 @@ class ProductRepositoryImpl implements ProductRepository {
         page: params.page,
         limit: params.limit,
       );
+      final meta = response.meta ?? response.pagination;
+      final total = response.total ?? meta?.total ?? 0;
+      final page = response.page ?? meta?.page ?? params.page;
+      final limit = response.limit ?? meta?.limit ?? params.limit;
+      final totalPages = _resolveTotalPages(
+        responseTotalPages: response.totalPages,
+        metadataTotalPages: meta?.totalPages,
+        total: total,
+        limit: limit,
+      );
+
       return Right(
         SkuListEntity(
           items: response.items.map(_mapSkuToEntity).toList(),
-          total: response.meta?.total ?? response.pagination?.total ?? 0,
-          page: response.meta?.page ?? response.pagination?.page ?? 1,
-          limit: response.meta?.limit ?? response.pagination?.limit ?? 20,
-          totalPages:
-              response.meta?.totalPages ?? response.pagination?.totalPages ?? 0,
+          total: total,
+          page: page,
+          limit: limit,
+          totalPages: totalPages,
         ),
       );
     } on DioException catch (e) {
@@ -173,6 +183,24 @@ class ProductRepositoryImpl implements ProductRepository {
     } catch (e) {
       return const Left(ServerFailure(AppErrors.unexpected));
     }
+  }
+
+  int _resolveTotalPages({
+    required int? responseTotalPages,
+    required int? metadataTotalPages,
+    required int total,
+    required int limit,
+  }) {
+    final explicitTotalPages = responseTotalPages ?? metadataTotalPages;
+    if (explicitTotalPages != null && explicitTotalPages > 0) {
+      return explicitTotalPages;
+    }
+
+    if (total <= 0 || limit <= 0) {
+      return 0;
+    }
+
+    return (total / limit).ceil();
   }
 
   SkuEntity _mapSkuToEntity(dynamic response, {dynamic fallbackSpu}) {

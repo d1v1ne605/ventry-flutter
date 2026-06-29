@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
+import 'package:ventry_flutter/core/widgets/loader/app_loader_backdrop_filter.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/price_and_inventory_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/sku_preview_section.dart';
@@ -32,108 +33,123 @@ class AddProductStep2Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ProductCatalogBloc>(),
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: Scaffold(
-          backgroundColor: AppColors.screenBackground,
-          appBar: AppTopBar(
-            title: AppStrings.addProductTitle,
-            leadingWidget: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                color: Colors.transparent,
-                padding: EdgeInsets.all(AppSize.size8.r),
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 20.r,
-                  color: AppColors.heading,
-                ),
-              ),
-            ),
-            trailingWidget: GestureDetector(
-              onTap: () {
-                context.goNamed(RouterName.productCatalog);
-              },
-              child: Container(
-                color: Colors.transparent,
-                padding: EdgeInsets.all(AppSize.size8.r),
-                child: Icon(
-                  Icons.close_rounded,
-                  size: 24.r,
-                  color: AppColors.heading,
-                ),
-              ),
-            ),
-          ),
-          body: const _AddProductStep2Body(),
-          bottomNavigationBar: Builder(
-            builder: (context) {
-              return AddProductBottomBar(
-                leftButtonText: AppStrings.quickAddBack,
-                onCancel: () => Navigator.of(context).pop(),
-                rightButtonText: AppStrings.saveAndComplete,
-                showRightIcon: false,
-                onNext: () {
-                  final attrState = context.read<AddProductBloc>().state;
-                  final skus = attrState.generatedSkus.map((e) {
-                    final uids = e.options
-                        .map((opt) => opt.uid)
-                        .whereType<String>()
-                        .toList();
-
-                    return CreateSkuParams(
-                      skuCode: e.skuCode.trim().isEmpty
-                          ? null
-                          : e.skuCode.trim(),
-                      barCode: e.barcode.trim().isEmpty
-                          ? null
-                          : e.barcode.trim(),
-                      sellingPrice: e.price,
-                      costPrice: e.costPrice,
-                      stockQuantity: e.stock,
-                      minStockQuantity: 0,
-                      imageKeys: params.imageKeys,
-                      isSellable: attrState.globalIsSellable,
-                      attributeValueUids: uids,
-                    );
-                  }).toList();
-
-                  if (skus.isEmpty) {
-                    skus.add(
-                      CreateSkuParams(
-                        skuCode: null, // Auto-generated in Bloc
-                        barCode: null,
-                        sellingPrice: attrState.globalPrice,
-                        costPrice: attrState.globalCostPrice,
-                        stockQuantity: attrState.globalStock,
-                        minStockQuantity: 0,
-                        imageKeys: params.imageKeys,
-                        isSellable: attrState.globalIsSellable,
-                        attributeValueUids: const [],
+      child: BlocSelector<ProductCatalogBloc, ProductCatalogState, bool>(
+        selector: (state) => state.isSubmitting,
+        builder: (context, isSubmitting) {
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.dark,
+            child: AppLoaderBackdropFilter(
+              isLoading: isSubmitting,
+              child: Scaffold(
+                backgroundColor: AppColors.screenBackground,
+                appBar: AppTopBar(
+                  title: AppStrings.addProductTitle,
+                  leadingWidget: GestureDetector(
+                    onTap: isSubmitting
+                        ? null
+                        : () => Navigator.of(context).pop(),
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: EdgeInsets.all(AppSize.size8.r),
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20.r,
+                        color: AppColors.heading,
                       ),
-                    );
-                  }
+                    ),
+                  ),
+                  trailingWidget: GestureDetector(
+                    onTap: isSubmitting
+                        ? null
+                        : () {
+                            context.goNamed(RouterName.productCatalog);
+                          },
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: EdgeInsets.all(AppSize.size8.r),
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 24.r,
+                        color: AppColors.heading,
+                      ),
+                    ),
+                  ),
+                ),
+                body: const _AddProductStep2Body(),
+                bottomNavigationBar: AddProductBottomBar(
+                  leftButtonText: AppStrings.quickAddBack,
+                  onCancel: isSubmitting
+                      ? () {}
+                      : () => Navigator.of(context).pop(),
+                  rightButtonText: AppStrings.saveAndComplete,
+                  showRightIcon: false,
+                  onNext: isSubmitting
+                      ? () {}
+                      : () {
+                          final attrState = context
+                              .read<AddProductBloc>()
+                              .state;
+                          final skus = attrState.generatedSkus.map((e) {
+                            final uids = e.options
+                                .map((opt) => opt.uid)
+                                .whereType<String>()
+                                .toList();
 
-                  final finalParams = CreateProductParams(
-                    name: params.name,
-                    categoryUid: params.categoryUid,
-                    description: params.description,
-                    brand: params.brand,
-                    imageKeys: params.imageKeys,
-                    currency: params.currency,
-                    unitOfMeasure: params.unitOfMeasure,
-                    globalAttributeValueUids: params.globalAttributeValueUids,
-                    skus: skus,
-                  );
+                            return CreateSkuParams(
+                              skuCode: e.skuCode.trim().isEmpty
+                                  ? null
+                                  : e.skuCode.trim(),
+                              barCode: e.barcode.trim().isEmpty
+                                  ? null
+                                  : e.barcode.trim(),
+                              sellingPrice: e.price,
+                              costPrice: e.costPrice,
+                              stockQuantity: e.stock,
+                              minStockQuantity: 0,
+                              imageKeys: params.imageKeys,
+                              isSellable: attrState.globalIsSellable,
+                              attributeValueUids: uids,
+                            );
+                          }).toList();
 
-                  context.read<ProductCatalogBloc>().add(
-                    CreateProduct(finalParams),
-                  );
-                },
-              );
-            },
-          ),
-        ),
+                          if (skus.isEmpty) {
+                            skus.add(
+                              CreateSkuParams(
+                                skuCode: null,
+                                barCode: null,
+                                sellingPrice: attrState.globalPrice,
+                                costPrice: attrState.globalCostPrice,
+                                stockQuantity: attrState.globalStock,
+                                minStockQuantity: 0,
+                                imageKeys: params.imageKeys,
+                                isSellable: attrState.globalIsSellable,
+                                attributeValueUids: const [],
+                              ),
+                            );
+                          }
+
+                          final finalParams = CreateProductParams(
+                            name: params.name,
+                            categoryUid: params.categoryUid,
+                            description: params.description,
+                            brand: params.brand,
+                            imageKeys: params.imageKeys,
+                            currency: params.currency,
+                            unitOfMeasure: params.unitOfMeasure,
+                            globalAttributeValueUids:
+                                params.globalAttributeValueUids,
+                            skus: skus,
+                          );
+
+                          context.read<ProductCatalogBloc>().add(
+                            CreateProduct(finalParams),
+                          );
+                        },
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -13,8 +13,28 @@ class SkuListResponse with _$SkuListResponse {
     @Default([]) List<SkuResponse> items,
     @JsonKey(name: 'meta') PaginationMetadata? meta,
     @JsonKey(name: 'pagination') PaginationMetadata? pagination,
+    @JsonKey(readValue: _readTotalValue) int? total,
+    @JsonKey(readValue: _readPageValue) int? page,
+    @JsonKey(readValue: _readLimitValue) int? limit,
+    @JsonKey(readValue: _readTotalPagesValue) int? totalPages,
   }) = _SkuListResponse;
 
   factory SkuListResponse.fromJson(Map<String, dynamic> json) =>
       _$SkuListResponseFromJson(json);
+}
+
+Object? _readTotalValue(Map<dynamic, dynamic> json, String key) {
+  return json['totalItems'] ?? json['total'];
+}
+
+Object? _readPageValue(Map<dynamic, dynamic> json, String key) {
+  return json['currentPage'] ?? json['page'];
+}
+
+Object? _readLimitValue(Map<dynamic, dynamic> json, String key) {
+  return json['itemsPerPage'] ?? json['limit'];
+}
+
+Object? _readTotalPagesValue(Map<dynamic, dynamic> json, String key) {
+  return json['totalPages'];
 }

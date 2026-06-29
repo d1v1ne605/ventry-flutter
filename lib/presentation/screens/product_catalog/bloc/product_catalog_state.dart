@@ -6,6 +6,7 @@ enum ProductCatalogActionStatus { initial, success, failure }
 
 class ProductCatalogState extends Equatable {
   final bool isLoading;
+  final bool isLoadingMore;
   final bool isSubmitting;
   final List<SkuEntity> skus;
   final String searchKeyword;
@@ -13,12 +14,15 @@ class ProductCatalogState extends Equatable {
   final bool? isStockAlert;
   final int total;
   final int page;
+  final int limit;
   final int totalPages;
+  final bool hasReachedEnd;
   final Failure? failure;
   final ProductCatalogActionStatus actionStatus;
 
   const ProductCatalogState({
     this.isLoading = false,
+    this.isLoadingMore = false,
     this.isSubmitting = false,
     this.skus = const [],
     this.searchKeyword = '',
@@ -26,15 +30,18 @@ class ProductCatalogState extends Equatable {
     this.isStockAlert,
     this.total = 0,
     this.page = 1,
-    this.totalPages = 1,
+    this.limit = 20,
+    this.totalPages = 0,
+    this.hasReachedEnd = false,
     this.failure,
     this.actionStatus = ProductCatalogActionStatus.initial,
   });
 
-  bool get hasNextPage => page < totalPages;
+  bool get hasNextPage => !hasReachedEnd;
 
   ProductCatalogState copyWith({
     bool? isLoading,
+    bool? isLoadingMore,
     bool? isSubmitting,
     List<SkuEntity>? skus,
     String? searchKeyword,
@@ -42,7 +49,9 @@ class ProductCatalogState extends Equatable {
     bool? isStockAlert,
     int? total,
     int? page,
+    int? limit,
     int? totalPages,
+    bool? hasReachedEnd,
     Failure? failure,
     ProductCatalogActionStatus? actionStatus,
     bool clearFilterStatus = false,
@@ -50,6 +59,7 @@ class ProductCatalogState extends Equatable {
   }) {
     return ProductCatalogState(
       isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       skus: skus ?? this.skus,
       searchKeyword: searchKeyword ?? this.searchKeyword,
@@ -61,7 +71,9 @@ class ProductCatalogState extends Equatable {
           : (isStockAlert ?? this.isStockAlert),
       total: total ?? this.total,
       page: page ?? this.page,
+      limit: limit ?? this.limit,
       totalPages: totalPages ?? this.totalPages,
+      hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
       failure: failure ?? this.failure,
       actionStatus: actionStatus ?? this.actionStatus,
     );
@@ -70,6 +82,7 @@ class ProductCatalogState extends Equatable {
   @override
   List<Object?> get props => [
     isLoading,
+    isLoadingMore,
     isSubmitting,
     skus,
     searchKeyword,
@@ -77,7 +90,9 @@ class ProductCatalogState extends Equatable {
     isStockAlert,
     total,
     page,
+    limit,
     totalPages,
+    hasReachedEnd,
     failure,
     actionStatus,
   ];

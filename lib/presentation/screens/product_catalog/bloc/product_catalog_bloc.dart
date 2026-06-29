@@ -19,6 +19,8 @@ EventTransformer<T> _debounceRestartable<T>(Duration duration) {
 @injectable
 class ProductCatalogBloc
     extends BaseViewModel<ProductCatalogEvent, ProductCatalogState> {
+  static const int _firstPage = 1;
+
   final GetSkusUseCase _getSkusUseCase;
   final CreateProductUseCase _createProductUseCase;
   final GetLatestGeneratedSkuCodeUseCase _getLatestGeneratedSkuCodeUseCase;
@@ -31,6 +33,7 @@ class ProductCatalogBloc
   ) : super(const ProductCatalogState(), logger) {
     // droppable: ignore new events while one is already being processed
     on<LoadSkus>(_onLoadSkus, transformer: droppable());
+    on<LoadMoreSkus>(_onLoadMoreSkus, transformer: droppable());
     // restartable + debounce: cancel previous search, start new one after delay
     on<SearchSkus>(
       _onSearchSkus,
@@ -45,31 +48,50 @@ class ProductCatalogBloc
     LoadSkus event,
     Emitter<ProductCatalogState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true));
-
-    final result = await _getSkusUseCase(
-      SkuQueryParams(
-        search: state.searchKeyword.isEmpty ? null : state.searchKeyword,
-        status: state.filterStatus,
-        isStockAlert: state.isStockAlert,
-      ),
+    await _loadFirstPage(
+      emit,
+      searchKeyword: state.searchKeyword,
+      filterStatus: state.filterStatus,
+      isStockAlert: state.isStockAlert,
     );
+  }
+
+  Future<void> _onLoadMoreSkus(
+    LoadMoreSkus event,
+    Emitter<ProductCatalogState> emit,
+  ) async {
+    if (state.isLoading || state.isLoadingMore || !state.hasNextPage) {
+      return;
+    }
+
+    emit(state.copyWith(isLoadingMore: true));
+
+    final nextPage = state.page + 1;
+    final result = await _getSkusUseCase(_buildQueryParams(page: nextPage));
 
     result.fold(
       (failure) => emit(
         state.copyWith(
-          isLoading: false,
+          isLoadingMore: false,
           failure: failure,
           actionStatus: ProductCatalogActionStatus.failure,
         ),
       ),
       (skuList) => emit(
         state.copyWith(
-          isLoading: false,
-          skus: skuList.items,
+          isLoadingMore: false,
+          skus: [...state.skus, ...skuList.items],
           total: skuList.total,
           page: skuList.page,
+          limit: skuList.limit,
           totalPages: skuList.totalPages,
+          hasReachedEnd: _hasReachedEnd(
+            loadedItemCount: state.skus.length + skuList.items.length,
+            total: skuList.total,
+            page: skuList.page,
+            limit: skuList.limit,
+            receivedItemCount: skuList.items.length,
+          ),
         ),
       ),
     );
@@ -79,33 +101,11 @@ class ProductCatalogBloc
     SearchSkus event,
     Emitter<ProductCatalogState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, searchKeyword: event.query));
-
-    final result = await _getSkusUseCase(
-      SkuQueryParams(
-        search: event.query.isEmpty ? null : event.query,
-        status: state.filterStatus,
-        isStockAlert: state.isStockAlert,
-      ),
-    );
-
-    result.fold(
-      (failure) => emit(
-        state.copyWith(
-          isLoading: false,
-          failure: failure,
-          actionStatus: ProductCatalogActionStatus.failure,
-        ),
-      ),
-      (skuList) => emit(
-        state.copyWith(
-          isLoading: false,
-          skus: skuList.items,
-          total: skuList.total,
-          page: skuList.page,
-          totalPages: skuList.totalPages,
-        ),
-      ),
+    await _loadFirstPage(
+      emit,
+      searchKeyword: event.query,
+      filterStatus: state.filterStatus,
+      isStockAlert: state.isStockAlert,
     );
   }
 
@@ -113,21 +113,52 @@ class ProductCatalogBloc
     FilterSkus event,
     Emitter<ProductCatalogState> emit,
   ) async {
+    final filterStatus = event.status;
+    final isStockAlert = event.isStockAlert;
+
+    await _loadFirstPage(
+      emit,
+      searchKeyword: state.searchKeyword,
+      filterStatus: filterStatus,
+      isStockAlert: isStockAlert,
+      clearFilterStatus: filterStatus == null,
+      clearStockAlert: isStockAlert == null,
+    );
+  }
+
+  Future<void> _loadFirstPage(
+    Emitter<ProductCatalogState> emit, {
+    required String searchKeyword,
+    required String? filterStatus,
+    required bool? isStockAlert,
+    bool clearFilterStatus = false,
+    bool clearStockAlert = false,
+  }) async {
+    final currentLimit = state.limit;
+
     emit(
       state.copyWith(
         isLoading: true,
-        filterStatus: event.status,
-        isStockAlert: event.isStockAlert,
-        clearFilterStatus: event.status == null,
-        clearStockAlert: event.isStockAlert == null,
+        isLoadingMore: false,
+        searchKeyword: searchKeyword,
+        filterStatus: filterStatus,
+        isStockAlert: isStockAlert,
+        page: _firstPage,
+        totalPages: 0,
+        limit: currentLimit,
+        hasReachedEnd: false,
+        clearFilterStatus: clearFilterStatus,
+        clearStockAlert: clearStockAlert,
       ),
     );
 
     final result = await _getSkusUseCase(
       SkuQueryParams(
-        search: state.searchKeyword.isEmpty ? null : state.searchKeyword,
-        status: event.status,
-        isStockAlert: event.isStockAlert,
+        search: searchKeyword.isEmpty ? null : searchKeyword,
+        status: filterStatus,
+        isStockAlert: isStockAlert,
+        page: _firstPage,
+        limit: currentLimit,
       ),
     );
 
@@ -135,6 +166,7 @@ class ProductCatalogBloc
       (failure) => emit(
         state.copyWith(
           isLoading: false,
+          isLoadingMore: false,
           failure: failure,
           actionStatus: ProductCatalogActionStatus.failure,
         ),
@@ -142,10 +174,19 @@ class ProductCatalogBloc
       (skuList) => emit(
         state.copyWith(
           isLoading: false,
+          isLoadingMore: false,
           skus: skuList.items,
           total: skuList.total,
           page: skuList.page,
+          limit: skuList.limit,
           totalPages: skuList.totalPages,
+          hasReachedEnd: _hasReachedEnd(
+            loadedItemCount: skuList.items.length,
+            total: skuList.total,
+            page: skuList.page,
+            limit: skuList.limit,
+            receivedItemCount: skuList.items.length,
+          ),
         ),
       ),
     );
@@ -228,5 +269,33 @@ class ProductCatalogBloc
         add(const LoadSkus());
       },
     );
+  }
+
+  SkuQueryParams _buildQueryParams({required int page}) {
+    return SkuQueryParams(
+      search: state.searchKeyword.isEmpty ? null : state.searchKeyword,
+      status: state.filterStatus,
+      isStockAlert: state.isStockAlert,
+      page: page,
+      limit: state.limit,
+    );
+  }
+
+  bool _hasReachedEnd({
+    required int loadedItemCount,
+    required int total,
+    required int page,
+    required int limit,
+    required int receivedItemCount,
+  }) {
+    if (receivedItemCount == 0) {
+      return true;
+    }
+
+    if (total > 0) {
+      return loadedItemCount >= total;
+    }
+
+    return receivedItemCount < limit;
   }
 }

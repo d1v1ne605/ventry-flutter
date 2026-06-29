@@ -12,6 +12,10 @@ class LoadSkus extends ProductCatalogEvent {
   const LoadSkus();
 }
 
+class LoadMoreSkus extends ProductCatalogEvent {
+  const LoadMoreSkus();
+}
+
 class SearchSkus extends ProductCatalogEvent {
   final String query;
 
