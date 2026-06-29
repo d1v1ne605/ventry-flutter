@@ -3,12 +3,12 @@ import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
 import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 
 abstract class ProductRepository {
-  Future<Either<Failure, SkuListEntity>> getSkus(SkuQueryParams params);
+  Future<Either<Failure, SkuSpuGroupListEntity>> getSkus(SkuQueryParams params);
 
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid);
 

@@ -80,13 +80,13 @@ class ProductCatalogBloc
       (skuList) => emit(
         state.copyWith(
           isLoadingMore: false,
-          skus: [...state.skus, ...skuList.items],
+          spuGroups: [...state.spuGroups, ...skuList.items],
           total: skuList.total,
           page: skuList.page,
           limit: skuList.limit,
           totalPages: skuList.totalPages,
           hasReachedEnd: _hasReachedEnd(
-            loadedItemCount: state.skus.length + skuList.items.length,
+            loadedItemCount: state.spuGroups.length + skuList.items.length,
             total: skuList.total,
             page: skuList.page,
             limit: skuList.limit,
@@ -175,7 +175,7 @@ class ProductCatalogBloc
         state.copyWith(
           isLoading: false,
           isLoadingMore: false,
-          skus: skuList.items,
+          spuGroups: skuList.items,
           total: skuList.total,
           page: skuList.page,
           limit: skuList.limit,

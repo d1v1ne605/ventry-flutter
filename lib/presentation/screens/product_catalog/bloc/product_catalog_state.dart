@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 
 enum ProductCatalogActionStatus { initial, success, failure }
 
@@ -8,7 +8,7 @@ class ProductCatalogState extends Equatable {
   final bool isLoading;
   final bool isLoadingMore;
   final bool isSubmitting;
-  final List<SkuEntity> skus;
+  final List<SkuSpuGroupEntity> spuGroups;
   final String searchKeyword;
   final String? filterStatus;
   final bool? isStockAlert;
@@ -24,7 +24,7 @@ class ProductCatalogState extends Equatable {
     this.isLoading = false,
     this.isLoadingMore = false,
     this.isSubmitting = false,
-    this.skus = const [],
+    this.spuGroups = const [],
     this.searchKeyword = '',
     this.filterStatus,
     this.isStockAlert,
@@ -43,7 +43,7 @@ class ProductCatalogState extends Equatable {
     bool? isLoading,
     bool? isLoadingMore,
     bool? isSubmitting,
-    List<SkuEntity>? skus,
+    List<SkuSpuGroupEntity>? spuGroups,
     String? searchKeyword,
     String? filterStatus,
     bool? isStockAlert,
@@ -61,7 +61,7 @@ class ProductCatalogState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      skus: skus ?? this.skus,
+      spuGroups: spuGroups ?? this.spuGroups,
       searchKeyword: searchKeyword ?? this.searchKeyword,
       filterStatus: clearFilterStatus
           ? null
@@ -84,7 +84,7 @@ class ProductCatalogState extends Equatable {
     isLoading,
     isLoadingMore,
     isSubmitting,
-    skus,
+    spuGroups,
     searchKeyword,
     filterStatus,
     isStockAlert,

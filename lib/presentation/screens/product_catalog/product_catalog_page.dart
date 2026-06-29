@@ -6,7 +6,6 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_bloc.dart';
@@ -134,7 +133,7 @@ class _ProductCatalogBody extends StatelessWidget {
           buildWhen: (prev, curr) =>
               prev.isLoading != curr.isLoading ||
               prev.isLoadingMore != curr.isLoadingMore ||
-              prev.skus != curr.skus,
+              prev.spuGroups != curr.spuGroups,
           builder: (context, state) {
             if (state.isLoading) {
               return const SliverFillRemaining(
@@ -144,7 +143,7 @@ class _ProductCatalogBody extends StatelessWidget {
               );
             }
 
-            if (state.skus.isEmpty) {
+            if (state.spuGroups.isEmpty) {
               return const SliverFillRemaining(child: _EmptyState());
             }
 
@@ -158,12 +157,12 @@ class _ProductCatalogBody extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (ctx, i) {
-                    if (i >= state.skus.length) {
+                    if (i >= state.spuGroups.length) {
                       return const _LoadMoreIndicator();
                     }
 
-                    final sku = state.skus[i];
-                    final isLastDataItem = i == state.skus.length - 1;
+                    final group = state.spuGroups[i];
+                    final isLastDataItem = i == state.spuGroups.length - 1;
 
                     return Padding(
                       padding: EdgeInsets.only(
@@ -172,8 +171,21 @@ class _ProductCatalogBody extends StatelessWidget {
                             : 12.h,
                       ),
                       child: ProductCard(
-                        sku: sku,
+                        group: group,
                         onTap: () {
+                          final sku = group.representativeSku;
+                          if (sku == null) {
+                            return;
+                          }
+
+                          if (group.variantCount > 1) {
+                            ctx.pushNamed(
+                              RouterName.spuVariants,
+                              pathParameters: {'spuUid': group.spuUid},
+                            );
+                            return;
+                          }
+
                           ctx.pushNamed(
                             RouterName.skuDetail,
                             pathParameters: {'skuUid': sku.uid},
@@ -182,7 +194,8 @@ class _ProductCatalogBody extends StatelessWidget {
                       ),
                     );
                   },
-                  childCount: state.skus.length + (state.isLoadingMore ? 1 : 0),
+                  childCount:
+                      state.spuGroups.length + (state.isLoadingMore ? 1 : 0),
                 ),
               ),
             );
@@ -223,11 +236,11 @@ class _StickyHeader extends StatelessWidget {
           BlocSelector<ProductCatalogBloc, ProductCatalogState, _FilterCounts>(
             selector: (state) => _FilterCounts(
               total: state.total,
-              lowStock: state.skus
-                  .where((s) => s.stockStatus == SkuStockStatus.lowStock)
+              lowStock: state.spuGroups
+                  .where((group) => group.lowStockCount > 0)
                   .length,
-              outOfStock: state.skus
-                  .where((s) => s.stockStatus == SkuStockStatus.outOfStock)
+              outOfStock: state.spuGroups
+                  .where((group) => group.stockStatus.isOutOfStock)
                   .length,
               filterStatus: state.filterStatus,
               isStockAlert: state.isStockAlert,

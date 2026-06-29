@@ -28,5 +28,6 @@ abstract final class RouterName {
   static const String addProduct = 'addProduct';
   static const String categoryManagement = 'categoryManagement';
   static const String skuDetail = 'skuDetail';
+  static const String spuVariants = 'spuVariants';
   static const String testScanner = 'testScanner';
 }

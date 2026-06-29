@@ -62,6 +62,7 @@ class CreateSkuParams extends Equatable {
 /// Params for [GetSkusUseCase].
 class SkuQueryParams extends Equatable {
   final String? search;
+  final String? spuUid;
   final String? categoryUid;
   final String? status;
   final bool? isSellable;
@@ -71,6 +72,7 @@ class SkuQueryParams extends Equatable {
 
   const SkuQueryParams({
     this.search,
+    this.spuUid,
     this.categoryUid,
     this.status,
     this.isSellable,
@@ -82,6 +84,7 @@ class SkuQueryParams extends Equatable {
   @override
   List<Object?> get props => [
     search,
+    spuUid,
     categoryUid,
     status,
     isSellable,

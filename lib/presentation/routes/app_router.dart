@@ -12,6 +12,7 @@ import '../screens/quick_add/quick_add_step4_page.dart';
 import '../screens/category_management/category_management_page.dart';
 import '../screens/test_scanner/test_scanner_page.dart';
 import '../screens/sku_details/sku_details_page.dart';
+import '../screens/spu_variants/spu_variants_page.dart';
 import '../../injection.dart';
 import 'auth_notifier.dart';
 import 'router_constants.dart';
@@ -66,6 +67,14 @@ final router = GoRouter(
           name: RouterName.productCatalog,
           builder: (context, state) => const ProductCatalogPage(),
           routes: [
+            GoRoute(
+              path: 'spu/:spuUid/variants',
+              name: RouterName.spuVariants,
+              builder: (context, state) {
+                final spuUid = state.pathParameters['spuUid'] ?? '';
+                return SpuVariantsPage(spuUid: spuUid);
+              },
+            ),
             GoRoute(
               path: ':skuUid',
               name: RouterName.skuDetail,

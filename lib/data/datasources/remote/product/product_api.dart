@@ -4,8 +4,8 @@ import 'package:ventry_flutter/data/models/product/request/create_presigned_uplo
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/response/product_response.dart';
 import 'package:ventry_flutter/data/models/product/response/presigned_upload_response.dart';
-import 'package:ventry_flutter/data/models/product/response/sku_list_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_response.dart';
+import 'package:ventry_flutter/data/models/product/response/sku_spu_group_response.dart';
 
 part 'product_api.g.dart';
 
@@ -16,9 +16,10 @@ abstract class ProductApi {
   @POST('/products')
   Future<ProductResponse> createProduct(@Body() CreateProductRequest request);
 
-  @GET('/skus')
-  Future<SkuListResponse> getSkus({
+  @GET('/skus/spu-groups')
+  Future<SkuSpuGroupListResponse> getSkus({
     @Query('search') String? search,
+    @Query('spuUid') String? spuUid,
     @Query('categoryUid') String? categoryUid,
     @Query('status') String? status,
     @Query('isSellable') bool? isSellable,
