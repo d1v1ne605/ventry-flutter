@@ -227,6 +227,40 @@ class AppStrings {
   static const String attributesTitle = 'Attributes';
   static const String descriptionTitle = 'Description';
   static const String notAvailable = 'N/A';
+  static const String addNew = 'Add New';
+
+  // ── Edit SKU ────────────────────────────────────────────────────────────────
+  static const String editSkuTitle = 'Edit SKU';
+  static const String editSkuSaveChanges = 'Save Changes';
+  static const String editSkuGeneralInformation = 'General Information';
+  static const String editSkuAttributes = 'Attributes';
+  static const String editSkuMedia = 'Media';
+  static const String editSkuDescription = 'Description';
+  static const String editSkuManage = 'Manage';
+  static const String editSkuEdit = 'Edit';
+  static const String editSkuSkuName = 'SKU Name';
+  static const String editSkuCategory = 'Category';
+  static const String editSkuBarcode = 'Barcode';
+  static const String editSkuSkuCode = 'SKU Code';
+  static const String editSkuCostPrice = 'Cost Price';
+  static const String editSkuSellingPrice = 'Selling Price';
+  static const String editSkuCurrency = 'Currency';
+  static const String editSkuUnitOfMeasure = 'Unit of Measure';
+  static const String editSkuIsSellable = 'Is Sellable';
+  static const String editSkuSellableHelper =
+      'Allow this item to be sold in POS';
+  static const String editSkuAddImage = 'Add Image';
+  static const String editSkuEditAttributesTitle = 'Edit Attributes';
+  static const String editSkuEditImagesTitle = 'Edit Images';
+  static const String editSkuCancel = 'Cancel';
+  static const String editSkuApplyAttributes = 'Apply Attributes';
+  static const String editSkuAddNewAttribute = 'Add New Attribute';
+  static const String editSkuSaveGallery = 'Save Gallery';
+  static const String editSkuUploadNew = 'Upload New';
+  static const String editSkuMediaHelper =
+      'Manage the gallery for this SKU. Drag to reorder.';
+  static const String editSkuCover = 'Cover';
+  static String editSkuNewAttributeLabel(int index) => 'Attribute $index';
 }
 
 /// Login screen string tokens.

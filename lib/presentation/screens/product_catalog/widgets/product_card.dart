@@ -6,6 +6,7 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
+import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 
 /// SPU group card in the product catalog list.
@@ -79,6 +80,10 @@ class _ProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeImageUrl = StringUtils.isSafeNetworkUrl(imageUrl)
+        ? imageUrl
+        : null;
+
     return Container(
       width: 72.r,
       height: 72.r,
@@ -87,9 +92,9 @@ class _ProductImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.r),
       ),
       clipBehavior: Clip.antiAlias,
-      child: imageUrl != null
+      child: safeImageUrl != null
           ? Image.network(
-              imageUrl!,
+              safeImageUrl,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) =>
                   Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),

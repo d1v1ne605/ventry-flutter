@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
@@ -9,6 +10,7 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
+import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
@@ -43,14 +45,32 @@ class _SpuVariantsView extends StatelessWidget {
       appBar: AppTopBar(
         title: AppStrings.spuVariantsTitle,
         leadingWidget: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: AppColors.primary,
-            size: AppSize.size16.r,
+          padding: EdgeInsets.zero,
+          icon: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159),
+            child: SvgPicture.asset(
+              AppAssets.icChevronRight,
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+              width: AppSize.size16.r,
+              height: AppSize.size16.r,
+            ),
           ),
           onPressed: () => context.pop(),
         ),
-        trailingWidget: SizedBox(width: 40.w, height: 40.h),
+        trailingWidget: GestureDetector(
+          onTap: () {},
+          child: Text(
+            AppStrings.addNew,
+            style: AppTextStyles.linkSmall.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ),
       body: BlocBuilder<SpuVariantsBloc, SpuVariantsState>(
         builder: (context, state) {
@@ -161,6 +181,10 @@ class _HeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeImageUrl = StringUtils.isSafeNetworkUrl(imageUrl)
+        ? imageUrl
+        : null;
+
     return Container(
       width: 72.r,
       height: 72.r,
@@ -169,9 +193,9 @@ class _HeroImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(14.r),
       ),
       clipBehavior: Clip.antiAlias,
-      child: imageUrl != null && imageUrl!.isNotEmpty
+      child: safeImageUrl != null
           ? Image.network(
-              imageUrl!,
+              safeImageUrl,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) =>
                   Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),

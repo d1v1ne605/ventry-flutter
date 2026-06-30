@@ -4,6 +4,7 @@ import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 
 class SkuHeroCard extends StatelessWidget {
@@ -16,6 +17,12 @@ class SkuHeroCard extends StatelessWidget {
     final attributesText = sku.attributes.isNotEmpty
         ? sku.attributes.map((e) => e.value).join(' / ')
         : '';
+    final primaryImageUrl = StringUtils.isSafeNetworkUrl(sku.primaryImageUrl)
+        ? sku.primaryImageUrl
+        : null;
+    final validImageUrls = sku.imageUrls
+        .where(StringUtils.isSafeNetworkUrl)
+        .toList(growable: false);
 
     return Container(
       padding: EdgeInsets.all(AppSize.size16.w),
@@ -39,11 +46,11 @@ class SkuHeroCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSize.size8.r),
                   border: Border.all(color: AppColors.inputBorder),
                 ),
-                child: sku.primaryImageUrl != null
+                child: primaryImageUrl != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(AppSize.size8.r),
                         child: Image.network(
-                          sku.primaryImageUrl!,
+                          primaryImageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => const Icon(
                             Icons.image_not_supported,
@@ -55,12 +62,12 @@ class SkuHeroCard extends StatelessWidget {
               ),
               SizedBox(width: AppSize.size8.w),
               // Thumbnails
-              if (sku.imageUrls.isNotEmpty)
+              if (validImageUrls.isNotEmpty)
                 Expanded(
                   child: Wrap(
                     spacing: AppSize.size8.w,
                     runSpacing: AppSize.size8.h,
-                    children: List.generate(sku.imageUrls.length, (index) {
+                    children: List.generate(validImageUrls.length, (index) {
                       final isSelected = index == 0;
                       return Container(
                         width: 40.w,
@@ -78,7 +85,7 @@ class SkuHeroCard extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(AppSize.size6.r),
                           child: Image.network(
-                            sku.imageUrls[index],
+                            validImageUrls[index],
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => const Icon(
                               Icons.image_not_supported,

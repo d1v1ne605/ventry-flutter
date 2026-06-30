@@ -182,4 +182,48 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: AppColors.textHint,
   );
+
+  static TextStyle get editSkuTitle => GoogleFonts.inter(
+    fontSize: 24.sp,
+    fontWeight: FontWeight.w700,
+    height: 32 / 24,
+    letterSpacing: -0.6,
+    color: Colors.white,
+  );
+
+  static TextStyle get editSkuSectionTitle => GoogleFonts.inter(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w600,
+    height: 24 / 18,
+    color: const Color(0xFF3D4947),
+  );
+
+  static TextStyle get editSkuFieldLabel => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    height: 20 / 14,
+    color: AppColors.textBody,
+  );
+
+  static TextStyle get editSkuFieldValue => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    height: 20 / 14,
+    color: AppColors.textHeading,
+  );
+
+  static TextStyle get editSkuButtonLabel => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    height: 21 / 14,
+    letterSpacing: 0.35,
+    color: AppColors.textHeading,
+  );
+
+  static TextStyle get editSkuTag => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    height: 20 / 14,
+    color: AppColors.editSkuTagText,
+  );
 }
