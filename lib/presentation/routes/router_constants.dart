@@ -12,6 +12,7 @@ abstract final class RouterPath {
   static const String categoryManagement = '/category-management';
   static const String addProduct = '/add-product';
   static const String testScanner = '/test-scanner';
+  static const String editSku = '/edit-sku';
 }
 
 abstract final class RouterName {
@@ -30,4 +31,5 @@ abstract final class RouterName {
   static const String skuDetail = 'skuDetail';
   static const String spuVariants = 'spuVariants';
   static const String testScanner = 'testScanner';
+  static const String editSku = 'editSku';
 }

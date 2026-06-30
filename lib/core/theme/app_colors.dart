@@ -137,6 +137,14 @@ class AppColors {
   // Muted text for out-of-stock products
   static const Color textMuted = Color(0xFFADB5BD);
 
+  // Edit SKU
+  static const Color editSkuFieldBorder = Color(0xFF94A3B8);
+  static const Color editSkuCardBackground = Color(0xFFFFFFFF);
+  static const Color editSkuSoftBackground = Color(0xFFF5FAF8);
+  static const Color editSkuTagBorder = Color(0xFFD7E2EC);
+  static const Color editSkuTagText = Color(0xFF64748B);
+  static const Color editSkuSuccess = Color(0xFF10B981);
+
   // Product name text
   static const Color productName = Color(0xFF1C2B2A);
   static const Color productMeta = Color(0xFF6D7A77);

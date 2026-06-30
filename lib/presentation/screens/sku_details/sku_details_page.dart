@@ -1,28 +1,31 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
-import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
+import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/injection.dart';
-import 'bloc/sku_details_bloc.dart';
-import 'bloc/sku_details_event.dart';
-import 'bloc/sku_details_state.dart';
-import 'widgets/attributes_card.dart';
-import 'widgets/description_card.dart';
-import 'widgets/general_info_card.dart';
-import 'widgets/inventory_stats_bar.dart';
-import 'widgets/sku_hero_card.dart';
+import 'package:ventry_flutter/presentation/routes/router_constants.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_event.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_state.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/widgets/attributes_card.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/widgets/description_card.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/widgets/general_info_card.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/widgets/inventory_stats_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_details/widgets/sku_hero_card.dart';
 
 class SkuDetailsPage extends StatelessWidget {
-  final String skuUid;
-
   const SkuDetailsPage({super.key, required this.skuUid});
+
+  final String skuUid;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +36,30 @@ class SkuDetailsPage extends StatelessWidget {
   }
 }
 
-class _SkuDetailsView extends StatelessWidget {
+class _SkuDetailsView extends StatefulWidget {
   const _SkuDetailsView();
+
+  @override
+  State<_SkuDetailsView> createState() => _SkuDetailsViewState();
+}
+
+class _SkuDetailsViewState extends State<_SkuDetailsView> {
+  SkuEntity? _editedSku;
+
+  Future<void> _openEditSku(BuildContext context, SkuEntity sku) async {
+    final updatedSku = await context.pushNamed<SkuEntity>(
+      RouterName.editSku,
+      extra: _editedSku ?? sku,
+    );
+
+    if (updatedSku == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _editedSku = updatedSku;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,24 +83,27 @@ class _SkuDetailsView extends StatelessWidget {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             );
-          } else if (state.status == BaseStatus.failure) {
+          }
+
+          if (state.status == BaseStatus.failure) {
             return Center(
               child: Text(
                 state.errorMessage ?? 'Error loading SKU details',
                 style: TextStyle(fontSize: 16.sp, color: Colors.red),
               ),
             );
-          } else if (state.status == BaseStatus.success && state.sku != null) {
-            final sku = state.sku!;
+          }
+
+          if (state.status == BaseStatus.success && state.sku != null) {
+            final sku = _editedSku ?? state.sku!;
             return Stack(
               children: [
-                // Main Content
                 SingleChildScrollView(
                   padding: EdgeInsets.only(
                     left: 16.w,
                     right: 16.w,
                     top: 20.h,
-                    bottom: 128.h, // Space for fixed bottom actions
+                    bottom: 128.h,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,7 +120,6 @@ class _SkuDetailsView extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Fixed Bottom Actions
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -113,18 +140,7 @@ class _SkuDetailsView extends StatelessWidget {
                             Expanded(
                               child: _OutlinedButton(
                                 text: AppStrings.editVariantButton,
-                                onPressed: () {
-                                  // TODO: Navigate to Edit Variant
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: _FilledButton(
-                                text: AppStrings.quickAdjustButton,
-                                onPressed: () {
-                                  // TODO: Open Quick Adjust Modal
-                                },
+                                onPressed: () => _openEditSku(context, sku),
                               ),
                             ),
                           ],
@@ -136,6 +152,7 @@ class _SkuDetailsView extends StatelessWidget {
               ],
             );
           }
+
           return const SizedBox.shrink();
         },
       ),
@@ -144,41 +161,11 @@ class _SkuDetailsView extends StatelessWidget {
 }
 
 class _OutlinedButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-
   const _OutlinedButton({required this.text, required this.onPressed});
 
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Container(
-        height: 44.h,
-        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppSize.size8.r),
-                          border: Border.all(color: AppColors.primary),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          text,
-                          style: AppTextStyles.buttonText.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-      ),
-    );
-  }
-}
-
-class _FilledButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const _FilledButton({required this.text, required this.onPressed});
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -187,14 +174,14 @@ class _FilledButton extends StatelessWidget {
       child: Container(
         height: 44.h,
         decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSize.size8.r),
-          boxShadow: const [AppColors.buttonShadow],
+          border: Border.all(color: AppColors.primary),
         ),
         alignment: Alignment.center,
         child: Text(
           text,
-          style: AppTextStyles.buttonText,
+          style: AppTextStyles.buttonText.copyWith(color: AppColors.primary),
         ),
       ),
     );

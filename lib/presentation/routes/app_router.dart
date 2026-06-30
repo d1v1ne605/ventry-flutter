@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/layouts/main_layout.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/add_product_step1_page.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
@@ -11,6 +13,7 @@ import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
 import '../screens/category_management/category_management_page.dart';
 import '../screens/test_scanner/test_scanner_page.dart';
+import '../screens/edit_sku/edit_sku_page.dart';
 import '../screens/sku_details/sku_details_page.dart';
 import '../screens/spu_variants/spu_variants_page.dart';
 import '../../injection.dart';
@@ -121,6 +124,17 @@ final router = GoRouter(
       path: RouterPath.testScanner,
       name: RouterName.testScanner,
       builder: (context, state) => const TestScannerPage(),
+    ),
+    GoRoute(
+      path: RouterPath.editSku,
+      name: RouterName.editSku,
+      builder: (context, state) {
+        final sku = state.extra as SkuEntity?;
+        if (sku == null) {
+          return const SizedBox.shrink();
+        }
+        return EditSkuPage(sku: sku);
+      },
     ),
   ],
 );
