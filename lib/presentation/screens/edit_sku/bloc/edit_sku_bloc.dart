@@ -311,16 +311,13 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   String? _findSourceAttributeValueUid(SkuAttributeEntity attribute) {
     final normalizedName = _normalize(attribute.attributeName);
     final normalizedValue = _normalize(attribute.value);
-    final submittedUid = attribute.uid.trim();
 
     for (final sourceAttribute in state.sourceSku.attributes) {
-      final sameUid =
-          submittedUid.isNotEmpty && sourceAttribute.uid == submittedUid;
       final sameName =
           _normalize(sourceAttribute.attributeName) == normalizedName;
       final sameValue = _normalize(sourceAttribute.value) == normalizedValue;
 
-      if ((sameUid && sameName) || (sameName && sameValue)) {
+      if (sameName && sameValue) {
         return sourceAttribute.uid;
       }
     }

@@ -249,7 +249,7 @@ class AppStrings {
   static const String editSkuUnitOfMeasure = 'Unit of Measure';
   static const String editSkuIsSellable = 'Is Sellable';
   static const String editSkuSellableHelper =
-      'Allow this item to be sold in POS';
+      'Allow this item to be sold in the store';
   static const String editSkuAddImage = 'Add Image';
   static const String editSkuEditAttributesTitle = 'Edit Attributes';
   static const String editSkuEditImagesTitle = 'Edit Images';
@@ -259,10 +259,20 @@ class AppStrings {
   static const String editSkuSelectAttributesHelper =
       'Choose one or more shop attributes to add to this SKU.';
   static const String editSkuAddNewAttribute = 'Add New Attribute';
+  static const String editSkuCreateAttributeTitle = 'New Attribute';
+  static const String editSkuCreateAttributeHint = 'Enter attribute name';
+  static const String editSkuCreateAttributeConfirm = 'Create';
+  static const String editSkuCreateAttributeHeaderAction = 'New';
+  static const String editSkuCreateAttributeNameRequired =
+      'Attribute name is required.';
+  static const String editSkuAttributeCreatedSuccess =
+      'Attribute created successfully';
   static const String editSkuAddSelectedAttributes = 'Add Attributes';
   static const String editSkuAttributeAlreadyAdded = 'Added';
   static const String editSkuAttributesEmptyState =
       'No attributes are available for this shop yet.';
+  static const String editSkuAttributesAllAdded =
+      'All available attributes have already been added to this SKU.';
   static const String editSkuAttributesLoadFailed =
       'Unable to load shop attributes.';
   static const String editSkuSaveGallery = 'Save Gallery';

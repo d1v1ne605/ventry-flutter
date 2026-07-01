@@ -12,12 +12,14 @@ class EditSkuAppBar extends StatelessWidget {
     required this.onBackTap,
     this.onSaveTap,
     this.showSaveAction = true,
+    this.trailingWidget,
   });
 
   final String title;
   final VoidCallback onBackTap;
   final VoidCallback? onSaveTap;
   final bool showSaveAction;
+  final Widget? trailingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +37,38 @@ class EditSkuAppBar extends StatelessWidget {
             height: AppSize.size64.h,
             color: AppColors.primary,
             padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                _EditSkuIconButton(
-                  icon: Icons.arrow_back_ios_new,
-                  onTap: onBackTap,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: _EditSkuIconButton(
+                    icon: Icons.arrow_back_ios_new,
+                    onTap: onBackTap,
+                  ),
                 ),
-                Text(title, style: AppTextStyles.editSkuTitle),
-                showSaveAction
-                    ? _EditSkuIconButton(icon: Icons.check, onTap: onSaveTap)
-                    : SizedBox(width: AppSize.size48.w),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (AppSize.size48 + AppSize.size8).w,
+                  ),
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.editSkuTitle,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child:
+                      trailingWidget ??
+                      (showSaveAction
+                          ? _EditSkuIconButton(
+                              icon: Icons.check,
+                              onTap: onSaveTap,
+                            )
+                          : SizedBox(width: AppSize.size48.w)),
+                ),
               ],
             ),
           ),

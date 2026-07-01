@@ -4,7 +4,9 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
+import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
@@ -34,6 +36,7 @@ class _EditSkuAttributePickerPageState
 
   List<AttributeEntity> _attributes = const [];
   bool _isLoading = true;
+  bool _isCreatingAttribute = false;
   String? _errorMessage;
 
   @override
@@ -92,7 +95,10 @@ class _EditSkuAttributePickerPageState
 
   List<AttributeEntity> _sanitizeAttributes(List<AttributeEntity> attributes) {
     return attributes
-        .where((attribute) => attribute.name.trim().isNotEmpty)
+        .where(
+          (attribute) =>
+              attribute.name.trim().isNotEmpty && !_isAlreadyAdded(attribute),
+        )
         .toList(growable: false);
   }
 
@@ -105,15 +111,252 @@ class _EditSkuAttributePickerPageState
   }
 
   void _toggleSelection(AttributeEntity attribute) {
-    if (_isAlreadyAdded(attribute)) {
-      return;
-    }
-
     setState(() {
       if (!_selectedAttributeUids.add(attribute.uid)) {
         _selectedAttributeUids.remove(attribute.uid);
       }
     });
+  }
+
+  Future<void> _handleCreateAttribute() async {
+    if (_isCreatingAttribute) {
+      return;
+    }
+
+    String draftAttributeName = '';
+    final createdName = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final trimmedName = draftAttributeName.trim();
+            final canCreate = trimmedName.isNotEmpty;
+
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
+              child: Container(
+                padding: EdgeInsets.all(AppSize.size20.w),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSize.size16.r),
+                  boxShadow: const [AppColors.cardShadow],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: AppSize.size32.w,
+                          height: AppSize.size32.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(
+                              AppSize.size8.r,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.add_rounded,
+                            size: AppSize.size20.r,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(width: AppSize.size12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppStrings.editSkuCreateAttributeTitle,
+                                style: AppTextStyles.editSkuSectionTitle
+                                    .copyWith(color: AppColors.textHeading),
+                              ),
+                              SizedBox(height: AppSize.size4.h),
+                              Text(
+                                'Create a shop attribute and return to this list.',
+                                style: AppTextStyles.editSkuFieldLabel,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AppSize.size20.h),
+                    Text(
+                      'Attribute name',
+                      style: AppTextStyles.editSkuFieldLabel.copyWith(
+                        color: AppColors.textHeading,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: AppSize.size8.h),
+                    TextField(
+                      autofocus: true,
+                      textInputAction: TextInputAction.done,
+                      cursorColor: AppColors.primary,
+                      style: AppTextStyles.input,
+                      decoration: InputDecoration(
+                        hintText: AppStrings.editSkuCreateAttributeHint,
+                        hintStyle: AppTextStyles.inputHint,
+                        filled: true,
+                        fillColor: AppColors.inputFill,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: AppSize.size16.w,
+                          vertical: AppSize.size14.h,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSize.size12.r),
+                          borderSide: const BorderSide(
+                            color: AppColors.inputBorder,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSize.size12.r),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: AppSize.size2,
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          draftAttributeName = value;
+                        });
+                      },
+                      onSubmitted: (value) {
+                        if (!canCreate) {
+                          return;
+                        }
+                        Navigator.of(dialogContext).pop(value.trim());
+                      },
+                    ),
+                    SizedBox(height: AppSize.size20.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.primary,
+                              side: const BorderSide(color: AppColors.primary),
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppSize.size12.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppSize.size12.r,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              AppStrings.editSkuCancel,
+                              style: AppTextStyles.editSkuButtonLabel.copyWith(
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: AppSize.size12.w),
+                        Expanded(
+                          child: Opacity(
+                            opacity: canCreate ? 1 : 0.5,
+                            child: IgnorePointer(
+                              ignoring: !canCreate,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.primaryGradient,
+                                  borderRadius: BorderRadius.circular(
+                                    AppSize.size12.r,
+                                  ),
+                                  boxShadow: const [AppColors.buttonShadow],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(
+                                      dialogContext,
+                                    ).pop(trimmedName);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: AppSize.size12.h,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        AppSize.size12.r,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    AppStrings.editSkuCreateAttributeConfirm,
+                                    style: AppTextStyles.buttonText,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    final attributeName = createdName?.trim() ?? '';
+    if (!mounted) {
+      return;
+    }
+
+    if (attributeName.isEmpty) {
+      if (createdName != null) {
+        AppSnackBar.showError(
+          context,
+          AppStrings.editSkuCreateAttributeNameRequired,
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isCreatingAttribute = true;
+    });
+
+    final result = await getIt<CreateAttributeUseCase>()(
+      CreateAttributeParams(name: attributeName),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+      },
+      (_) {
+        AppSnackBar.showSuccess(
+          context,
+          AppStrings.editSkuAttributeCreatedSuccess,
+        );
+      },
+    );
+
+    setState(() {
+      _isCreatingAttribute = false;
+    });
+
+    if (result.isRight()) {
+      await _loadAttributes();
+    }
   }
 
   void _handleAddAttributes() {
@@ -140,6 +383,27 @@ class _EditSkuAttributePickerPageState
                 title: AppStrings.editSkuSelectAttributesTitle,
                 onBackTap: () => Navigator.of(context).maybePop(),
                 showSaveAction: false,
+                trailingWidget: TextButton.icon(
+                  onPressed: _isCreatingAttribute
+                      ? null
+                      : _handleCreateAttribute,
+                  icon: Icon(
+                    Icons.add,
+                    size: AppSize.size16.r,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    AppStrings.editSkuCreateAttributeHeaderAction,
+                    style: AppTextStyles.editSkuFieldLabel.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: AppSize.size8.w),
+                  ),
+                ),
               ),
               Expanded(child: _buildContent()),
             ],
@@ -209,7 +473,9 @@ class _EditSkuAttributePickerPageState
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
           child: Text(
-            AppStrings.editSkuAttributesEmptyState,
+            _existingAttributeNames.isEmpty
+                ? AppStrings.editSkuAttributesEmptyState
+                : AppStrings.editSkuAttributesAllAdded,
             textAlign: TextAlign.center,
             style: AppTextStyles.body,
           ),
@@ -235,12 +501,11 @@ class _EditSkuAttributePickerPageState
         }
 
         final attribute = _attributes[index - 1];
-        final isDisabled = _isAlreadyAdded(attribute);
 
         return EditSkuAttributeSelectionTile(
           attribute: attribute,
           isSelected: _selectedAttributeUids.contains(attribute.uid),
-          isDisabled: isDisabled,
+          isDisabled: false,
           onTap: () => _toggleSelection(attribute),
         );
       },

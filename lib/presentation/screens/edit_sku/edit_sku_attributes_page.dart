@@ -33,6 +33,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   late final Map<String, GlobalKey> _attributeKeys;
   late final ScrollController _scrollController;
   late final ValueNotifier<bool> _canApplyNotifier;
+  late final ValueNotifier<bool> _hasFocusedFieldNotifier;
   final Set<String> _newAttributeIds = <String>{};
   Map<String, List<String>> _attributeSuggestionsByName =
       const <String, List<String>>{};
@@ -43,6 +44,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     _attributes = widget.attributes
         .map(EditableSkuAttribute.fromEntity)
         .toList(growable: true);
+    _hasFocusedFieldNotifier = ValueNotifier<bool>(false);
     _controllers = {
       for (final attribute in _attributes)
         attribute.id: TextEditingController(text: attribute.value),
@@ -69,12 +71,14 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     }
     _scrollController.dispose();
     _canApplyNotifier.dispose();
+    _hasFocusedFieldNotifier.dispose();
     super.dispose();
   }
 
   FocusNode _buildFocusNode(String id) {
     final focusNode = FocusNode();
     focusNode.addListener(() {
+      _syncFocusedFieldState();
       if (!focusNode.hasFocus) {
         return;
       }
@@ -90,6 +94,13 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
       });
     });
     return focusNode;
+  }
+
+  void _syncFocusedFieldState() {
+    final hasFocusedField = _focusNodes.values.any((node) => node.hasFocus);
+    if (_hasFocusedFieldNotifier.value != hasFocusedField) {
+      _hasFocusedFieldNotifier.value = hasFocusedField;
+    }
   }
 
   Future<void> _loadAttributeSuggestions() async {
@@ -174,6 +185,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     _focusNodes.remove(id)?.dispose();
     _attributeKeys.remove(id);
     _newAttributeIds.remove(id);
+    _syncFocusedFieldState();
     setState(() {
       _attributes = _attributes
           .where((attribute) => attribute.id != id)
@@ -257,7 +269,21 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     });
   }
 
+  void _syncAttributesFromControllers() {
+    _attributes = _attributes
+        .map((attribute) {
+          final controller = _controllers[attribute.id];
+          if (controller == null) {
+            return attribute;
+          }
+
+          return attribute.copyWith(value: controller.text);
+        })
+        .toList(growable: false);
+  }
+
   void _handleApply() {
+    _syncAttributesFromControllers();
     Navigator.of(
       context,
     ).pop(_attributes.map((attribute) => attribute.toEntity()).toList());
@@ -361,12 +387,21 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: ValueListenableBuilder<bool>(
-              valueListenable: _canApplyNotifier,
-              builder: (context, canApply, _) {
-                return EditSkuAttributesBottomBar(
-                  onCancel: () => Navigator.of(context).maybePop(),
-                  onApply: _handleApply,
-                  isPrimaryEnabled: canApply,
+              valueListenable: _hasFocusedFieldNotifier,
+              builder: (context, hasFocusedField, _) {
+                if (hasFocusedField) {
+                  return const SizedBox.shrink();
+                }
+
+                return ValueListenableBuilder<bool>(
+                  valueListenable: _canApplyNotifier,
+                  builder: (context, canApply, _) {
+                    return EditSkuAttributesBottomBar(
+                      onCancel: () => Navigator.of(context).maybePop(),
+                      onApply: _handleApply,
+                      isPrimaryEnabled: canApply,
+                    );
+                  },
                 );
               },
             ),
