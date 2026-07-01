@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 
 abstract class EditSkuEvent extends Equatable {
   const EditSkuEvent();
@@ -96,4 +97,23 @@ class EditSkuDescriptionChanged extends EditSkuEvent {
 
   @override
   List<Object?> get props => [value];
+}
+
+class EditSkuSubmitted extends EditSkuEvent {
+  const EditSkuSubmitted({required this.attributes, required this.baseSku});
+
+  final List<SkuAttributeEntity> attributes;
+  final SkuEntity baseSku;
+
+  @override
+  List<Object?> get props => [attributes, baseSku];
+}
+
+class EditSkuSourceSynced extends EditSkuEvent {
+  const EditSkuSourceSynced(this.sku);
+
+  final SkuEntity sku;
+
+  @override
+  List<Object?> get props => [sku];
 }

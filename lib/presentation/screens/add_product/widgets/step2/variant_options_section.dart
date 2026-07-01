@@ -90,12 +90,18 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
   final TextEditingController _valueController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _valueFocusNode = FocusNode();
+  String? _lastSubmittedName;
 
   @override
   void initState() {
     super.initState();
     _nameController.text = widget.group.name;
     _nameFocusNode.addListener(() {
+      if (_nameFocusNode.hasFocus) {
+        _lastSubmittedName = null;
+        return;
+      }
+
       if (!_nameFocusNode.hasFocus) {
         _onNameSubmitted(_nameController.text);
       }
@@ -109,6 +115,10 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
         _nameController.text != widget.group.name) {
       _nameController.text = widget.group.name;
     }
+
+    if (oldWidget.group.name != widget.group.name) {
+      _lastSubmittedName = widget.group.name.trim();
+    }
   }
 
   @override
@@ -121,14 +131,20 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
   }
 
   void _onNameSubmitted(String text) {
+    final normalizedText = text.trim();
+    if (_lastSubmittedName == normalizedText) {
+      return;
+    }
+    _lastSubmittedName = normalizedText;
     context.read<AddProductBloc>().add(
-      UpdateVariantGroupNameEvent(widget.group.id, text),
+      UpdateVariantGroupNameEvent(widget.group.id, normalizedText),
     );
   }
 
   void _onValueSubmitted(String text) {
+    final normalizedText = text.trim();
     context.read<AddProductBloc>().add(
-      AddVariantOptionValueEvent(widget.group.id, text),
+      AddVariantOptionValueEvent(widget.group.id, normalizedText),
     );
     _valueController.clear();
   }
@@ -151,8 +167,9 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
                 textEditingController: _nameController,
                 focusNode: _nameFocusNode,
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty)
+                  if (textEditingValue.text.isEmpty) {
                     return const Iterable<AttributeEntity>.empty();
+                  }
                   return attributes.where(
                     (attr) => attr.name.toLowerCase().contains(
                       textEditingValue.text.toLowerCase(),
@@ -236,8 +253,10 @@ class _OptionGroupItemState extends State<_OptionGroupItem> {
                 textEditingController: _valueController,
                 focusNode: _valueFocusNode,
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (activeAttribute == null || textEditingValue.text.isEmpty)
+                  if (activeAttribute == null ||
+                      textEditingValue.text.isEmpty) {
                     return const Iterable<String>.empty();
+                  }
                   return activeAttribute.values
                       .map((v) => v.value)
                       .where(

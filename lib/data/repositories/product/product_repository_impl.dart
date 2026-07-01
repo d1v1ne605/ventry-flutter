@@ -10,11 +10,15 @@ import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart'
 import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
+import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
+import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
 import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 import 'package:ventry_flutter/domain/repositories/product/product_repository.dart';
@@ -91,6 +95,51 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid) async {
     try {
       final response = await _productApi.getSkuByUid(skuUid);
+      return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SkuEntity>> updateSku(UpdateSkuParams params) async {
+    try {
+      final response = await _productApi.updateSku(
+        params.skuUid,
+        UpdateSkuRequest(
+          version: params.version,
+          skuCode: params.skuCode,
+          barCode: params.barCode,
+          sellingPrice: params.sellingPrice,
+          costPrice: params.costPrice,
+          stockQuantity: params.stockQuantity,
+          minStockQuantity: params.minStockQuantity,
+          isSellable: params.isSellable,
+          attributeValueUids: params.attributeValueUids,
+        ),
+      );
+      return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SkuEntity>> updateSkuImages(
+    UpdateSkuImagesParams params,
+  ) async {
+    try {
+      final response = await _productApi.updateSkuImages(
+        params.skuUid,
+        UpdateSkuImagesRequest(
+          version: params.version,
+          imageKeys: params.imageKeys,
+        ),
+      );
       return Right(_mapSkuToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());

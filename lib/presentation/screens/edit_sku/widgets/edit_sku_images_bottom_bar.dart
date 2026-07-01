@@ -10,10 +10,14 @@ class EditSkuImagesBottomBar extends StatelessWidget {
     super.key,
     required this.onCancel,
     required this.onSave,
+    this.isSaving = false,
+    this.isSaveEnabled = true,
   });
 
   final VoidCallback onCancel;
   final VoidCallback onSave;
+  final bool isSaving;
+  final bool isSaveEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,7 @@ class EditSkuImagesBottomBar extends StatelessWidget {
                 boxShadow: const [AppColors.buttonShadow],
               ),
               child: ElevatedButton(
-                onPressed: onSave,
+                onPressed: isSaveEnabled && !isSaving ? onSave : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
@@ -77,10 +81,19 @@ class EditSkuImagesBottomBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSize.size8.r),
                   ),
                 ),
-                child: Text(
-                  AppStrings.editSkuSaveGallery,
-                  style: AppTextStyles.buttonText,
-                ),
+                child: isSaving
+                    ? SizedBox(
+                        width: AppSize.size20.w,
+                        height: AppSize.size20.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: AppSize.size2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        AppStrings.editSkuSaveGallery,
+                        style: AppTextStyles.buttonText,
+                      ),
               ),
             ),
           ),

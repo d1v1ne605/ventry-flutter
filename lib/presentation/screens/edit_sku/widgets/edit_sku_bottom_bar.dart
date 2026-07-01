@@ -10,10 +10,12 @@ class EditSkuBottomBar extends StatelessWidget {
     super.key,
     required this.isEnabled,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   final bool isEnabled;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +42,11 @@ class EditSkuBottomBar extends StatelessWidget {
       child: Opacity(
         opacity: isEnabled ? 1 : 0.5,
         child: IgnorePointer(
-          ignoring: !isEnabled,
+          ignoring: !isEnabled || isLoading,
           child: PrimaryButton(
             text: AppStrings.editSkuSaveChanges,
             onPressed: onPressed,
+            isLoading: isLoading,
             icon: Icon(
               Icons.save_outlined,
               color: Colors.white,

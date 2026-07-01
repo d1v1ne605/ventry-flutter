@@ -80,18 +80,18 @@ class EditSkuFormCard extends StatelessWidget {
             style: AppTextStyles.editSkuSectionTitle,
           ),
           SizedBox(height: AppSize.size16.h),
-          EditSkuInputField(
-            label: AppStrings.editSkuCategory,
-            controller: categoryController,
-            readOnly: true,
-            onTap: onCategoryTap,
-            suffixIcon: Icon(
-              Icons.keyboard_arrow_down,
-              color: AppColors.subtitle,
-              size: AppSize.size20.r,
-            ),
-          ),
-          SizedBox(height: AppSize.size16.h),
+          // EditSkuInputField(
+          //   label: AppStrings.editSkuCategory,
+          //   controller: categoryController,
+          //   readOnly: true,
+          //   onTap: onCategoryTap,
+          //   suffixIcon: Icon(
+          //     Icons.keyboard_arrow_down,
+          //     color: AppColors.subtitle,
+          //     size: AppSize.size20.r,
+          //   ),
+          // ),
+          // SizedBox(height: AppSize.size16.h),
           Row(
             children: [
               Expanded(

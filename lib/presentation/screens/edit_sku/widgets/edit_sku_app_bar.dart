@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
@@ -11,34 +12,63 @@ class EditSkuAppBar extends StatelessWidget {
     required this.onBackTap,
     this.onSaveTap,
     this.showSaveAction = true,
+    this.trailingWidget,
   });
 
   final String title;
   final VoidCallback onBackTap;
   final VoidCallback? onSaveTap;
   final bool showSaveAction;
+  final Widget? trailingWidget;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.primary,
-      child: SafeArea(
-        bottom: false,
-        child: SizedBox(
-          height: AppSize.size64.h,
-          child: Padding(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Container(
+        color: Colors.white,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            height: AppSize.size64.h,
+            color: AppColors.primary,
             padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                _EditSkuIconButton(
-                  icon: Icons.arrow_back_ios_new,
-                  onTap: onBackTap,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: _EditSkuIconButton(
+                    icon: Icons.arrow_back_ios_new,
+                    onTap: onBackTap,
+                  ),
                 ),
-                Text(title, style: AppTextStyles.editSkuTitle),
-                showSaveAction
-                    ? _EditSkuIconButton(icon: Icons.check, onTap: onSaveTap)
-                    : SizedBox(width: AppSize.size48.w),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: (AppSize.size48 + AppSize.size8).w,
+                  ),
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.editSkuTitle,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child:
+                      trailingWidget ??
+                      (showSaveAction
+                          ? _EditSkuIconButton(
+                              icon: Icons.check,
+                              onTap: onSaveTap,
+                            )
+                          : SizedBox(width: AppSize.size48.w)),
+                ),
               ],
             ),
           ),

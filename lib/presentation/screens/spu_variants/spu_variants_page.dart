@@ -68,6 +68,7 @@ class _SpuVariantsView extends StatelessWidget {
             style: AppTextStyles.linkSmall.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w700,
+              fontSize: AppSize.size14.sp,
             ),
           ),
         ),

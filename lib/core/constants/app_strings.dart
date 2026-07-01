@@ -228,6 +228,7 @@ class AppStrings {
   static const String descriptionTitle = 'Description';
   static const String notAvailable = 'N/A';
   static const String addNew = 'Add New';
+  static const String retry = 'Retry';
 
   // ── Edit SKU ────────────────────────────────────────────────────────────────
   static const String editSkuTitle = 'Edit SKU';
@@ -248,18 +249,42 @@ class AppStrings {
   static const String editSkuUnitOfMeasure = 'Unit of Measure';
   static const String editSkuIsSellable = 'Is Sellable';
   static const String editSkuSellableHelper =
-      'Allow this item to be sold in POS';
+      'Allow this item to be sold in the store';
   static const String editSkuAddImage = 'Add Image';
   static const String editSkuEditAttributesTitle = 'Edit Attributes';
   static const String editSkuEditImagesTitle = 'Edit Images';
   static const String editSkuCancel = 'Cancel';
   static const String editSkuApplyAttributes = 'Apply Attributes';
+  static const String editSkuSelectAttributesTitle = 'Select Attributes';
+  static const String editSkuSelectAttributesHelper =
+      'Choose one or more shop attributes to add to this SKU.';
   static const String editSkuAddNewAttribute = 'Add New Attribute';
+  static const String editSkuCreateAttributeTitle = 'New Attribute';
+  static const String editSkuCreateAttributeHint = 'Enter attribute name';
+  static const String editSkuCreateAttributeConfirm = 'Create';
+  static const String editSkuCreateAttributeHeaderAction = 'New';
+  static const String editSkuCreateAttributeNameRequired =
+      'Attribute name is required.';
+  static const String editSkuAttributeCreatedSuccess =
+      'Attribute created successfully';
+  static const String editSkuAddSelectedAttributes = 'Add Attributes';
+  static const String editSkuAttributeAlreadyAdded = 'Added';
+  static const String editSkuAttributesEmptyState =
+      'No attributes are available for this shop yet.';
+  static const String editSkuAttributesAllAdded =
+      'All available attributes have already been added to this SKU.';
+  static const String editSkuAttributesLoadFailed =
+      'Unable to load shop attributes.';
   static const String editSkuSaveGallery = 'Save Gallery';
   static const String editSkuUploadNew = 'Upload New';
   static const String editSkuMediaHelper =
       'Manage the gallery for this SKU. Drag to reorder.';
   static const String editSkuCover = 'Cover';
+  static const String editSkuUploadInProgress =
+      'Please wait until image upload completes';
+  static const String editSkuGalleryUpdatedSuccess =
+      'Gallery updated successfully';
+  static const String editSkuUpdatedSuccess = 'SKU updated successfully';
   static String editSkuNewAttributeLabel(int index) => 'Attribute $index';
 }
 

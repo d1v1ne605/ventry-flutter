@@ -10,12 +10,16 @@ class EditSkuAttributeCard extends StatelessWidget {
     super.key,
     required this.attribute,
     required this.controller,
+    required this.focusNode,
+    required this.suggestions,
     required this.onChanged,
     required this.onDelete,
   });
 
   final EditableSkuAttribute attribute;
   final TextEditingController controller;
+  final FocusNode focusNode;
+  final List<String> suggestions;
   final ValueChanged<String> onChanged;
   final VoidCallback onDelete;
 
@@ -55,22 +59,98 @@ class EditSkuAttributeCard extends StatelessWidget {
           ),
           SizedBox(height: AppSize.size8.h),
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 200.w),
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              style: AppTextStyles.editSkuFieldValue,
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                fillColor: AppColors.inputFill,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: AppSize.size12.w,
-                  vertical: AppSize.size12.h,
-                ),
-                enabledBorder: _border,
-                focusedBorder: _border,
-              ),
+            constraints: BoxConstraints(maxWidth: double.infinity),
+            child: RawAutocomplete<String>(
+              textEditingController: controller,
+              focusNode: focusNode,
+              displayStringForOption: (option) => option,
+              optionsViewOpenDirection: OptionsViewOpenDirection.up,
+              optionsBuilder: (textEditingValue) {
+                final normalizedQuery = textEditingValue.text
+                    .trim()
+                    .toLowerCase();
+                final normalizedOptions = <String>{};
+                final filteredSuggestions = suggestions.where((suggestion) {
+                  final trimmedSuggestion = suggestion.trim();
+                  if (trimmedSuggestion.isEmpty) {
+                    return false;
+                  }
+
+                  final normalizedSuggestion = trimmedSuggestion.toLowerCase();
+                  if (!normalizedOptions.add(normalizedSuggestion)) {
+                    return false;
+                  }
+
+                  return normalizedQuery.isEmpty ||
+                      normalizedSuggestion.contains(normalizedQuery);
+                });
+
+                return filteredSuggestions;
+              },
+              onSelected: onChanged,
+              fieldViewBuilder:
+                  (context, textEditingController, textFieldFocusNode, _) {
+                    return TextField(
+                      controller: textEditingController,
+                      focusNode: textFieldFocusNode,
+                      onChanged: onChanged,
+                      style: AppTextStyles.editSkuFieldValue,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        fillColor: AppColors.inputFill,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: AppSize.size12.w,
+                          vertical: AppSize.size12.h,
+                        ),
+                        enabledBorder: _border,
+                        focusedBorder: _border,
+                      ),
+                    );
+                  },
+              optionsViewBuilder: (context, onSelected, options) {
+                if (options.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    color: AppColors.surface,
+                    elevation: AppSize.size4,
+                    borderRadius: BorderRadius.circular(AppSize.size12.r),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: 200.h,
+                        minWidth: MediaQuery.sizeOf(context).width - 64.w,
+                      ),
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                          vertical: AppSize.size8.h,
+                        ),
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (context, index) {
+                          final option = options.elementAt(index);
+                          return InkWell(
+                            onTap: () => onSelected(option),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSize.size16.w,
+                                vertical: AppSize.size10.h,
+                              ),
+                              child: Text(
+                                option,
+                                style: AppTextStyles.editSkuFieldValue,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

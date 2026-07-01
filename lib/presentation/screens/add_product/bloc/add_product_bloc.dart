@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
@@ -27,8 +28,14 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     on<LoadAttributesEvent>(_onLoadAttributes);
     on<AddVariantGroupEvent>(_onAddVariantGroup);
     on<RemoveVariantGroupEvent>(_onRemoveVariantGroup);
-    on<UpdateVariantGroupNameEvent>(_onUpdateVariantGroupName);
-    on<AddVariantOptionValueEvent>(_onAddVariantOptionValue);
+    on<UpdateVariantGroupNameEvent>(
+      _onUpdateVariantGroupName,
+      transformer: sequential(),
+    );
+    on<AddVariantOptionValueEvent>(
+      _onAddVariantOptionValue,
+      transformer: sequential(),
+    );
     on<RemoveVariantOptionValueEvent>(_onRemoveVariantOptionValue);
     on<RemoveGeneratedSkuEvent>(_onRemoveGeneratedSku);
     on<UpdateGeneratedSkuEvent>(_onUpdateGeneratedSku);
@@ -107,8 +114,9 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     if (groupIndex == -1) return;
 
     final name = event.name.trim();
+    final currentGroup = state.variantGroups[groupIndex];
     if (name.isEmpty) {
-      final updatedGroup = state.variantGroups[groupIndex].copyWith(
+      final updatedGroup = currentGroup.copyWith(
         name: '',
         clearAttributeUid: true,
         values: [],
@@ -120,13 +128,17 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
       return;
     }
 
+    final normalizedCurrentName = currentGroup.name.trim().toLowerCase();
+    if (normalizedCurrentName == name.toLowerCase() &&
+        currentGroup.attributeUid != null) {
+      return;
+    }
+
     final existing = state.localAttributes
         .where((a) => a.name.toLowerCase() == name.toLowerCase())
         .firstOrNull;
 
-    VariantOptionGroup updatedGroup = state.variantGroups[groupIndex].copyWith(
-      name: name,
-    );
+    VariantOptionGroup updatedGroup = currentGroup.copyWith(name: name);
 
     if (existing != null) {
       updatedGroup = updatedGroup.copyWith(attributeUid: existing.uid);
