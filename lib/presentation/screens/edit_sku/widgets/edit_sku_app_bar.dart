@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
@@ -20,13 +21,19 @@ class EditSkuAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.primary,
-      child: SafeArea(
-        bottom: false,
-        child: SizedBox(
-          height: AppSize.size64.h,
-          child: Padding(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Container(
+        color: Colors.white,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            height: AppSize.size64.h,
+            color: AppColors.primary,
             padding: EdgeInsets.symmetric(horizontal: AppSize.size16.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

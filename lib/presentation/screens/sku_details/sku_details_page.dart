@@ -9,6 +9,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/injection.dart';
@@ -52,13 +53,14 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
       extra: _editedSku ?? sku,
     );
 
-    if (updatedSku == null || !mounted) {
+    if (updatedSku == null || !context.mounted) {
       return;
     }
 
     setState(() {
       _editedSku = updatedSku;
     });
+    AppSnackBar.showSuccess(context, AppStrings.editSkuUpdatedSuccess);
   }
 
   @override

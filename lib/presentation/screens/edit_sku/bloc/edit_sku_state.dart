@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
 
 class EditSkuFormData extends Equatable {
   const EditSkuFormData({
@@ -101,6 +103,9 @@ class EditSkuState extends Equatable {
     required this.sourceSku,
     required this.initialForm,
     required this.form,
+    this.status = BaseStatus.initial,
+    this.errorMessage,
+    this.updatedSku,
   });
 
   factory EditSkuState.fromSku(SkuEntity sku) {
@@ -111,51 +116,62 @@ class EditSkuState extends Equatable {
   final SkuEntity sourceSku;
   final EditSkuFormData initialForm;
   final EditSkuFormData form;
+  final BaseStatus status;
+  final String? errorMessage;
+  final SkuEntity? updatedSku;
 
   String get selectedCategoryName => form.categoryName;
 
   String? get selectedCategoryUid => form.categoryUid;
 
-  bool get hasChanges => form != initialForm;
+  bool get hasSavableChanges {
+    return _normalizeOptionalText(form.barcode) !=
+            _normalizeOptionalText(initialForm.barcode) ||
+        _normalizeOptionalText(form.skuCode) !=
+            _normalizeOptionalText(initialForm.skuCode) ||
+        _parsePrice(form.costPrice) != _parsePrice(initialForm.costPrice) ||
+        _parsePrice(form.sellingPrice) !=
+            _parsePrice(initialForm.sellingPrice) ||
+        form.isSellable != initialForm.isSellable;
+  }
 
-  EditSkuState copyWith({EditSkuFormData? form}) {
+  bool get isSubmitting => status == BaseStatus.loading;
+
+  EditSkuState copyWith({
+    SkuEntity? sourceSku,
+    EditSkuFormData? form,
+    BaseStatus? status,
+    String? errorMessage,
+    bool clearErrorMessage = false,
+    SkuEntity? updatedSku,
+    bool clearUpdatedSku = false,
+  }) {
     return EditSkuState(
-      sourceSku: sourceSku,
+      sourceSku: sourceSku ?? this.sourceSku,
       initialForm: initialForm,
       form: form ?? this.form,
+      status: status ?? this.status,
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
+      updatedSku: clearUpdatedSku ? null : (updatedSku ?? this.updatedSku),
     );
   }
 
-  SkuEntity toSku() {
-    return SkuEntity(
-      uid: sourceSku.uid,
+  UpdateSkuParams toUpdateSkuParams({
+    required List<String> attributeValueUids,
+    SkuEntity? baseSku,
+  }) {
+    final effectiveSku = baseSku ?? sourceSku;
+    return UpdateSkuParams(
+      skuUid: effectiveSku.uid,
+      version: effectiveSku.version,
       skuCode: form.skuCode.trim().isEmpty ? null : form.skuCode.trim(),
       barCode: form.barcode.trim().isEmpty ? null : form.barcode.trim(),
       sellingPrice: _parsePrice(form.sellingPrice),
       costPrice: _parsePrice(form.costPrice),
-      stockQuantity: sourceSku.stockQuantity,
-      minStockQuantity: sourceSku.minStockQuantity,
-      imageKeys: sourceSku.imageKeys,
-      imageUrls: sourceSku.imageUrls,
-      attributes: sourceSku.attributes,
-      status: sourceSku.status,
       isSellable: form.isSellable,
-      version: sourceSku.version,
-      spuUid: sourceSku.spuUid,
-      spuName: form.skuName.trim(),
-      spuStatus: sourceSku.spuStatus,
-      spuDescription: form.description.trim().isEmpty
-          ? null
-          : form.description.trim(),
-      spuCategoryName: form.categoryName.trim().isEmpty
-          ? null
-          : form.categoryName.trim(),
-      spuCurrency: form.currency.trim().isEmpty ? null : form.currency.trim(),
-      spuUnitOfMeasure: form.unitOfMeasure.trim().isEmpty
-          ? null
-          : form.unitOfMeasure.trim(),
-      createdAt: sourceSku.createdAt,
-      updatedAt: sourceSku.updatedAt,
+      attributeValueUids: attributeValueUids,
     );
   }
 
@@ -166,6 +182,18 @@ class EditSkuState extends Equatable {
     return AppFormatters.parsePrice(value);
   }
 
+  String? _normalizeOptionalText(String value) {
+    final trimmedValue = value.trim();
+    return trimmedValue.isEmpty ? null : trimmedValue;
+  }
+
   @override
-  List<Object?> get props => [sourceSku, initialForm, form];
+  List<Object?> get props => [
+    sourceSku,
+    initialForm,
+    form,
+    status,
+    errorMessage,
+    updatedSku,
+  ];
 }

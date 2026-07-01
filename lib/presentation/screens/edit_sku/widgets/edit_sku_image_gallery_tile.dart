@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
@@ -10,21 +12,23 @@ import 'package:ventry_flutter/core/utils/string_utils.dart';
 class EditSkuImageGalleryTile extends StatelessWidget {
   const EditSkuImageGalleryTile({
     super.key,
-    required this.imageUrl,
+    required this.previewPath,
     required this.onRemove,
     this.isCover = false,
     this.height,
+    this.isLocalFile = false,
   });
 
-  final String? imageUrl;
+  final String previewPath;
   final VoidCallback onRemove;
   final bool isCover;
   final double? height;
+  final bool isLocalFile;
 
   @override
   Widget build(BuildContext context) {
-    final safeImageUrl = StringUtils.isSafeNetworkUrl(imageUrl)
-        ? imageUrl
+    final safeImageUrl = StringUtils.isSafeNetworkUrl(previewPath)
+        ? previewPath
         : null;
 
     return Container(
@@ -40,18 +44,30 @@ class EditSkuImageGalleryTile extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            safeImageUrl == null
-                ? Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover)
-                : Image.network(
-                    safeImageUrl,
+            if (isLocalFile)
+              Image.file(
+                File(previewPath),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Image.asset(
+                    AppAssets.imgPlaceHolder,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) {
-                      return Image.asset(
-                        AppAssets.imgPlaceHolder,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
+                  );
+                },
+              )
+            else if (safeImageUrl != null)
+              Image.network(
+                safeImageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Image.asset(
+                    AppAssets.imgPlaceHolder,
+                    fit: BoxFit.cover,
+                  );
+                },
+              )
+            else
+              Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
             if (isCover)
               Positioned(
                 left: AppSize.size8.w,

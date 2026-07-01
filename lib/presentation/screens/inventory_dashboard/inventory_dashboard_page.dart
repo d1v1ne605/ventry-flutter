@@ -69,7 +69,7 @@ class _InventoryDashboardBody extends StatelessWidget {
         children: [
           InventoryHeaderSection(
             onScannerTap: () {
-              context.push(RouterPath.testScanner);
+              // context.push(RouterPath.testScanner);
             },
           ),
           SizedBox(height: AppSize.size24.h),

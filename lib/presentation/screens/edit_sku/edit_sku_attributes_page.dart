@@ -5,7 +5,13 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/widgets/dashed_border_painter.dart';
+import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/usecase.dart';
+import 'package:ventry_flutter/injection.dart';
+import 'package:ventry_flutter/presentation/screens/edit_sku/edit_sku_attribute_picker_page.dart';
 import 'package:ventry_flutter/presentation/screens/edit_sku/models/editable_sku_attribute.dart';
 import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_app_bar.dart';
 import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_attribute_card.dart';
@@ -23,7 +29,13 @@ class EditSkuAttributesPage extends StatefulWidget {
 class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   late List<EditableSkuAttribute> _attributes;
   late final Map<String, TextEditingController> _controllers;
-  int _newAttributeCount = 0;
+  late final Map<String, FocusNode> _focusNodes;
+  late final Map<String, GlobalKey> _attributeKeys;
+  late final ScrollController _scrollController;
+  late final ValueNotifier<bool> _canApplyNotifier;
+  final Set<String> _newAttributeIds = <String>{};
+  Map<String, List<String>> _attributeSuggestionsByName =
+      const <String, List<String>>{};
 
   @override
   void initState() {
@@ -35,6 +47,16 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
       for (final attribute in _attributes)
         attribute.id: TextEditingController(text: attribute.value),
     };
+    _focusNodes = {
+      for (final attribute in _attributes)
+        attribute.id: _buildFocusNode(attribute.id),
+    };
+    _attributeKeys = {
+      for (final attribute in _attributes) attribute.id: GlobalKey(),
+    };
+    _scrollController = ScrollController();
+    _canApplyNotifier = ValueNotifier<bool>(_computeCanApply());
+    _loadAttributeSuggestions();
   }
 
   @override
@@ -42,41 +64,196 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     for (final controller in _controllers.values) {
       controller.dispose();
     }
+    for (final focusNode in _focusNodes.values) {
+      focusNode.dispose();
+    }
+    _scrollController.dispose();
+    _canApplyNotifier.dispose();
     super.dispose();
   }
 
-  void _handleValueChanged(String id, String value) {
-    setState(() {
-      _attributes = _attributes
-          .map(
-            (attribute) => attribute.id == id
-                ? attribute.copyWith(value: value)
-                : attribute,
-          )
-          .toList(growable: false);
+  FocusNode _buildFocusNode(String id) {
+    final focusNode = FocusNode();
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus) {
+        return;
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToAttribute(id);
+      });
+      Future<void>.delayed(const Duration(milliseconds: 300), () {
+        if (!mounted || !focusNode.hasFocus) {
+          return;
+        }
+        _scrollToAttribute(id);
+      });
     });
+    return focusNode;
+  }
+
+  Future<void> _loadAttributeSuggestions() async {
+    final localResult = await getIt<GetLocalAttributesUseCase>()(NoParams());
+    if (!mounted) {
+      return;
+    }
+
+    localResult.fold((_) {}, (attributes) {
+      setState(() {
+        _attributeSuggestionsByName = _buildSuggestionsByName(attributes);
+      });
+    });
+
+    final syncResult = await getIt<SyncAttributesUseCase>()(NoParams());
+    if (!mounted || syncResult.isLeft()) {
+      return;
+    }
+
+    final refreshedResult = await getIt<GetLocalAttributesUseCase>()(
+      NoParams(),
+    );
+    if (!mounted) {
+      return;
+    }
+
+    refreshedResult.fold((_) {}, (attributes) {
+      setState(() {
+        _attributeSuggestionsByName = _buildSuggestionsByName(attributes);
+      });
+    });
+  }
+
+  Map<String, List<String>> _buildSuggestionsByName(
+    List<AttributeEntity> attributes,
+  ) {
+    final suggestions = <String, List<String>>{};
+
+    for (final attribute in attributes) {
+      final normalizedName = _normalizeAttributeName(attribute.name);
+      final values = attribute.values
+          .map((value) => value.value.trim())
+          .where((value) => value.isNotEmpty)
+          .toSet()
+          .toList(growable: false);
+
+      suggestions[normalizedName] = values;
+    }
+
+    return suggestions;
+  }
+
+  Future<void> _scrollToAttribute(String id) async {
+    final context = _attributeKeys[id]?.currentContext;
+    if (context == null) {
+      return;
+    }
+
+    await Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+      alignment: 0.15,
+    );
+  }
+
+  void _handleValueChanged(String id, String value) {
+    final index = _attributes.indexWhere((attribute) => attribute.id == id);
+    if (index == -1) {
+      return;
+    }
+
+    _attributes[index] = _attributes[index].copyWith(value: value);
+    final nextCanApply = _computeCanApply();
+    if (_canApplyNotifier.value != nextCanApply) {
+      _canApplyNotifier.value = nextCanApply;
+    }
   }
 
   void _handleDelete(String id) {
     _controllers.remove(id)?.dispose();
+    _focusNodes.remove(id)?.dispose();
+    _attributeKeys.remove(id);
+    _newAttributeIds.remove(id);
     setState(() {
       _attributes = _attributes
           .where((attribute) => attribute.id != id)
           .toList(growable: false);
     });
+    _canApplyNotifier.value = _computeCanApply();
   }
 
-  void _handleAddAttribute() {
-    _newAttributeCount += 1;
-    final label = AppStrings.editSkuNewAttributeLabel(_newAttributeCount);
-    final id = 'draft_attribute_$_newAttributeCount';
+  String _normalizeAttributeName(String value) => value.trim().toLowerCase();
 
-    _controllers[id] = TextEditingController();
+  Future<void> _handleAddAttribute() async {
+    final selectedAttributes = await Navigator.of(context)
+        .push<List<AttributeEntity>>(
+          MaterialPageRoute(
+            builder: (_) => EditSkuAttributePickerPage(
+              existingAttributeNames: _attributes
+                  .map((attribute) => attribute.name)
+                  .toList(growable: false),
+            ),
+          ),
+        );
+
+    if (selectedAttributes == null || !mounted) {
+      return;
+    }
+
+    final existingAttributeNames = _attributes
+        .map((attribute) => _normalizeAttributeName(attribute.name))
+        .toSet();
+    final newAttributes = selectedAttributes
+        .where(
+          (attribute) => !existingAttributeNames.contains(
+            _normalizeAttributeName(attribute.name),
+          ),
+        )
+        .map(
+          (attribute) => EditableSkuAttribute(
+            id: attribute.uid,
+            name: attribute.name,
+            value: '',
+          ),
+        )
+        .toList(growable: false);
+
+    if (newAttributes.isEmpty) {
+      return;
+    }
+
+    for (final attribute in newAttributes) {
+      _controllers.putIfAbsent(
+        attribute.id,
+        () => TextEditingController(text: attribute.value),
+      );
+      _focusNodes.putIfAbsent(
+        attribute.id,
+        () => _buildFocusNode(attribute.id),
+      );
+      _attributeKeys.putIfAbsent(attribute.id, GlobalKey.new);
+      _newAttributeIds.add(attribute.id);
+      _attributeSuggestionsByName = {
+        ..._attributeSuggestionsByName,
+        _normalizeAttributeName(attribute.name): selectedAttributes
+            .firstWhere((selected) => selected.uid == attribute.id)
+            .values
+            .map((value) => value.value.trim())
+            .where((value) => value.isNotEmpty)
+            .toSet()
+            .toList(growable: false),
+      };
+    }
+
     setState(() {
-      _attributes = [
-        ..._attributes,
-        EditableSkuAttribute(id: id, name: label, value: ''),
-      ];
+      _attributes = [..._attributes, ...newAttributes];
+    });
+    _canApplyNotifier.value = _computeCanApply();
+
+    final firstNewAttributeId = newAttributes.first.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNodes[firstNewAttributeId]?.requestFocus();
+      _scrollToAttribute(firstNewAttributeId);
     });
   }
 
@@ -86,8 +263,16 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     ).pop(_attributes.map((attribute) => attribute.toEntity()).toList());
   }
 
+  bool _computeCanApply() {
+    return _attributes
+        .where((attribute) => _newAttributeIds.contains(attribute.id))
+        .every((attribute) => attribute.value.trim().isNotEmpty);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+
     return Scaffold(
       backgroundColor: AppColors.editSkuSoftBackground,
       body: Stack(
@@ -101,20 +286,28 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   padding: EdgeInsets.fromLTRB(
                     AppSize.size16.w,
                     AppSize.size24.h,
                     AppSize.size16.w,
-                    120.h,
+                    120.h + keyboardInset,
                   ),
                   child: Column(
                     children: [
                       ..._attributes.map(
                         (attribute) => Padding(
+                          key: _attributeKeys[attribute.id],
                           padding: EdgeInsets.only(bottom: AppSize.size20.h),
                           child: EditSkuAttributeCard(
                             attribute: attribute,
                             controller: _controllers[attribute.id]!,
+                            focusNode: _focusNodes[attribute.id]!,
+                            suggestions:
+                                _attributeSuggestionsByName[_normalizeAttributeName(
+                                  attribute.name,
+                                )] ??
+                                const <String>[],
                             onChanged: (value) =>
                                 _handleValueChanged(attribute.id, value),
                             onDelete: () => _handleDelete(attribute.id),
@@ -167,9 +360,15 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: EditSkuAttributesBottomBar(
-              onCancel: () => Navigator.of(context).maybePop(),
-              onApply: _handleApply,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _canApplyNotifier,
+              builder: (context, canApply, _) {
+                return EditSkuAttributesBottomBar(
+                  onCancel: () => Navigator.of(context).maybePop(),
+                  onApply: _handleApply,
+                  isPrimaryEnabled: canApply,
+                );
+              },
             ),
           ),
         ],

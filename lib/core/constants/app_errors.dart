@@ -7,4 +7,8 @@ class AppErrors {
   static String unsupportedImageFormat(String mimeType) {
     return 'Unsupported image format: $mimeType';
   }
+
+  static String skuAttributeNotFound(String attributeName) {
+    return 'Unable to find attribute "$attributeName" while updating the SKU';
+  }
 }

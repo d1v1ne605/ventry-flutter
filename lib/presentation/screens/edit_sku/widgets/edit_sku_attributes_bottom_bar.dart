@@ -10,10 +10,14 @@ class EditSkuAttributesBottomBar extends StatelessWidget {
     super.key,
     required this.onCancel,
     required this.onApply,
+    this.primaryLabel = AppStrings.editSkuApplyAttributes,
+    this.isPrimaryEnabled = true,
   });
 
   final VoidCallback onCancel;
   final VoidCallback onApply;
+  final String primaryLabel;
+  final bool isPrimaryEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -61,25 +65,28 @@ class EditSkuAttributesBottomBar extends StatelessWidget {
           ),
           SizedBox(width: AppSize.size16.w),
           Expanded(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(AppSize.size8.r),
-                boxShadow: const [AppColors.buttonShadow],
-              ),
-              child: ElevatedButton(
-                onPressed: onApply,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.symmetric(vertical: AppSize.size12.h),
-                  shape: RoundedRectangleBorder(
+            child: Opacity(
+              opacity: isPrimaryEnabled ? 1 : 0.5,
+              child: IgnorePointer(
+                ignoring: !isPrimaryEnabled,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
                     borderRadius: BorderRadius.circular(AppSize.size8.r),
+                    boxShadow: const [AppColors.buttonShadow],
                   ),
-                ),
-                child: Text(
-                  AppStrings.editSkuApplyAttributes,
-                  style: AppTextStyles.buttonText,
+                  child: ElevatedButton(
+                    onPressed: onApply,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: EdgeInsets.symmetric(vertical: AppSize.size12.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppSize.size8.r),
+                      ),
+                    ),
+                    child: Text(primaryLabel, style: AppTextStyles.buttonText),
+                  ),
                 ),
               ),
             ),
