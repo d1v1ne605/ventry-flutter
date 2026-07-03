@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class EditableSkuImage extends Equatable {
+class EditableSkuFormImage extends Equatable {
   final String imageKey;
   final String previewPath;
   final bool isLocalFile;
 
-  const EditableSkuImage({
+  const EditableSkuFormImage({
     required this.imageKey,
     required this.previewPath,
     required this.isLocalFile,

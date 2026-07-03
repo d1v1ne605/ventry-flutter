@@ -11,6 +11,7 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
+import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
@@ -19,6 +20,7 @@ import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/spu_variants/bloc/spu_variants_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/spu_variants/bloc/spu_variants_event.dart';
 import 'package:ventry_flutter/presentation/screens/spu_variants/bloc/spu_variants_state.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_page.dart';
 
 class SpuVariantsPage extends StatelessWidget {
   final String spuUid;
@@ -61,17 +63,7 @@ class _SpuVariantsView extends StatelessWidget {
           ),
           onPressed: () => context.pop(),
         ),
-        trailingWidget: GestureDetector(
-          onTap: () {},
-          child: Text(
-            AppStrings.addNew,
-            style: AppTextStyles.linkSmall.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w700,
-              fontSize: AppSize.size14.sp,
-            ),
-          ),
-        ),
+        trailingWidget: const _AddVariantAction(),
       ),
       body: BlocBuilder<SpuVariantsBloc, SpuVariantsState>(
         builder: (context, state) {
@@ -93,6 +85,54 @@ class _SpuVariantsView extends StatelessWidget {
           return _VariantsContent(group: group);
         },
       ),
+    );
+  }
+}
+
+class _AddVariantAction extends StatelessWidget {
+  const _AddVariantAction();
+
+  Future<void> _openCreateSkuForm(BuildContext context) async {
+    final bloc = context.read<SpuVariantsBloc>();
+    final group = bloc.state.group;
+    final templateSku = group?.representativeSku;
+    if (group == null || templateSku == null) {
+      return;
+    }
+
+    final createdSku = await context.pushNamed<SkuEntity>(
+      RouterName.skuForm,
+      extra: SkuFormPageArgs.create(templateSku),
+    );
+
+    if (createdSku == null || !context.mounted) {
+      return;
+    }
+
+    AppSnackBar.showSuccess(context, AppStrings.skuFormCreatedSuccess);
+    bloc.add(LoadSpuVariants(group.spuUid));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<SpuVariantsBloc, SpuVariantsState, bool>(
+      selector: (state) => state.group?.representativeSku != null,
+      builder: (context, canCreate) {
+        return GestureDetector(
+          onTap: canCreate ? () => _openCreateSkuForm(context) : null,
+          child: Opacity(
+            opacity: canCreate ? 1 : 0.5,
+            child: Text(
+              AppStrings.addNew,
+              style: AppTextStyles.linkSmall.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: AppSize.size14.sp,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -10,9 +10,11 @@ import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart'
 import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
@@ -95,6 +97,31 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid) async {
     try {
       final response = await _productApi.getSkuByUid(skuUid);
+      return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params) async {
+    try {
+      final response = await _productApi.createSku(
+        CreateSkuRequest(
+          spuUid: params.spuUid,
+          skuCode: params.skuCode,
+          barCode: params.barCode,
+          sellingPrice: params.sellingPrice,
+          costPrice: params.costPrice,
+          stockQuantity: params.stockQuantity,
+          minStockQuantity: params.minStockQuantity,
+          imageKeys: params.imageKeys,
+          isSellable: params.isSellable,
+          attributeValueUids: params.attributeValueUids,
+        ),
+      );
       return Right(_mapSkuToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());

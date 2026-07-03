@@ -9,8 +9,8 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
 
-class EditSkuImageGalleryTile extends StatelessWidget {
-  const EditSkuImageGalleryTile({
+class SkuFormImageGalleryTile extends StatelessWidget {
+  const SkuFormImageGalleryTile({
     super.key,
     required this.previewPath,
     required this.onRemove,
@@ -82,8 +82,8 @@ class EditSkuImageGalleryTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSize.size4.r),
                   ),
                   child: Text(
-                    AppStrings.editSkuCover,
-                    style: AppTextStyles.editSkuFieldLabel.copyWith(
+                    AppStrings.skuFormCover,
+                    style: AppTextStyles.skuFormFieldLabel.copyWith(
                       color: Colors.white,
                     ),
                   ),

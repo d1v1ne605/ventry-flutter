@@ -11,18 +11,18 @@ import 'package:ventry_flutter/presentation/screens/category_management/bloc/cat
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/add_category_bottom_sheet.dart';
 
-class EditSkuCategoryBottomSheet extends StatefulWidget {
-  const EditSkuCategoryBottomSheet({super.key, this.selectedCategory});
+class SkuFormCategoryBottomSheet extends StatefulWidget {
+  const SkuFormCategoryBottomSheet({super.key, this.selectedCategory});
 
   final CategoryEntity? selectedCategory;
 
   @override
-  State<EditSkuCategoryBottomSheet> createState() =>
-      _EditSkuCategoryBottomSheetState();
+  State<SkuFormCategoryBottomSheet> createState() =>
+      _SkuFormCategoryBottomSheetState();
 }
 
-class _EditSkuCategoryBottomSheetState
-    extends State<EditSkuCategoryBottomSheet> {
+class _SkuFormCategoryBottomSheetState
+    extends State<SkuFormCategoryBottomSheet> {
   late final TextEditingController _searchController;
 
   @override
@@ -105,7 +105,7 @@ class _EditSkuCategoryBottomSheetState
                   child: Column(
                     children: [
                       Text(
-                        AppStrings.editSkuCategory,
+                        AppStrings.skuFormCategory,
                         style: AppTextStyles.sectionHeading,
                       ),
                       SizedBox(height: AppSize.size16.h),
@@ -207,7 +207,7 @@ class _EditSkuCategoryBottomSheetState
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColors.editSkuSoftBackground
+                                      ? AppColors.skuFormSoftBackground
                                       : Colors.white,
                                   borderRadius: BorderRadius.circular(
                                     AppSize.size12.r,

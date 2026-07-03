@@ -11,12 +11,12 @@ import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_us
 import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
 import 'package:ventry_flutter/injection.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_app_bar.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_attribute_selection_tile.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_attributes_bottom_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_app_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_attribute_selection_tile.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_attributes_bottom_bar.dart';
 
-class EditSkuAttributePickerPage extends StatefulWidget {
-  const EditSkuAttributePickerPage({
+class SkuFormAttributePickerPage extends StatefulWidget {
+  const SkuFormAttributePickerPage({
     super.key,
     required this.existingAttributeNames,
   });
@@ -24,12 +24,12 @@ class EditSkuAttributePickerPage extends StatefulWidget {
   final List<String> existingAttributeNames;
 
   @override
-  State<EditSkuAttributePickerPage> createState() =>
-      _EditSkuAttributePickerPageState();
+  State<SkuFormAttributePickerPage> createState() =>
+      _SkuFormAttributePickerPageState();
 }
 
-class _EditSkuAttributePickerPageState
-    extends State<EditSkuAttributePickerPage> {
+class _SkuFormAttributePickerPageState
+    extends State<SkuFormAttributePickerPage> {
   final Set<String> _selectedAttributeUids = <String>{};
 
   late final Set<String> _existingAttributeNames;
@@ -170,14 +170,14 @@ class _EditSkuAttributePickerPageState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppStrings.editSkuCreateAttributeTitle,
-                                style: AppTextStyles.editSkuSectionTitle
+                                AppStrings.skuFormCreateAttributeTitle,
+                                style: AppTextStyles.skuFormSectionTitle
                                     .copyWith(color: AppColors.textHeading),
                               ),
                               SizedBox(height: AppSize.size4.h),
                               Text(
                                 'Create a shop attribute and return to this list.',
-                                style: AppTextStyles.editSkuFieldLabel,
+                                style: AppTextStyles.skuFormFieldLabel,
                               ),
                             ],
                           ),
@@ -187,7 +187,7 @@ class _EditSkuAttributePickerPageState
                     SizedBox(height: AppSize.size20.h),
                     Text(
                       'Attribute name',
-                      style: AppTextStyles.editSkuFieldLabel.copyWith(
+                      style: AppTextStyles.skuFormFieldLabel.copyWith(
                         color: AppColors.textHeading,
                         fontWeight: FontWeight.w600,
                       ),
@@ -199,7 +199,7 @@ class _EditSkuAttributePickerPageState
                       cursorColor: AppColors.primary,
                       style: AppTextStyles.input,
                       decoration: InputDecoration(
-                        hintText: AppStrings.editSkuCreateAttributeHint,
+                        hintText: AppStrings.skuFormCreateAttributeHint,
                         hintStyle: AppTextStyles.inputHint,
                         filled: true,
                         fillColor: AppColors.inputFill,
@@ -252,8 +252,8 @@ class _EditSkuAttributePickerPageState
                               ),
                             ),
                             child: Text(
-                              AppStrings.editSkuCancel,
-                              style: AppTextStyles.editSkuButtonLabel.copyWith(
+                              AppStrings.skuFormCancel,
+                              style: AppTextStyles.skuFormButtonLabel.copyWith(
                                 color: AppColors.primary,
                               ),
                             ),
@@ -292,7 +292,7 @@ class _EditSkuAttributePickerPageState
                                     ),
                                   ),
                                   child: Text(
-                                    AppStrings.editSkuCreateAttributeConfirm,
+                                    AppStrings.skuFormCreateAttributeConfirm,
                                     style: AppTextStyles.buttonText,
                                   ),
                                 ),
@@ -320,7 +320,7 @@ class _EditSkuAttributePickerPageState
       if (createdName != null) {
         AppSnackBar.showError(
           context,
-          AppStrings.editSkuCreateAttributeNameRequired,
+          AppStrings.skuFormCreateAttributeNameRequired,
         );
       }
       return;
@@ -345,7 +345,7 @@ class _EditSkuAttributePickerPageState
       (_) {
         AppSnackBar.showSuccess(
           context,
-          AppStrings.editSkuAttributeCreatedSuccess,
+          AppStrings.skuFormAttributeCreatedSuccess,
         );
       },
     );
@@ -374,13 +374,13 @@ class _EditSkuAttributePickerPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.editSkuSoftBackground,
+      backgroundColor: AppColors.skuFormSoftBackground,
       body: Stack(
         children: [
           Column(
             children: [
-              EditSkuAppBar(
-                title: AppStrings.editSkuSelectAttributesTitle,
+              SkuFormAppBar(
+                title: AppStrings.skuFormSelectAttributesTitle,
                 onBackTap: () => Navigator.of(context).maybePop(),
                 showSaveAction: false,
                 trailingWidget: TextButton.icon(
@@ -393,8 +393,8 @@ class _EditSkuAttributePickerPageState
                     color: Colors.white,
                   ),
                   label: Text(
-                    AppStrings.editSkuCreateAttributeHeaderAction,
-                    style: AppTextStyles.editSkuFieldLabel.copyWith(
+                    AppStrings.skuFormCreateAttributeHeaderAction,
+                    style: AppTextStyles.skuFormFieldLabel.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
@@ -410,10 +410,10 @@ class _EditSkuAttributePickerPageState
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: EditSkuAttributesBottomBar(
+            child: SkuFormAttributesBottomBar(
               onCancel: () => Navigator.of(context).maybePop(),
               onApply: _handleAddAttributes,
-              primaryLabel: AppStrings.editSkuAddSelectedAttributes,
+              primaryLabel: AppStrings.skuFormAddSelectedAttributes,
               isPrimaryEnabled: _selectedAttributeUids.isNotEmpty,
             ),
           ),
@@ -437,7 +437,7 @@ class _EditSkuAttributePickerPageState
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                AppStrings.editSkuAttributesLoadFailed,
+                AppStrings.skuFormAttributesLoadFailed,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
@@ -457,7 +457,7 @@ class _EditSkuAttributePickerPageState
                 ),
                 child: Text(
                   AppStrings.retry,
-                  style: AppTextStyles.editSkuButtonLabel.copyWith(
+                  style: AppTextStyles.skuFormButtonLabel.copyWith(
                     color: AppColors.primary,
                   ),
                 ),
@@ -474,8 +474,8 @@ class _EditSkuAttributePickerPageState
           padding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
           child: Text(
             _existingAttributeNames.isEmpty
-                ? AppStrings.editSkuAttributesEmptyState
-                : AppStrings.editSkuAttributesAllAdded,
+                ? AppStrings.skuFormAttributesEmptyState
+                : AppStrings.skuFormAttributesAllAdded,
             textAlign: TextAlign.center,
             style: AppTextStyles.body,
           ),
@@ -495,14 +495,14 @@ class _EditSkuAttributePickerPageState
       itemBuilder: (context, index) {
         if (index == 0) {
           return Text(
-            AppStrings.editSkuSelectAttributesHelper,
-            style: AppTextStyles.editSkuFieldLabel,
+            AppStrings.skuFormSelectAttributesHelper,
+            style: AppTextStyles.skuFormFieldLabel,
           );
         }
 
         final attribute = _attributes[index - 1];
 
-        return EditSkuAttributeSelectionTile(
+        return SkuFormAttributeSelectionTile(
           attribute: attribute,
           isSelected: _selectedAttributeUids.contains(attribute.uid),
           isDisabled: false,

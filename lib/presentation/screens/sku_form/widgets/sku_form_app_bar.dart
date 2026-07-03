@@ -5,8 +5,8 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 
-class EditSkuAppBar extends StatelessWidget {
-  const EditSkuAppBar({
+class SkuFormAppBar extends StatelessWidget {
+  const SkuFormAppBar({
     super.key,
     required this.title,
     required this.onBackTap,
@@ -42,7 +42,7 @@ class EditSkuAppBar extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: _EditSkuIconButton(
+                  child: _SkuFormIconButton(
                     icon: Icons.arrow_back_ios_new,
                     onTap: onBackTap,
                   ),
@@ -55,7 +55,7 @@ class EditSkuAppBar extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.editSkuTitle,
+                    style: AppTextStyles.skuFormTitle,
                   ),
                 ),
                 Align(
@@ -63,7 +63,7 @@ class EditSkuAppBar extends StatelessWidget {
                   child:
                       trailingWidget ??
                       (showSaveAction
-                          ? _EditSkuIconButton(
+                          ? _SkuFormIconButton(
                               icon: Icons.check,
                               onTap: onSaveTap,
                             )
@@ -78,8 +78,8 @@ class EditSkuAppBar extends StatelessWidget {
   }
 }
 
-class _EditSkuIconButton extends StatelessWidget {
-  const _EditSkuIconButton({required this.icon, this.onTap});
+class _SkuFormIconButton extends StatelessWidget {
+  const _SkuFormIconButton({required this.icon, this.onTap});
 
   final IconData icon;
   final VoidCallback? onTap;

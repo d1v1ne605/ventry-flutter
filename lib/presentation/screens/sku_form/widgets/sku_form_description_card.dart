@@ -5,8 +5,8 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 
-class EditSkuDescriptionCard extends StatelessWidget {
-  const EditSkuDescriptionCard({
+class SkuFormDescriptionCard extends StatelessWidget {
+  const SkuFormDescriptionCard({
     super.key,
     required this.controller,
     required this.tags,
@@ -27,7 +27,7 @@ class EditSkuDescriptionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(AppSize.size16.w),
       decoration: BoxDecoration(
-        color: AppColors.editSkuCardBackground,
+        color: AppColors.skuFormCardBackground,
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
@@ -39,8 +39,8 @@ class EditSkuDescriptionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppStrings.editSkuDescription,
-                  style: AppTextStyles.editSkuSectionTitle,
+                  AppStrings.skuFormDescription,
+                  style: AppTextStyles.skuFormSectionTitle,
                 ),
                 Icon(
                   isExpanded
@@ -60,7 +60,7 @@ class EditSkuDescriptionCard extends StatelessWidget {
               controller: controller,
               maxLines: 4,
               onChanged: onDescriptionChanged,
-              style: AppTextStyles.editSkuFieldValue,
+              style: AppTextStyles.skuFormFieldValue,
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
@@ -85,9 +85,9 @@ class EditSkuDescriptionCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(AppSize.size16.r),
-                          border: Border.all(color: AppColors.editSkuTagBorder),
+                          border: Border.all(color: AppColors.skuFormTagBorder),
                         ),
-                        child: Text(tag, style: AppTextStyles.editSkuTag),
+                        child: Text(tag, style: AppTextStyles.skuFormTag),
                       ),
                     )
                     .toList(),
@@ -101,6 +101,6 @@ class EditSkuDescriptionCard extends StatelessWidget {
 
   OutlineInputBorder get _border => OutlineInputBorder(
     borderRadius: BorderRadius.circular(AppSize.size12.r),
-    borderSide: const BorderSide(color: AppColors.editSkuFieldBorder),
+    borderSide: const BorderSide(color: AppColors.skuFormFieldBorder),
   );
 }

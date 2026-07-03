@@ -2,59 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
-import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_event.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_image_upload_state.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/bloc/edit_sku_images_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/models/editable_sku_image.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_app_bar.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_image_gallery_tile.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_images_bottom_bar.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_upload_image_tile.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_image.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_app_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_image_gallery_tile.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_images_bottom_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_upload_image_tile.dart';
 
-class EditSkuImagesPage extends StatelessWidget {
-  const EditSkuImagesPage({super.key, required this.sku});
+class SkuFormImagesPage extends StatelessWidget {
+  const SkuFormImagesPage({super.key, required this.images});
 
-  final SkuEntity sku;
+  final List<EditableSkuFormImage> images;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => getIt<AddProductImageUploadBloc>()),
-        BlocProvider(create: (_) => getIt<EditSkuImagesBloc>()),
-      ],
-      child: _EditSkuImagesView(sku: sku),
+    return BlocProvider(
+      create: (_) => getIt<AddProductImageUploadBloc>(),
+      child: _SkuFormImagesView(images: images),
     );
   }
 }
 
-class _EditSkuImagesView extends StatefulWidget {
-  const _EditSkuImagesView({required this.sku});
+class _SkuFormImagesView extends StatefulWidget {
+  const _SkuFormImagesView({required this.images});
 
-  final SkuEntity sku;
+  final List<EditableSkuFormImage> images;
 
   @override
-  State<_EditSkuImagesView> createState() => _EditSkuImagesViewState();
+  State<_SkuFormImagesView> createState() => _SkuFormImagesViewState();
 }
 
-class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
+class _SkuFormImagesViewState extends State<_SkuFormImagesView> {
   final ImagePicker _picker = ImagePicker();
 
-  late List<EditableSkuImage> _existingImages;
+  late List<EditableSkuFormImage> _existingImages;
 
   @override
   void initState() {
     super.initState();
-    _existingImages = _buildExistingImages(widget.sku);
+    _existingImages = List<EditableSkuFormImage>.from(widget.images);
   }
 
   void _handleRemoveImage(int index) {
@@ -68,7 +62,7 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
 
     if (index < existingCount) {
       setState(() {
-        _existingImages = List<EditableSkuImage>.from(_existingImages)
+        _existingImages = List<EditableSkuFormImage>.from(_existingImages)
           ..removeAt(index);
       });
       return;
@@ -82,17 +76,11 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
   void _handleSaveGallery() {
     final uploadState = context.read<AddProductImageUploadBloc>().state;
     if (uploadState.isUploading) {
-      AppSnackBar.showError(context, AppStrings.editSkuUploadInProgress);
+      AppSnackBar.showError(context, AppStrings.skuFormUploadInProgress);
       return;
     }
 
-    context.read<EditSkuImagesBloc>().add(
-      SaveEditSkuImagesEvent(
-        skuUid: widget.sku.uid,
-        version: widget.sku.version,
-        imageKeys: _resolveImageKeys(uploadState),
-      ),
-    );
+    Navigator.of(context).pop(_buildGalleryItems(uploadState));
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -148,7 +136,7 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
               children: [
                 Text(
                   AppStrings.uploadImage,
-                  style: AppTextStyles.editSkuSectionTitle.copyWith(
+                  style: AppTextStyles.skuFormSectionTitle.copyWith(
                     color: AppColors.textHeading,
                   ),
                 ),
@@ -193,31 +181,12 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
     );
   }
 
-  List<EditableSkuImage> _buildExistingImages(SkuEntity sku) {
-    final items = <EditableSkuImage>[];
-    final itemCount = sku.imageKeys.length < sku.imageUrls.length
-        ? sku.imageKeys.length
-        : sku.imageUrls.length;
-
-    for (var index = 0; index < itemCount; index++) {
-      items.add(
-        EditableSkuImage(
-          imageKey: sku.imageKeys[index],
-          previewPath: sku.imageUrls[index],
-          isLocalFile: false,
-        ),
-      );
-    }
-
-    return items;
-  }
-
-  List<EditableSkuImage> _buildGalleryItems(
+  List<EditableSkuFormImage> _buildGalleryItems(
     AddProductImageUploadState uploadState,
   ) {
     final uploadedImages = uploadState.images
         .map(
-          (image) => EditableSkuImage(
+          (image) => EditableSkuFormImage(
             imageKey: image.objectKey,
             previewPath: image.localPath,
             isLocalFile: true,
@@ -228,47 +197,21 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
     return [..._existingImages, ...uploadedImages];
   }
 
-  List<String> _resolveImageKeys(AddProductImageUploadState uploadState) {
-    return _buildGalleryItems(uploadState)
-        .map((image) => image.imageKey)
-        .where((imageKey) => imageKey.trim().isNotEmpty)
-        .toList(growable: false);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<AddProductImageUploadBloc, AddProductImageUploadState>(
-          listenWhen: (previous, current) =>
-              previous.errorMessage != current.errorMessage &&
-              current.errorMessage != null,
-          listener: (context, state) {
-            AppSnackBar.showError(context, state.errorMessage!);
-          },
-        ),
-        BlocListener<EditSkuImagesBloc, EditSkuImagesState>(
-          listenWhen: (previous, current) => previous.status != current.status,
-          listener: (context, state) {
-            if (state.status == BaseStatus.failure &&
-                state.errorMessage != null) {
-              AppSnackBar.showError(context, state.errorMessage!);
-              return;
-            }
-
-            if (state.status == BaseStatus.success &&
-                state.updatedSku != null) {
-              Navigator.of(context).pop(state.updatedSku);
-            }
-          },
-        ),
-      ],
+    return BlocListener<AddProductImageUploadBloc, AddProductImageUploadState>(
+      listenWhen: (previous, current) =>
+          previous.errorMessage != current.errorMessage &&
+          current.errorMessage != null,
+      listener: (context, state) {
+        AppSnackBar.showError(context, state.errorMessage!);
+      },
       child: BlocBuilder<AddProductImageUploadBloc, AddProductImageUploadState>(
         builder: (context, uploadState) {
           final galleryItems = _buildGalleryItems(uploadState);
           final additionalImages = galleryItems.length > 1
               ? galleryItems.sublist(1)
-              : const <EditableSkuImage>[];
+              : const <EditableSkuFormImage>[];
 
           return Scaffold(
             backgroundColor: AppColors.surface,
@@ -276,8 +219,8 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
               children: [
                 Column(
                   children: [
-                    EditSkuAppBar(
-                      title: AppStrings.editSkuEditImagesTitle,
+                    SkuFormAppBar(
+                      title: AppStrings.skuFormEditImagesTitle,
                       onBackTap: () => Navigator.of(context).maybePop(),
                       showSaveAction: false,
                     ),
@@ -293,15 +236,15 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppStrings.editSkuEditImagesTitle,
-                              style: AppTextStyles.editSkuSectionTitle.copyWith(
+                              AppStrings.skuFormEditImagesTitle,
+                              style: AppTextStyles.skuFormSectionTitle.copyWith(
                                 color: AppColors.textHeading,
                               ),
                             ),
                             SizedBox(height: AppSize.size8.h),
                             Text(
-                              AppStrings.editSkuMediaHelper,
-                              style: AppTextStyles.editSkuFieldValue.copyWith(
+                              AppStrings.skuFormMediaHelper,
+                              style: AppTextStyles.skuFormFieldValue.copyWith(
                                 color: AppColors.textBody,
                               ),
                             ),
@@ -314,7 +257,7 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                               physics: const NeverScrollableScrollPhysics(),
                               childAspectRatio: 171 / 152,
                               children: [
-                                EditSkuUploadImageTile(
+                                SkuFormUploadImageTile(
                                   onTap: _showImagePickerBottomSheet,
                                 ),
                                 if (uploadState.isUploading)
@@ -343,8 +286,8 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                                         ),
                                         SizedBox(height: AppSize.size12.h),
                                         Text(
-                                          AppStrings.editSkuUploadNew,
-                                          style: AppTextStyles.editSkuFieldLabel
+                                          AppStrings.skuFormUploadNew,
+                                          style: AppTextStyles.skuFormFieldLabel
                                               .copyWith(
                                                 color: AppColors.textBody,
                                               ),
@@ -358,7 +301,7 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                             ),
                             if (galleryItems.isNotEmpty) ...[
                               SizedBox(height: AppSize.size16.h),
-                              EditSkuImageGalleryTile(
+                              SkuFormImageGalleryTile(
                                 previewPath: galleryItems.first.previewPath,
                                 isLocalFile: galleryItems.first.isLocalFile,
                                 height: 358.h,
@@ -381,7 +324,7 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                                     ),
                                 itemBuilder: (context, index) {
                                   final image = additionalImages[index];
-                                  return EditSkuImageGalleryTile(
+                                  return SkuFormImageGalleryTile(
                                     previewPath: image.previewPath,
                                     isLocalFile: image.isLocalFile,
                                     onRemove: () =>
@@ -398,18 +341,12 @@ class _EditSkuImagesViewState extends State<_EditSkuImagesView> {
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child:
-                      BlocSelector<EditSkuImagesBloc, EditSkuImagesState, bool>(
-                        selector: (state) => state.isSaving,
-                        builder: (context, isSaving) {
-                          return EditSkuImagesBottomBar(
-                            onCancel: () => Navigator.of(context).maybePop(),
-                            onSave: _handleSaveGallery,
-                            isSaving: isSaving,
-                            isSaveEnabled: !uploadState.isUploading,
-                          );
-                        },
-                      ),
+                  child: SkuFormImagesBottomBar(
+                    onCancel: () => Navigator.of(context).maybePop(),
+                    onSave: _handleSaveGallery,
+                    isSaving: false,
+                    isSaveEnabled: !uploadState.isUploading,
+                  ),
                 ),
               ],
             ),

@@ -6,8 +6,8 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
 
-class EditSkuAttributeSelectionTile extends StatelessWidget {
-  const EditSkuAttributeSelectionTile({
+class SkuFormAttributeSelectionTile extends StatelessWidget {
+  const SkuFormAttributeSelectionTile({
     super.key,
     required this.attribute,
     required this.isSelected,
@@ -26,7 +26,7 @@ class EditSkuAttributeSelectionTile extends StatelessWidget {
         ? AppColors.primary
         : AppColors.inputBorder;
     final backgroundColor = isDisabled || isSelected
-        ? AppColors.editSkuSoftBackground
+        ? AppColors.skuFormSoftBackground
         : AppColors.surface;
     final textColor = isDisabled || isSelected
         ? AppColors.primary
@@ -57,8 +57,8 @@ class EditSkuAttributeSelectionTile extends StatelessWidget {
               ),
               if (isDisabled)
                 Text(
-                  AppStrings.editSkuAttributeAlreadyAdded,
-                  style: AppTextStyles.editSkuFieldLabel.copyWith(
+                  AppStrings.skuFormAttributeAlreadyAdded,
+                  style: AppTextStyles.skuFormFieldLabel.copyWith(
                     color: AppColors.primary,
                   ),
                 )
