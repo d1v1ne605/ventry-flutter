@@ -265,6 +265,9 @@ class AppStrings {
   static const String skuFormCreateAttributeHint = 'Enter attribute name';
   static const String skuFormCreateAttributeConfirm = 'Create';
   static const String skuFormCreateAttributeHeaderAction = 'New';
+  static const String skuFormCreateAttributeHelper =
+      'Create a shop attribute and return to this list.';
+  static const String skuFormCreateAttributeNameLabel = 'Attribute name';
   static const String skuFormCreateAttributeNameRequired =
       'Attribute name is required.';
   static const String skuFormAttributeCreatedSuccess =
@@ -282,6 +285,7 @@ class AppStrings {
   static const String skuFormMediaHelper =
       'Manage the gallery for this SKU. Drag to reorder.';
   static const String skuFormCover = 'Cover';
+  static const String skuFormMainImageBadge = 'Main';
   static const String skuFormUploadInProgress =
       'Please wait until image upload completes';
   static const String skuFormGalleryUpdatedSuccess =

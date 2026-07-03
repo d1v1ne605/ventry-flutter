@@ -56,7 +56,7 @@ class SkuFormMediaCard extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: AppSize.size20.h),
         _SkuFormSectionCard(
           title: AppStrings.skuFormMedia,
           actionLabel: AppStrings.skuFormManage,
@@ -117,7 +117,7 @@ class _SkuFormSectionCard extends StatelessWidget {
                 onPressed: onActionTap,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textHeading,
-                  side: const BorderSide(color: Color(0xFF6B7280)),
+                  side: const BorderSide(color: AppColors.skuFormActionBorder),
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSize.size12.w,
                     vertical: AppSize.size8.h,
@@ -200,7 +200,7 @@ class _SkuFormImageTile extends StatelessWidget {
                 border: Border.all(color: AppColors.inputBorder),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x1A000000),
+                    color: AppColors.skuFormImageShadow,
                     offset: Offset(0, 1),
                     blurRadius: 2,
                   ),
@@ -221,12 +221,12 @@ class _SkuFormImageTile extends StatelessWidget {
                     vertical: AppSize.size4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(AppSize.size4.r),
                     border: Border.all(color: AppColors.inputBorder),
                   ),
                   child: Text(
-                    'Main',
+                    AppStrings.skuFormMainImageBadge,
                     style: AppTextStyles.skuFormFieldLabel.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,

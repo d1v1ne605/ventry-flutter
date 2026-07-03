@@ -25,12 +25,12 @@ class SkuFormAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.white,
+        statusBarColor: AppColors.surface,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
       ),
       child: Container(
-        color: Colors.white,
+        color: AppColors.surface,
         child: SafeArea(
           bottom: false,
           child: Container(
@@ -88,8 +88,8 @@ class _SkuFormIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
-      splashRadius: 20.r,
-      icon: Icon(icon, color: Colors.white, size: AppSize.size20.r),
+      splashRadius: AppSize.size20.r,
+      icon: Icon(icon, color: AppColors.onPrimary, size: AppSize.size20.r),
     );
   }
 }

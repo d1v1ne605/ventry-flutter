@@ -32,6 +32,9 @@ class SkuFormAttributesPage extends StatefulWidget {
 }
 
 class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
+  static const Duration _attributeScrollDelay = Duration(milliseconds: 300);
+  static const Duration _attributeScrollDuration = Duration(milliseconds: 250);
+
   late List<EditableSkuFormAttribute> _attributes;
   late final Map<String, TextEditingController> _controllers;
   late final Map<String, FocusNode> _focusNodes;
@@ -91,7 +94,7 @@ class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToAttribute(id);
       });
-      Future<void>.delayed(const Duration(milliseconds: 300), () {
+      Future<void>.delayed(_attributeScrollDelay, () {
         if (!mounted || !focusNode.hasFocus) {
           return;
         }
@@ -166,7 +169,7 @@ class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
 
     await Scrollable.ensureVisible(
       context,
-      duration: const Duration(milliseconds: 250),
+      duration: _attributeScrollDuration,
       curve: Curves.easeOutCubic,
       alignment: 0.15,
     );
@@ -338,7 +341,7 @@ class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
                     AppSize.size16.w,
                     AppSize.size24.h,
                     AppSize.size16.w,
-                    120.h + keyboardInset,
+                    AppSize.size120.h + keyboardInset,
                   ),
                   child: Column(
                     children: [
@@ -366,14 +369,14 @@ class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
                       if (!widget.isStructureLocked)
                         SizedBox(
                           width: double.infinity,
-                          height: 57.h,
+                          height: AppSize.size57.h,
                           child: CustomPaint(
                             painter: DashedBorderPainter(
                               color: AppColors.inputBorder,
                               radius: AppSize.size12.r,
                             ),
                             child: Material(
-                              color: Colors.white,
+                              color: AppColors.surface,
                               borderRadius: BorderRadius.circular(
                                 AppSize.size12.r,
                               ),

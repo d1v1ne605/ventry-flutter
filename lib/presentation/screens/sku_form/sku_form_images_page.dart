@@ -230,7 +230,7 @@ class _SkuFormImagesViewState extends State<_SkuFormImagesView> {
                           AppSize.size16.w,
                           AppSize.size16.h,
                           AppSize.size16.w,
-                          96.h,
+                          AppSize.size96.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,7 +255,8 @@ class _SkuFormImagesViewState extends State<_SkuFormImagesView> {
                               mainAxisSpacing: AppSize.size16.h,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              childAspectRatio: 171 / 152,
+                              childAspectRatio:
+                                  AppSize.size171 / AppSize.size152,
                               children: [
                                 SkuFormUploadImageTile(
                                   onTap: _showImagePickerBottomSheet,
@@ -263,7 +264,7 @@ class _SkuFormImagesViewState extends State<_SkuFormImagesView> {
                                 if (uploadState.isUploading)
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: AppColors.surface,
                                       borderRadius: BorderRadius.circular(
                                         AppSize.size12.r,
                                       ),
@@ -304,7 +305,7 @@ class _SkuFormImagesViewState extends State<_SkuFormImagesView> {
                               SkuFormImageGalleryTile(
                                 previewPath: galleryItems.first.previewPath,
                                 isLocalFile: galleryItems.first.isLocalFile,
-                                height: 358.h,
+                                height: AppSize.size358.h,
                                 isCover: true,
                                 onRemove: () => _handleRemoveImage(0),
                               ),

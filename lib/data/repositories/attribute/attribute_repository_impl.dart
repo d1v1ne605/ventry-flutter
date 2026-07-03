@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ventry_flutter/core/constants/app_errors.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/core/network/dio_exception_extension.dart';
 import 'package:ventry_flutter/data/datasources/local/attribute/attribute_local_datasource.dart';
@@ -24,7 +25,7 @@ class AttributeRepositoryImpl implements AttributeRepository {
       final attributes = await _localDataSource.getAttributes();
       return Right(attributes);
     } catch (e) {
-      return Left(CacheFailure('Failed to read attributes from local DB: $e'));
+      return Left(CacheFailure(AppErrors.localAttributeReadFailed(e)));
     }
   }
 
@@ -59,7 +60,7 @@ class AttributeRepositoryImpl implements AttributeRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(ServerFailure('Unexpected error: $e'));
+      return Left(ServerFailure(AppErrors.unexpectedWithDetails(e)));
     }
   }
 
@@ -83,7 +84,7 @@ class AttributeRepositoryImpl implements AttributeRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(ServerFailure('Unexpected error: $e'));
+      return Left(ServerFailure(AppErrors.unexpectedWithDetails(e)));
     }
   }
 
@@ -110,7 +111,7 @@ class AttributeRepositoryImpl implements AttributeRepository {
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(ServerFailure('Unexpected error: $e'));
+      return Left(ServerFailure(AppErrors.unexpectedWithDetails(e)));
     }
   }
 }

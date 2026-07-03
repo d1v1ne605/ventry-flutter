@@ -35,7 +35,7 @@ class SkuFormImagesBottomBar extends StatelessWidget {
         border: Border(top: BorderSide(color: AppColors.inputBorder)),
         boxShadow: [
           BoxShadow(
-            color: Color(0x140F172A),
+            color: AppColors.skuFormOverlayShadow,
             offset: Offset(0, -4),
             blurRadius: 12,
           ),
@@ -74,8 +74,8 @@ class SkuFormImagesBottomBar extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: isSaveEnabled && !isSaving ? onSave : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
+                  backgroundColor: AppColors.transparent,
+                  shadowColor: AppColors.transparent,
                   padding: EdgeInsets.symmetric(vertical: AppSize.size12.h),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppSize.size8.r),
@@ -87,7 +87,7 @@ class SkuFormImagesBottomBar extends StatelessWidget {
                         height: AppSize.size20.w,
                         child: const CircularProgressIndicator(
                           strokeWidth: AppSize.size2,
-                          color: Colors.white,
+                          color: AppColors.onPrimary,
                         ),
                       )
                     : Text(

@@ -23,6 +23,8 @@ class SkuFormCategoryBottomSheet extends StatefulWidget {
 
 class _SkuFormCategoryBottomSheetState
     extends State<SkuFormCategoryBottomSheet> {
+  static const Duration _sheetAnimationDuration = Duration(milliseconds: 200);
+
   late final TextEditingController _searchController;
 
   @override
@@ -41,7 +43,7 @@ class _SkuFormCategoryBottomSheetState
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<CategoryBloc>(),
         child: const AddCategoryBottomSheet(),
@@ -70,7 +72,7 @@ class _SkuFormCategoryBottomSheetState
         Navigator.of(context).pop(state.categories.first);
       },
       child: AnimatedPadding(
-        duration: const Duration(milliseconds: 200),
+        duration: _sheetAnimationDuration,
         curve: Curves.easeOut,
         padding: EdgeInsets.only(bottom: bottomInset),
         child: SafeArea(
@@ -194,7 +196,7 @@ class _SkuFormCategoryBottomSheetState
                           final category = state.categories[index];
                           final isSelected = _isSelected(category);
                           return Material(
-                            color: Colors.transparent,
+                            color: AppColors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(
                                 AppSize.size12.r,
@@ -208,7 +210,7 @@ class _SkuFormCategoryBottomSheetState
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? AppColors.skuFormSoftBackground
-                                      : Colors.white,
+                                      : AppColors.surface,
                                   borderRadius: BorderRadius.circular(
                                     AppSize.size12.r,
                                   ),

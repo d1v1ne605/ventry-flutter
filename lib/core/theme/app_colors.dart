@@ -4,6 +4,9 @@ class AppColors {
   // Backgrounds
   static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
+  static const Color transparent = Color(0x00000000);
+  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color loadingOverlay = Color(0x61000000);
 
   // Inputs
   static const Color inputFill = Color(0xFFF1F5F9);
@@ -13,6 +16,7 @@ class AppColors {
   static const Color textHeading = Color(0xFF171D1C);
   static const Color textBody = Color(0xFF64748B);
   static const Color textHint = Color(0xB364748B); // rgba(100, 116, 139, 0.7)
+  static const Color bodySubtle = Color(0xFF475569);
 
   // Primary
   static const Color primary = Color(0xFF00685F);
@@ -144,6 +148,13 @@ class AppColors {
   static const Color skuFormTagBorder = Color(0xFFD7E2EC);
   static const Color skuFormTagText = Color(0xFF64748B);
   static const Color skuFormSuccess = Color(0xFF10B981);
+  static const Color skuFormActionBorder = Color(0xFF6B7280);
+  static const Color skuFormBottomBarBackground = Color(0xF2FFFFFF);
+  static const Color skuFormOverlayShadow = Color(0x140F172A);
+  static const Color skuFormImageShadow = Color(0x1A000000);
+  static const Color skuFormSectionTitle = Color(0xFF3D4947);
+  static const Color skuFormImageBadgeOverlay = Color(0x4D000000);
+  static const Color skuFormFloatingActionBackground = Color(0xEBFFFFFF);
 
   // Product name text
   static const Color productName = Color(0xFF1C2B2A);

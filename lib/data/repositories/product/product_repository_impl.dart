@@ -28,6 +28,8 @@ import 'package:ventry_flutter/domain/repositories/product/product_repository.da
 @LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
   final ProductApi _productApi;
+  static const String _unknownSpuName = 'Unknown';
+  static const String _unknownSpuStatus = 'UNKNOWN';
   static const List<String> _supportedMimeTypes = [
     'image/jpeg',
     'image/png',
@@ -69,7 +71,7 @@ class ProductRepositoryImpl implements ProductRepository {
                 (group) => SkuSpuGroupEntity(
                   spuUid: group.spu.uid,
                   spuName: group.spu.name ?? '',
-                  spuStatus: group.spu.status ?? 'UNKNOWN',
+                  spuStatus: group.spu.status ?? _unknownSpuStatus,
                   categoryName: group.spu.category?.name,
                   categoryImageUrl: group.spu.category?.imageUrl,
                   skus: group.skus
@@ -315,8 +317,8 @@ class ProductRepositoryImpl implements ProductRepository {
       isSellable: response.isSellable,
       version: response.version,
       spuUid: spu?.uid ?? '',
-      spuName: spu?.name ?? 'Unknown',
-      spuStatus: spu?.status ?? 'UNKNOWN',
+      spuName: spu?.name ?? _unknownSpuName,
+      spuStatus: spu?.status ?? _unknownSpuStatus,
       spuDescription: spu?.description,
       spuCategoryName: spu?.category?.name,
       spuCurrency: spu?.currency,

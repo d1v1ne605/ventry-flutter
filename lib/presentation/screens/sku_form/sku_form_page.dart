@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
+import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/logging/app_logger.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
@@ -127,7 +128,7 @@ class _SkuFormViewState extends State<_SkuFormView> {
     final category = await showModalBottomSheet<CategoryEntity>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<CategoryBloc>(),
         child: SkuFormCategoryBottomSheet(selectedCategory: selectedCategory),
@@ -221,7 +222,12 @@ class _SkuFormViewState extends State<_SkuFormView> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 104.h),
+                    padding: EdgeInsets.fromLTRB(
+                      AppSize.size12.w,
+                      AppSize.size20.h,
+                      AppSize.size12.w,
+                      AppSize.size104.h,
+                    ),
                     child: Column(
                       children: [
                         SkuFormFormCard(
@@ -260,7 +266,7 @@ class _SkuFormViewState extends State<_SkuFormView> {
                               .read<SkuFormBloc>()
                               .add(SkuFormSellableChanged(value)),
                         ),
-                        SizedBox(height: 20.h),
+                        SizedBox(height: AppSize.size20.h),
                         BlocBuilder<SkuFormBloc, SkuFormState>(
                           buildWhen: (previous, current) =>
                               previous.attributes != current.attributes ||
@@ -307,7 +313,7 @@ class _SkuFormViewState extends State<_SkuFormView> {
                 }
 
                 return Container(
-                  color: Colors.black38,
+                  color: AppColors.loadingOverlay,
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(
                     color: AppColors.primary,

@@ -133,7 +133,7 @@ class _SkuFormAttributePickerPageState
             final canCreate = trimmedName.isNotEmpty;
 
             return Dialog(
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppColors.transparent,
               insetPadding: EdgeInsets.symmetric(horizontal: AppSize.size24.w),
               child: Container(
                 padding: EdgeInsets.all(AppSize.size20.w),
@@ -176,7 +176,7 @@ class _SkuFormAttributePickerPageState
                               ),
                               SizedBox(height: AppSize.size4.h),
                               Text(
-                                'Create a shop attribute and return to this list.',
+                                AppStrings.skuFormCreateAttributeHelper,
                                 style: AppTextStyles.skuFormFieldLabel,
                               ),
                             ],
@@ -186,7 +186,7 @@ class _SkuFormAttributePickerPageState
                     ),
                     SizedBox(height: AppSize.size20.h),
                     Text(
-                      'Attribute name',
+                      AppStrings.skuFormCreateAttributeNameLabel,
                       style: AppTextStyles.skuFormFieldLabel.copyWith(
                         color: AppColors.textHeading,
                         fontWeight: FontWeight.w600,
@@ -280,8 +280,8 @@ class _SkuFormAttributePickerPageState
                                     ).pop(trimmedName);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
+                                    backgroundColor: AppColors.transparent,
+                                    shadowColor: AppColors.transparent,
                                     padding: EdgeInsets.symmetric(
                                       vertical: AppSize.size12.h,
                                     ),
@@ -390,17 +390,17 @@ class _SkuFormAttributePickerPageState
                   icon: Icon(
                     Icons.add,
                     size: AppSize.size16.r,
-                    color: Colors.white,
+                    color: AppColors.onPrimary,
                   ),
                   label: Text(
                     AppStrings.skuFormCreateAttributeHeaderAction,
                     style: AppTextStyles.skuFormFieldLabel.copyWith(
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.onPrimary,
                     padding: EdgeInsets.symmetric(horizontal: AppSize.size8.w),
                   ),
                 ),
@@ -488,7 +488,7 @@ class _SkuFormAttributePickerPageState
         AppSize.size16.w,
         AppSize.size24.h,
         AppSize.size16.w,
-        120.h,
+        AppSize.size120.h,
       ),
       itemCount: _attributes.length + 1,
       separatorBuilder: (_, __) => SizedBox(height: AppSize.size12.h),

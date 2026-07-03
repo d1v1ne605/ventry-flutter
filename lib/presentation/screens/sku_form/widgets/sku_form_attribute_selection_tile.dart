@@ -33,7 +33,7 @@ class SkuFormAttributeSelectionTile extends StatelessWidget {
         : AppColors.textHeading;
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: isDisabled ? null : onTap,
         borderRadius: BorderRadius.circular(AppSize.size12.r),

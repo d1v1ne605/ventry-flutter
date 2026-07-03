@@ -23,7 +23,7 @@ class SkuFormUploadImageTile extends StatelessWidget {
           radius: AppSize.size12.r,
         ),
         child: Material(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSize.size12.r),
           child: InkWell(
             onTap: onTap,

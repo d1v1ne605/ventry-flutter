@@ -45,7 +45,7 @@ class SkuFormInputField extends StatelessWidget {
           decoration: InputDecoration(
             isDense: true,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.surface,
             contentPadding: EdgeInsets.symmetric(
               horizontal: AppSize.size12.w,
               vertical: AppSize.size12.h,

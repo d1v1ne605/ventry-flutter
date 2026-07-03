@@ -50,7 +50,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     height: 20 / 14,
     letterSpacing: 14 * 0.025,
-    color: Colors.white,
+    color: AppColors.onPrimary,
   );
 
   /// Section heading for registration form cards (style_OTCDPP in Figma).
@@ -66,7 +66,7 @@ class AppTextStyles {
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
-    color: const Color(0xFF475569),
+    color: AppColors.bodySubtle,
   );
 
   // ── Manrope styles (Inventory Dashboard / Figma) ──────────────────────────
@@ -188,14 +188,14 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     height: 32 / 24,
     letterSpacing: -0.6,
-    color: Colors.white,
+    color: AppColors.onPrimary,
   );
 
   static TextStyle get skuFormSectionTitle => GoogleFonts.inter(
     fontSize: 18.sp,
     fontWeight: FontWeight.w600,
     height: 24 / 18,
-    color: const Color(0xFF3D4947),
+    color: AppColors.skuFormSectionTitle,
   );
 
   static TextStyle get skuFormFieldLabel => GoogleFonts.inter(

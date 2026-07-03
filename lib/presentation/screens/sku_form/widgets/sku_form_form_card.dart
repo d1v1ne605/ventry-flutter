@@ -198,9 +198,9 @@ class SkuFormFormCard extends StatelessWidget {
                   return Switch(
                     value: isSellable,
                     onChanged: onSellableChanged,
-                    activeThumbColor: Colors.white,
+                    activeThumbColor: AppColors.onPrimary,
                     activeTrackColor: AppColors.skuFormSuccess,
-                    inactiveThumbColor: Colors.white,
+                    inactiveThumbColor: AppColors.onPrimary,
                     inactiveTrackColor: AppColors.inputBorder,
                   );
                 },

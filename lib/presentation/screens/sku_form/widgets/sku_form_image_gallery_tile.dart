@@ -34,7 +34,7 @@ class SkuFormImageGalleryTile extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSize.size12.r),
         border: Border.all(color: AppColors.inputBorder),
         boxShadow: const [AppColors.cardShadow],
@@ -78,13 +78,13 @@ class SkuFormImageGalleryTile extends StatelessWidget {
                     vertical: AppSize.size4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: AppColors.skuFormImageBadgeOverlay,
                     borderRadius: BorderRadius.circular(AppSize.size4.r),
                   ),
                   child: Text(
                     AppStrings.skuFormCover,
                     style: AppTextStyles.skuFormFieldLabel.copyWith(
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                     ),
                   ),
                 ),
@@ -93,7 +93,7 @@ class SkuFormImageGalleryTile extends StatelessWidget {
               top: AppSize.size8.h,
               right: AppSize.size8.w,
               child: Material(
-                color: Colors.white.withValues(alpha: 0.92),
+                color: AppColors.skuFormFloatingActionBackground,
                 shape: const CircleBorder(),
                 child: InkWell(
                   onTap: onRemove,

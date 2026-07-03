@@ -53,7 +53,7 @@ class SkuFormDescriptionCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: AppSize.size16.h),
-          Container(height: 1.h, color: AppColors.inputBorder),
+          Container(height: AppSize.size1.h, color: AppColors.inputBorder),
           if (isExpanded) ...[
             SizedBox(height: AppSize.size16.h),
             TextField(
@@ -64,7 +64,7 @@ class SkuFormDescriptionCard extends StatelessWidget {
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: AppColors.surface,
                 contentPadding: EdgeInsets.all(AppSize.size12.w),
                 enabledBorder: _border,
                 focusedBorder: _border,
@@ -83,7 +83,7 @@ class SkuFormDescriptionCard extends StatelessWidget {
                           vertical: AppSize.size6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(AppSize.size16.r),
                           border: Border.all(color: AppColors.skuFormTagBorder),
                         ),

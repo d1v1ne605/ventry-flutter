@@ -122,8 +122,9 @@ class SkuFormAttributeCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSize.size12.r),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: 200.h,
-                        minWidth: MediaQuery.sizeOf(context).width - 64.w,
+                        maxHeight: AppSize.size200.h,
+                        minWidth:
+                            MediaQuery.sizeOf(context).width - AppSize.size64.w,
                       ),
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(

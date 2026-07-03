@@ -31,11 +31,11 @@ class SkuFormBottomBar extends StatelessWidget {
         (AppSize.size16 + bottomPadding).h,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xF2FFFFFF),
+        color: AppColors.skuFormBottomBarBackground,
         border: Border(top: BorderSide(color: AppColors.inputBorder)),
         boxShadow: [
           BoxShadow(
-            color: Color(0x140F172A),
+            color: AppColors.skuFormOverlayShadow,
             offset: Offset(0, -4),
             blurRadius: 12,
           ),
@@ -51,7 +51,7 @@ class SkuFormBottomBar extends StatelessWidget {
             isLoading: isLoading,
             icon: Icon(
               Icons.save_outlined,
-              color: Colors.white,
+              color: AppColors.onPrimary,
               size: AppSize.size16.r,
             ),
           ),
