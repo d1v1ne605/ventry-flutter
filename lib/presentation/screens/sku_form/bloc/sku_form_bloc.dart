@@ -5,42 +5,62 @@ import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/constants/app_errors.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/core/logging/app_logger.dart';
+import 'package:ventry_flutter/core/utils/sku_code_generator.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/create_sku_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_latest_generated_sku_code_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/update_sku_images_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/update_sku_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/bloc/edit_sku_event.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/bloc/edit_sku_state.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/bloc/sku_form_event.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/bloc/sku_form_state.dart';
 
-class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
+class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
   final GetLocalAttributesUseCase _getLocalAttributesUseCase;
   final CreateAttributeValueUseCase _createAttributeValueUseCase;
+  final CreateSkuUseCase _createSkuUseCase;
+  final GetLatestGeneratedSkuCodeUseCase _getLatestGeneratedSkuCodeUseCase;
   final UpdateSkuUseCase _updateSkuUseCase;
+  final UpdateSkuImagesUseCase _updateSkuImagesUseCase;
 
-  EditSkuBloc(
+  SkuFormBloc(
     AppLogger logger,
     this._getLocalAttributesUseCase,
     this._createAttributeValueUseCase,
+    this._createSkuUseCase,
+    this._getLatestGeneratedSkuCodeUseCase,
     this._updateSkuUseCase, {
+    required SkuFormMode mode,
     required SkuEntity initialSku,
-  }) : super(EditSkuState.fromSku(initialSku), logger) {
-    on<EditSkuNameChanged>(_onNameChanged);
-    on<EditSkuCategoryChanged>(_onCategoryChanged);
-    on<EditSkuBarcodeChanged>(_onBarcodeChanged);
-    on<EditSkuCodeChanged>(_onSkuCodeChanged);
-    on<EditSkuCostPriceChanged>(_onCostPriceChanged);
-    on<EditSkuSellingPriceChanged>(_onSellingPriceChanged);
-    on<EditSkuCurrencyChanged>(_onCurrencyChanged);
-    on<EditSkuUnitOfMeasureChanged>(_onUnitChanged);
-    on<EditSkuSellableChanged>(_onSellableChanged);
-    on<EditSkuDescriptionChanged>(_onDescriptionChanged);
-    on<EditSkuSubmitted>(_onSubmitted);
-    on<EditSkuSourceSynced>(_onSourceSynced);
+    required UpdateSkuImagesUseCase updateSkuImagesUseCase,
+  }) : _updateSkuImagesUseCase = updateSkuImagesUseCase,
+       super(
+         mode.isCreate
+             ? SkuFormState.create(initialSku)
+             : SkuFormState.edit(initialSku),
+         logger,
+       ) {
+    on<SkuFormNameChanged>(_onNameChanged);
+    on<SkuFormCategoryChanged>(_onCategoryChanged);
+    on<SkuFormBarcodeChanged>(_onBarcodeChanged);
+    on<SkuFormCodeChanged>(_onSkuCodeChanged);
+    on<SkuFormCostPriceChanged>(_onCostPriceChanged);
+    on<SkuFormSellingPriceChanged>(_onSellingPriceChanged);
+    on<SkuFormCurrencyChanged>(_onCurrencyChanged);
+    on<SkuFormUnitOfMeasureChanged>(_onUnitChanged);
+    on<SkuFormSellableChanged>(_onSellableChanged);
+    on<SkuFormDescriptionChanged>(_onDescriptionChanged);
+    on<SkuFormSubmitted>(_onSubmitted);
+    on<SkuFormSourceSynced>(_onSourceSynced);
+    on<SkuFormAttributesChanged>(_onAttributesChanged);
+    on<SkuFormImagesChanged>(_onImagesChanged);
   }
 
-  void _onNameChanged(EditSkuNameChanged event, Emitter<EditSkuState> emit) {
+  void _onNameChanged(SkuFormNameChanged event, Emitter<SkuFormState> emit) {
     emit(
       state.copyWith(
         form: state.form.copyWith(skuName: event.value),
@@ -51,8 +71,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onCategoryChanged(
-    EditSkuCategoryChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormCategoryChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -67,8 +87,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onBarcodeChanged(
-    EditSkuBarcodeChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormBarcodeChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -79,7 +99,7 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
     );
   }
 
-  void _onSkuCodeChanged(EditSkuCodeChanged event, Emitter<EditSkuState> emit) {
+  void _onSkuCodeChanged(SkuFormCodeChanged event, Emitter<SkuFormState> emit) {
     emit(
       state.copyWith(
         form: state.form.copyWith(skuCode: event.value),
@@ -90,8 +110,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onCostPriceChanged(
-    EditSkuCostPriceChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormCostPriceChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -103,8 +123,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onSellingPriceChanged(
-    EditSkuSellingPriceChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormSellingPriceChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -116,8 +136,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onCurrencyChanged(
-    EditSkuCurrencyChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormCurrencyChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -129,8 +149,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onUnitChanged(
-    EditSkuUnitOfMeasureChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormUnitOfMeasureChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -142,8 +162,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onSellableChanged(
-    EditSkuSellableChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormSellableChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -155,8 +175,8 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
   }
 
   void _onDescriptionChanged(
-    EditSkuDescriptionChanged event,
-    Emitter<EditSkuState> emit,
+    SkuFormDescriptionChanged event,
+    Emitter<SkuFormState> emit,
   ) {
     emit(
       state.copyWith(
@@ -167,7 +187,7 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
     );
   }
 
-  void _onSourceSynced(EditSkuSourceSynced event, Emitter<EditSkuState> emit) {
+  void _onSourceSynced(SkuFormSourceSynced event, Emitter<SkuFormState> emit) {
     emit(
       state.copyWith(
         sourceSku: event.sku,
@@ -177,9 +197,35 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
     );
   }
 
+  void _onAttributesChanged(
+    SkuFormAttributesChanged event,
+    Emitter<SkuFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        attributes: List<SkuAttributeEntity>.from(event.attributes),
+        clearErrorMessage: true,
+        clearUpdatedSku: true,
+      ),
+    );
+  }
+
+  void _onImagesChanged(
+    SkuFormImagesChanged event,
+    Emitter<SkuFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        images: List.of(event.images),
+        clearErrorMessage: true,
+        clearUpdatedSku: true,
+      ),
+    );
+  }
+
   Future<void> _onSubmitted(
-    EditSkuSubmitted event,
-    Emitter<EditSkuState> emit,
+    SkuFormSubmitted event,
+    Emitter<SkuFormState> emit,
   ) async {
     emit(
       state.copyWith(
@@ -190,7 +236,7 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
     );
 
     final attributeValueUidsResult = await _resolveAttributeValueUids(
-      event.attributes,
+      state.attributes,
     );
 
     final attributeValueUids = attributeValueUidsResult.fold((failure) {
@@ -207,14 +253,112 @@ class EditSkuBloc extends BaseViewModel<EditSkuEvent, EditSkuState> {
       return;
     }
 
-    final result = await _updateSkuUseCase(
-      state.toUpdateSkuParams(
+    if (state.isCreateMode) {
+      await _createSku(attributeValueUids, emit);
+      return;
+    }
+
+    await _updateSku(attributeValueUids, emit);
+  }
+
+  Future<void> _createSku(
+    List<String> attributeValueUids,
+    Emitter<SkuFormState> emit,
+  ) async {
+    final generatedSkuCode = await _resolveCreateSkuCode(emit);
+    if (generatedSkuCode == null && state.form.skuCode.trim().isEmpty) {
+      return;
+    }
+
+    final result = await _createSkuUseCase(
+      state.toCreateSkuParams(
         attributeValueUids: attributeValueUids,
-        baseSku: event.baseSku,
+        skuCode: generatedSkuCode,
       ),
     );
 
     result.fold(
+      (failure) {
+        emit(
+          state.copyWith(
+            status: BaseStatus.failure,
+            errorMessage: mapFailureToMessage(failure),
+          ),
+        );
+      },
+      (updatedSku) {
+        emit(
+          state.copyWith(status: BaseStatus.success, updatedSku: updatedSku),
+        );
+      },
+    );
+  }
+
+  Future<String?> _resolveCreateSkuCode(Emitter<SkuFormState> emit) async {
+    final currentSkuCode = state.form.skuCode.trim();
+    if (currentSkuCode.isNotEmpty) {
+      return currentSkuCode;
+    }
+
+    final result = await _getLatestGeneratedSkuCodeUseCase(NoParams());
+    return result.fold((failure) {
+      emit(
+        state.copyWith(
+          status: BaseStatus.failure,
+          errorMessage: mapFailureToMessage(failure),
+        ),
+      );
+      return null;
+    }, SkuCodeGenerator.nextFromLatest);
+  }
+
+  Future<void> _updateSku(
+    List<String> attributeValueUids,
+    Emitter<SkuFormState> emit,
+  ) async {
+    final shouldUpdateSku = state.hasFormChanges || state.hasAttributeChanges;
+    var latestSku = state.sourceSku;
+
+    if (shouldUpdateSku) {
+      final result = await _updateSkuUseCase(
+        state.toUpdateSkuParams(attributeValueUids: attributeValueUids),
+      );
+
+      final shouldStop = result.fold(
+        (failure) {
+          emit(
+            state.copyWith(
+              status: BaseStatus.failure,
+              errorMessage: mapFailureToMessage(failure),
+            ),
+          );
+          return true;
+        },
+        (updatedSku) {
+          latestSku = updatedSku;
+          return false;
+        },
+      );
+
+      if (shouldStop) {
+        return;
+      }
+    }
+
+    if (!state.hasImageChanges) {
+      emit(state.copyWith(status: BaseStatus.success, updatedSku: latestSku));
+      return;
+    }
+
+    final imageResult = await _updateSkuImagesUseCase(
+      UpdateSkuImagesParams(
+        skuUid: latestSku.uid,
+        version: latestSku.version,
+        imageKeys: state.imageKeys,
+      ),
+    );
+
+    imageResult.fold(
       (failure) {
         emit(
           state.copyWith(

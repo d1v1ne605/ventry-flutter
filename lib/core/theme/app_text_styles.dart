@@ -50,7 +50,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     height: 20 / 14,
     letterSpacing: 14 * 0.025,
-    color: Colors.white,
+    color: AppColors.onPrimary,
   );
 
   /// Section heading for registration form cards (style_OTCDPP in Figma).
@@ -66,7 +66,7 @@ class AppTextStyles {
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
-    color: const Color(0xFF475569),
+    color: AppColors.bodySubtle,
   );
 
   // ── Manrope styles (Inventory Dashboard / Figma) ──────────────────────────
@@ -183,36 +183,36 @@ class AppTextStyles {
     color: AppColors.textHint,
   );
 
-  static TextStyle get editSkuTitle => GoogleFonts.inter(
+  static TextStyle get skuFormTitle => GoogleFonts.inter(
     fontSize: 24.sp,
     fontWeight: FontWeight.w700,
     height: 32 / 24,
     letterSpacing: -0.6,
-    color: Colors.white,
+    color: AppColors.onPrimary,
   );
 
-  static TextStyle get editSkuSectionTitle => GoogleFonts.inter(
+  static TextStyle get skuFormSectionTitle => GoogleFonts.inter(
     fontSize: 18.sp,
     fontWeight: FontWeight.w600,
     height: 24 / 18,
-    color: const Color(0xFF3D4947),
+    color: AppColors.skuFormSectionTitle,
   );
 
-  static TextStyle get editSkuFieldLabel => GoogleFonts.inter(
+  static TextStyle get skuFormFieldLabel => GoogleFonts.inter(
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
     color: AppColors.textBody,
   );
 
-  static TextStyle get editSkuFieldValue => GoogleFonts.inter(
+  static TextStyle get skuFormFieldValue => GoogleFonts.inter(
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
     color: AppColors.textHeading,
   );
 
-  static TextStyle get editSkuButtonLabel => GoogleFonts.inter(
+  static TextStyle get skuFormButtonLabel => GoogleFonts.inter(
     fontSize: 14.sp,
     fontWeight: FontWeight.w600,
     height: 21 / 14,
@@ -220,10 +220,10 @@ class AppTextStyles {
     color: AppColors.textHeading,
   );
 
-  static TextStyle get editSkuTag => GoogleFonts.inter(
+  static TextStyle get skuFormTag => GoogleFonts.inter(
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
-    color: AppColors.editSkuTagText,
+    color: AppColors.skuFormTagText,
   );
 }

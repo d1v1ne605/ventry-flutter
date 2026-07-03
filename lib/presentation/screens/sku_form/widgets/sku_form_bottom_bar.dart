@@ -5,16 +5,18 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/widgets/primary_button.dart';
 
-class EditSkuBottomBar extends StatelessWidget {
-  const EditSkuBottomBar({
+class SkuFormBottomBar extends StatelessWidget {
+  const SkuFormBottomBar({
     super.key,
     required this.isEnabled,
     required this.onPressed,
+    this.label = AppStrings.skuFormSaveChanges,
     this.isLoading = false,
   });
 
   final bool isEnabled;
   final VoidCallback onPressed;
+  final String label;
   final bool isLoading;
 
   @override
@@ -29,11 +31,11 @@ class EditSkuBottomBar extends StatelessWidget {
         (AppSize.size16 + bottomPadding).h,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xF2FFFFFF),
+        color: AppColors.skuFormBottomBarBackground,
         border: Border(top: BorderSide(color: AppColors.inputBorder)),
         boxShadow: [
           BoxShadow(
-            color: Color(0x140F172A),
+            color: AppColors.skuFormOverlayShadow,
             offset: Offset(0, -4),
             blurRadius: 12,
           ),
@@ -44,12 +46,12 @@ class EditSkuBottomBar extends StatelessWidget {
         child: IgnorePointer(
           ignoring: !isEnabled || isLoading,
           child: PrimaryButton(
-            text: AppStrings.editSkuSaveChanges,
+            text: label,
             onPressed: onPressed,
             isLoading: isLoading,
             icon: Icon(
               Icons.save_outlined,
-              color: Colors.white,
+              color: AppColors.onPrimary,
               size: AppSize.size16.r,
             ),
           ),

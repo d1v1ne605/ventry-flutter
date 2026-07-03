@@ -9,12 +9,12 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/bloc/edit_sku_bloc.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/bloc/edit_sku_state.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_input_field.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/bloc/sku_form_bloc.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/bloc/sku_form_state.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_input_field.dart';
 
-class EditSkuFormCard extends StatelessWidget {
-  const EditSkuFormCard({
+class SkuFormFormCard extends StatelessWidget {
+  const SkuFormFormCard({
     super.key,
     required this.skuNameController,
     required this.categoryController,
@@ -69,19 +69,19 @@ class EditSkuFormCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(AppSize.size16.w),
       decoration: BoxDecoration(
-        color: AppColors.editSkuCardBackground,
+        color: AppColors.skuFormCardBackground,
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.editSkuGeneralInformation,
-            style: AppTextStyles.editSkuSectionTitle,
+            AppStrings.skuFormGeneralInformation,
+            style: AppTextStyles.skuFormSectionTitle,
           ),
           SizedBox(height: AppSize.size16.h),
-          // EditSkuInputField(
-          //   label: AppStrings.editSkuCategory,
+          // SkuFormInputField(
+          //   label: AppStrings.skuFormCategory,
           //   controller: categoryController,
           //   readOnly: true,
           //   onTap: onCategoryTap,
@@ -95,8 +95,8 @@ class EditSkuFormCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuBarcode,
+                child: SkuFormInputField(
+                  label: AppStrings.skuFormBarcode,
                   controller: barcodeController,
                   onChanged: onBarcodeChanged,
                   suffixIcon: IconButton(
@@ -115,8 +115,8 @@ class EditSkuFormCard extends StatelessWidget {
               ),
               SizedBox(width: AppSize.size16.w),
               Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuSkuCode,
+                child: SkuFormInputField(
+                  label: AppStrings.skuFormSkuCode,
                   controller: skuCodeController,
                   onChanged: onSkuCodeChanged,
                 ),
@@ -127,8 +127,8 @@ class EditSkuFormCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuCostPrice,
+                child: SkuFormInputField(
+                  label: AppStrings.skuFormCostPrice,
                   controller: costPriceController,
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -139,8 +139,8 @@ class EditSkuFormCard extends StatelessWidget {
               ),
               SizedBox(width: AppSize.size16.w),
               Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuSellingPrice,
+                child: SkuFormInputField(
+                  label: AppStrings.skuFormSellingPrice,
                   controller: sellingPriceController,
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -152,26 +152,26 @@ class EditSkuFormCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: AppSize.size16.h),
-          Row(
-            children: [
-              Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuCurrency,
-                  controller: currencyController,
-                  onChanged: onCurrencyChanged,
-                ),
-              ),
-              SizedBox(width: AppSize.size16.w),
-              Expanded(
-                child: EditSkuInputField(
-                  label: AppStrings.editSkuUnitOfMeasure,
-                  controller: unitController,
-                  onChanged: onUnitChanged,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: AppSize.size16.h),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: SkuFormInputField(
+          //         label: AppStrings.skuFormCurrency,
+          //         controller: currencyController,
+          //         onChanged: onCurrencyChanged,
+          //       ),
+          //     ),
+          //     SizedBox(width: AppSize.size16.w),
+          //     Expanded(
+          //       child: SkuFormInputField(
+          //         label: AppStrings.skuFormUnitOfMeasure,
+          //         controller: unitController,
+          //         onChanged: onUnitChanged,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // SizedBox(height: AppSize.size16.h),
           Row(
             children: [
               Expanded(
@@ -179,28 +179,28 @@ class EditSkuFormCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppStrings.editSkuIsSellable,
-                      style: AppTextStyles.editSkuButtonLabel.copyWith(
+                      AppStrings.skuFormIsSellable,
+                      style: AppTextStyles.skuFormButtonLabel.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     SizedBox(height: AppSize.size4.h),
                     Text(
-                      AppStrings.editSkuSellableHelper,
-                      style: AppTextStyles.editSkuFieldLabel,
+                      AppStrings.skuFormSellableHelper,
+                      style: AppTextStyles.skuFormFieldLabel,
                     ),
                   ],
                 ),
               ),
-              BlocSelector<EditSkuBloc, EditSkuState, bool>(
+              BlocSelector<SkuFormBloc, SkuFormState, bool>(
                 selector: (state) => state.form.isSellable,
                 builder: (context, isSellable) {
                   return Switch(
                     value: isSellable,
                     onChanged: onSellableChanged,
-                    activeThumbColor: Colors.white,
-                    activeTrackColor: AppColors.editSkuSuccess,
-                    inactiveThumbColor: Colors.white,
+                    activeThumbColor: AppColors.onPrimary,
+                    activeTrackColor: AppColors.skuFormSuccess,
+                    inactiveThumbColor: AppColors.onPrimary,
                     inactiveTrackColor: AppColors.inputBorder,
                   );
                 },

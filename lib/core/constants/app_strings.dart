@@ -230,62 +230,69 @@ class AppStrings {
   static const String addNew = 'Add New';
   static const String retry = 'Retry';
 
-  // ── Edit SKU ────────────────────────────────────────────────────────────────
-  static const String editSkuTitle = 'Edit SKU';
-  static const String editSkuSaveChanges = 'Save Changes';
-  static const String editSkuGeneralInformation = 'General Information';
-  static const String editSkuAttributes = 'Attributes';
-  static const String editSkuMedia = 'Media';
-  static const String editSkuDescription = 'Description';
-  static const String editSkuManage = 'Manage';
-  static const String editSkuEdit = 'Edit';
-  static const String editSkuSkuName = 'SKU Name';
-  static const String editSkuCategory = 'Category';
-  static const String editSkuBarcode = 'Barcode';
-  static const String editSkuSkuCode = 'SKU Code';
-  static const String editSkuCostPrice = 'Cost Price';
-  static const String editSkuSellingPrice = 'Selling Price';
-  static const String editSkuCurrency = 'Currency';
-  static const String editSkuUnitOfMeasure = 'Unit of Measure';
-  static const String editSkuIsSellable = 'Is Sellable';
-  static const String editSkuSellableHelper =
+  // ── SKU Form ────────────────────────────────────────────────────────────────
+  static const String skuFormEditTitle = 'Edit SKU';
+  static const String skuFormCreateTitle = 'Add SKU';
+  static const String skuFormSaveChanges = 'Save Changes';
+  static const String skuFormCreateSku = 'Create SKU';
+  static const String skuFormGeneralInformation = 'General Information';
+  static const String skuFormAttributes = 'Attributes';
+  static const String skuFormMedia = 'Media';
+  static const String skuFormDescription = 'Description';
+  static const String skuFormManage = 'Manage';
+  static const String skuFormEdit = 'Edit';
+  static const String skuFormSkuName = 'SKU Name';
+  static const String skuFormCategory = 'Category';
+  static const String skuFormBarcode = 'Barcode';
+  static const String skuFormSkuCode = 'SKU Code';
+  static const String skuFormCostPrice = 'Cost Price';
+  static const String skuFormSellingPrice = 'Selling Price';
+  static const String skuFormCurrency = 'Currency';
+  static const String skuFormUnitOfMeasure = 'Unit of Measure';
+  static const String skuFormIsSellable = 'Is Sellable';
+  static const String skuFormSellableHelper =
       'Allow this item to be sold in the store';
-  static const String editSkuAddImage = 'Add Image';
-  static const String editSkuEditAttributesTitle = 'Edit Attributes';
-  static const String editSkuEditImagesTitle = 'Edit Images';
-  static const String editSkuCancel = 'Cancel';
-  static const String editSkuApplyAttributes = 'Apply Attributes';
-  static const String editSkuSelectAttributesTitle = 'Select Attributes';
-  static const String editSkuSelectAttributesHelper =
+  static const String skuFormAddImage = 'Add Image';
+  static const String skuFormEditAttributesTitle = 'Edit Attributes';
+  static const String skuFormEditImagesTitle = 'Edit Images';
+  static const String skuFormCancel = 'Cancel';
+  static const String skuFormApplyAttributes = 'Apply Attributes';
+  static const String skuFormSelectAttributesTitle = 'Select Attributes';
+  static const String skuFormSelectAttributesHelper =
       'Choose one or more shop attributes to add to this SKU.';
-  static const String editSkuAddNewAttribute = 'Add New Attribute';
-  static const String editSkuCreateAttributeTitle = 'New Attribute';
-  static const String editSkuCreateAttributeHint = 'Enter attribute name';
-  static const String editSkuCreateAttributeConfirm = 'Create';
-  static const String editSkuCreateAttributeHeaderAction = 'New';
-  static const String editSkuCreateAttributeNameRequired =
+  static const String skuFormAddNewAttribute = 'Add New Attribute';
+  static const String skuFormCreateAttributeTitle = 'New Attribute';
+  static const String skuFormCreateAttributeHint = 'Enter attribute name';
+  static const String skuFormCreateAttributeConfirm = 'Create';
+  static const String skuFormCreateAttributeHeaderAction = 'New';
+  static const String skuFormCreateAttributeHelper =
+      'Create a shop attribute and return to this list.';
+  static const String skuFormCreateAttributeNameLabel = 'Attribute name';
+  static const String skuFormCreateAttributeNameRequired =
       'Attribute name is required.';
-  static const String editSkuAttributeCreatedSuccess =
+  static const String skuFormAttributeCreatedSuccess =
       'Attribute created successfully';
-  static const String editSkuAddSelectedAttributes = 'Add Attributes';
-  static const String editSkuAttributeAlreadyAdded = 'Added';
-  static const String editSkuAttributesEmptyState =
+  static const String skuFormAddSelectedAttributes = 'Add Attributes';
+  static const String skuFormAttributeAlreadyAdded = 'Added';
+  static const String skuFormAttributesEmptyState =
       'No attributes are available for this shop yet.';
-  static const String editSkuAttributesAllAdded =
+  static const String skuFormAttributesAllAdded =
       'All available attributes have already been added to this SKU.';
-  static const String editSkuAttributesLoadFailed =
+  static const String skuFormAttributesLoadFailed =
       'Unable to load shop attributes.';
-  static const String editSkuSaveGallery = 'Save Gallery';
-  static const String editSkuUploadNew = 'Upload New';
-  static const String editSkuMediaHelper =
+  static const String skuFormSaveGallery = 'Save Gallery';
+  static const String skuFormUploadNew = 'Upload New';
+  static const String skuFormMediaHelper =
       'Manage the gallery for this SKU. Drag to reorder.';
-  static const String editSkuCover = 'Cover';
-  static const String editSkuUploadInProgress =
+  static const String skuFormCover = 'Cover';
+  static const String skuFormMainImageBadge = 'Main';
+  static const String skuFormUploadInProgress =
       'Please wait until image upload completes';
-  static const String editSkuGalleryUpdatedSuccess =
+  static const String skuFormGalleryUpdatedSuccess =
       'Gallery updated successfully';
-  static const String editSkuUpdatedSuccess = 'SKU updated successfully';
-  static String editSkuNewAttributeLabel(int index) => 'Attribute $index';
+  static const String skuFormUpdatedSuccess = 'SKU updated successfully';
+  static const String skuFormCreatedSuccess = 'SKU created successfully';
+  static String skuFormNewAttributeLabel(int index) => 'Attribute $index';
 }
 
 /// Login screen string tokens.

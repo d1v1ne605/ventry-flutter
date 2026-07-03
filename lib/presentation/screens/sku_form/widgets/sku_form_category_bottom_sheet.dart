@@ -11,18 +11,20 @@ import 'package:ventry_flutter/presentation/screens/category_management/bloc/cat
 import 'package:ventry_flutter/presentation/screens/category_management/bloc/category_state.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/add_category_bottom_sheet.dart';
 
-class EditSkuCategoryBottomSheet extends StatefulWidget {
-  const EditSkuCategoryBottomSheet({super.key, this.selectedCategory});
+class SkuFormCategoryBottomSheet extends StatefulWidget {
+  const SkuFormCategoryBottomSheet({super.key, this.selectedCategory});
 
   final CategoryEntity? selectedCategory;
 
   @override
-  State<EditSkuCategoryBottomSheet> createState() =>
-      _EditSkuCategoryBottomSheetState();
+  State<SkuFormCategoryBottomSheet> createState() =>
+      _SkuFormCategoryBottomSheetState();
 }
 
-class _EditSkuCategoryBottomSheetState
-    extends State<EditSkuCategoryBottomSheet> {
+class _SkuFormCategoryBottomSheetState
+    extends State<SkuFormCategoryBottomSheet> {
+  static const Duration _sheetAnimationDuration = Duration(milliseconds: 200);
+
   late final TextEditingController _searchController;
 
   @override
@@ -41,7 +43,7 @@ class _EditSkuCategoryBottomSheetState
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<CategoryBloc>(),
         child: const AddCategoryBottomSheet(),
@@ -70,7 +72,7 @@ class _EditSkuCategoryBottomSheetState
         Navigator.of(context).pop(state.categories.first);
       },
       child: AnimatedPadding(
-        duration: const Duration(milliseconds: 200),
+        duration: _sheetAnimationDuration,
         curve: Curves.easeOut,
         padding: EdgeInsets.only(bottom: bottomInset),
         child: SafeArea(
@@ -105,7 +107,7 @@ class _EditSkuCategoryBottomSheetState
                   child: Column(
                     children: [
                       Text(
-                        AppStrings.editSkuCategory,
+                        AppStrings.skuFormCategory,
                         style: AppTextStyles.sectionHeading,
                       ),
                       SizedBox(height: AppSize.size16.h),
@@ -194,7 +196,7 @@ class _EditSkuCategoryBottomSheetState
                           final category = state.categories[index];
                           final isSelected = _isSelected(category);
                           return Material(
-                            color: Colors.transparent,
+                            color: AppColors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(
                                 AppSize.size12.r,
@@ -207,8 +209,8 @@ class _EditSkuCategoryBottomSheetState
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColors.editSkuSoftBackground
-                                      : Colors.white,
+                                      ? AppColors.skuFormSoftBackground
+                                      : AppColors.surface,
                                   borderRadius: BorderRadius.circular(
                                     AppSize.size12.r,
                                   ),

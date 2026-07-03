@@ -11,23 +11,31 @@ import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_us
 import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
 import 'package:ventry_flutter/injection.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/edit_sku_attribute_picker_page.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/models/editable_sku_attribute.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_app_bar.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_attribute_card.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/widgets/edit_sku_attributes_bottom_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_attribute_picker_page.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_attribute.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_app_bar.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_attribute_card.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_attributes_bottom_bar.dart';
 
-class EditSkuAttributesPage extends StatefulWidget {
-  const EditSkuAttributesPage({super.key, required this.attributes});
+class SkuFormAttributesPage extends StatefulWidget {
+  const SkuFormAttributesPage({
+    super.key,
+    required this.attributes,
+    this.isStructureLocked = false,
+  });
 
   final List<SkuAttributeEntity> attributes;
+  final bool isStructureLocked;
 
   @override
-  State<EditSkuAttributesPage> createState() => _EditSkuAttributesPageState();
+  State<SkuFormAttributesPage> createState() => _SkuFormAttributesPageState();
 }
 
-class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
-  late List<EditableSkuAttribute> _attributes;
+class _SkuFormAttributesPageState extends State<SkuFormAttributesPage> {
+  static const Duration _attributeScrollDelay = Duration(milliseconds: 300);
+  static const Duration _attributeScrollDuration = Duration(milliseconds: 250);
+
+  late List<EditableSkuFormAttribute> _attributes;
   late final Map<String, TextEditingController> _controllers;
   late final Map<String, FocusNode> _focusNodes;
   late final Map<String, GlobalKey> _attributeKeys;
@@ -42,7 +50,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   void initState() {
     super.initState();
     _attributes = widget.attributes
-        .map(EditableSkuAttribute.fromEntity)
+        .map(EditableSkuFormAttribute.fromEntity)
         .toList(growable: true);
     _hasFocusedFieldNotifier = ValueNotifier<bool>(false);
     _controllers = {
@@ -86,7 +94,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToAttribute(id);
       });
-      Future<void>.delayed(const Duration(milliseconds: 300), () {
+      Future<void>.delayed(_attributeScrollDelay, () {
         if (!mounted || !focusNode.hasFocus) {
           return;
         }
@@ -161,7 +169,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
 
     await Scrollable.ensureVisible(
       context,
-      duration: const Duration(milliseconds: 250),
+      duration: _attributeScrollDuration,
       curve: Curves.easeOutCubic,
       alignment: 0.15,
     );
@@ -181,6 +189,10 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   }
 
   void _handleDelete(String id) {
+    if (widget.isStructureLocked) {
+      return;
+    }
+
     _controllers.remove(id)?.dispose();
     _focusNodes.remove(id)?.dispose();
     _attributeKeys.remove(id);
@@ -197,10 +209,14 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   String _normalizeAttributeName(String value) => value.trim().toLowerCase();
 
   Future<void> _handleAddAttribute() async {
+    if (widget.isStructureLocked) {
+      return;
+    }
+
     final selectedAttributes = await Navigator.of(context)
         .push<List<AttributeEntity>>(
           MaterialPageRoute(
-            builder: (_) => EditSkuAttributePickerPage(
+            builder: (_) => SkuFormAttributePickerPage(
               existingAttributeNames: _attributes
                   .map((attribute) => attribute.name)
                   .toList(growable: false),
@@ -222,7 +238,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
           ),
         )
         .map(
-          (attribute) => EditableSkuAttribute(
+          (attribute) => EditableSkuFormAttribute(
             id: attribute.uid,
             name: attribute.name,
             value: '',
@@ -290,6 +306,14 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
   }
 
   bool _computeCanApply() {
+    if (widget.isStructureLocked) {
+      return _attributes.every(
+        (attribute) =>
+            attribute.name.trim().isNotEmpty &&
+            attribute.value.trim().isNotEmpty,
+      );
+    }
+
     return _attributes
         .where((attribute) => _newAttributeIds.contains(attribute.id))
         .every((attribute) => attribute.value.trim().isNotEmpty);
@@ -300,13 +324,13 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Scaffold(
-      backgroundColor: AppColors.editSkuSoftBackground,
+      backgroundColor: AppColors.skuFormSoftBackground,
       body: Stack(
         children: [
           Column(
             children: [
-              EditSkuAppBar(
-                title: AppStrings.editSkuEditAttributesTitle,
+              SkuFormAppBar(
+                title: AppStrings.skuFormEditAttributesTitle,
                 onBackTap: () => Navigator.of(context).maybePop(),
                 showSaveAction: false,
               ),
@@ -317,7 +341,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
                     AppSize.size16.w,
                     AppSize.size24.h,
                     AppSize.size16.w,
-                    120.h + keyboardInset,
+                    AppSize.size120.h + keyboardInset,
                   ),
                   child: Column(
                     children: [
@@ -325,7 +349,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
                         (attribute) => Padding(
                           key: _attributeKeys[attribute.id],
                           padding: EdgeInsets.only(bottom: AppSize.size20.h),
-                          child: EditSkuAttributeCard(
+                          child: SkuFormAttributeCard(
                             attribute: attribute,
                             controller: _controllers[attribute.id]!,
                             focusNode: _focusNodes[attribute.id]!,
@@ -336,48 +360,51 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
                                 const <String>[],
                             onChanged: (value) =>
                                 _handleValueChanged(attribute.id, value),
-                            onDelete: () => _handleDelete(attribute.id),
+                            onDelete: widget.isStructureLocked
+                                ? null
+                                : () => _handleDelete(attribute.id),
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 57.h,
-                        child: CustomPaint(
-                          painter: DashedBorderPainter(
-                            color: AppColors.inputBorder,
-                            radius: AppSize.size12.r,
-                          ),
-                          child: Material(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              AppSize.size12.r,
+                      if (!widget.isStructureLocked)
+                        SizedBox(
+                          width: double.infinity,
+                          height: AppSize.size57.h,
+                          child: CustomPaint(
+                            painter: DashedBorderPainter(
+                              color: AppColors.inputBorder,
+                              radius: AppSize.size12.r,
                             ),
-                            child: InkWell(
-                              onTap: _handleAddAttribute,
+                            child: Material(
+                              color: AppColors.surface,
                               borderRadius: BorderRadius.circular(
                                 AppSize.size12.r,
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    size: AppSize.size20.r,
-                                    color: AppColors.textBody,
-                                  ),
-                                  SizedBox(width: AppSize.size8.w),
-                                  Text(
-                                    AppStrings.editSkuAddNewAttribute,
-                                    style: AppTextStyles.editSkuButtonLabel
-                                        .copyWith(color: AppColors.textBody),
-                                  ),
-                                ],
+                              child: InkWell(
+                                onTap: _handleAddAttribute,
+                                borderRadius: BorderRadius.circular(
+                                  AppSize.size12.r,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      size: AppSize.size20.r,
+                                      color: AppColors.textBody,
+                                    ),
+                                    SizedBox(width: AppSize.size8.w),
+                                    Text(
+                                      AppStrings.skuFormAddNewAttribute,
+                                      style: AppTextStyles.skuFormButtonLabel
+                                          .copyWith(color: AppColors.textBody),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -396,7 +423,7 @@ class _EditSkuAttributesPageState extends State<EditSkuAttributesPage> {
                 return ValueListenableBuilder<bool>(
                   valueListenable: _canApplyNotifier,
                   builder: (context, canApply, _) {
-                    return EditSkuAttributesBottomBar(
+                    return SkuFormAttributesBottomBar(
                       onCancel: () => Navigator.of(context).maybePop(),
                       onApply: _handleApply,
                       isPrimaryEnabled: canApply,

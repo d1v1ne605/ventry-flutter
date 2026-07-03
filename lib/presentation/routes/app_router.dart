@@ -13,7 +13,7 @@ import '../screens/quick_add/quick_add_step3_page.dart';
 import '../screens/quick_add/quick_add_step4_page.dart';
 import '../screens/category_management/category_management_page.dart';
 import '../screens/test_scanner/test_scanner_page.dart';
-import '../screens/edit_sku/edit_sku_page.dart';
+import '../screens/sku_form/sku_form_page.dart';
 import '../screens/sku_details/sku_details_page.dart';
 import '../screens/spu_variants/spu_variants_page.dart';
 import '../../injection.dart';
@@ -126,14 +126,19 @@ final router = GoRouter(
       builder: (context, state) => const TestScannerPage(),
     ),
     GoRoute(
-      path: RouterPath.editSku,
-      name: RouterName.editSku,
+      path: RouterPath.skuForm,
+      name: RouterName.skuForm,
       builder: (context, state) {
-        final sku = state.extra as SkuEntity?;
-        if (sku == null) {
+        final extra = state.extra;
+        final args = extra is SkuFormPageArgs
+            ? extra
+            : extra is SkuEntity
+            ? SkuFormPageArgs.edit(extra)
+            : null;
+        if (args == null) {
           return const SizedBox.shrink();
         }
-        return EditSkuPage(sku: sku);
+        return SkuFormPage(args: args);
       },
     ),
   ],

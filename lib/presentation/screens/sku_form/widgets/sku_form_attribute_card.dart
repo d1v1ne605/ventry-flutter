@@ -3,25 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
-import 'package:ventry_flutter/presentation/screens/edit_sku/models/editable_sku_attribute.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_attribute.dart';
 
-class EditSkuAttributeCard extends StatelessWidget {
-  const EditSkuAttributeCard({
+class SkuFormAttributeCard extends StatelessWidget {
+  const SkuFormAttributeCard({
     super.key,
     required this.attribute,
     required this.controller,
     required this.focusNode,
     required this.suggestions,
     required this.onChanged,
-    required this.onDelete,
+    this.onDelete,
   });
 
-  final EditableSkuAttribute attribute;
+  final EditableSkuFormAttribute attribute;
   final TextEditingController controller;
   final FocusNode focusNode;
   final List<String> suggestions;
   final ValueChanged<String> onChanged;
-  final VoidCallback onDelete;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +41,21 @@ class EditSkuAttributeCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   attribute.name,
-                  style: AppTextStyles.editSkuSectionTitle.copyWith(
+                  style: AppTextStyles.skuFormSectionTitle.copyWith(
                     color: AppColors.textHeading,
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: onDelete,
-                splashRadius: AppSize.size20.r,
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: AppSize.size20.r,
-                  color: AppColors.subtitle,
+              if (onDelete != null)
+                IconButton(
+                  onPressed: onDelete,
+                  splashRadius: AppSize.size20.r,
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: AppSize.size20.r,
+                    color: AppColors.subtitle,
+                  ),
                 ),
-              ),
             ],
           ),
           SizedBox(height: AppSize.size8.h),
@@ -94,7 +95,7 @@ class EditSkuAttributeCard extends StatelessWidget {
                       controller: textEditingController,
                       focusNode: textFieldFocusNode,
                       onChanged: onChanged,
-                      style: AppTextStyles.editSkuFieldValue,
+                      style: AppTextStyles.skuFormFieldValue,
                       decoration: InputDecoration(
                         isDense: true,
                         filled: true,
@@ -121,8 +122,9 @@ class EditSkuAttributeCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSize.size12.r),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: 200.h,
-                        minWidth: MediaQuery.sizeOf(context).width - 64.w,
+                        maxHeight: AppSize.size200.h,
+                        minWidth:
+                            MediaQuery.sizeOf(context).width - AppSize.size64.w,
                       ),
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(
@@ -141,7 +143,7 @@ class EditSkuAttributeCard extends StatelessWidget {
                               ),
                               child: Text(
                                 option,
-                                style: AppTextStyles.editSkuFieldValue,
+                                style: AppTextStyles.skuFormFieldValue,
                               ),
                             ),
                           );

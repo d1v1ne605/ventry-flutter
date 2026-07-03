@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 
-class EditableSkuAttribute extends Equatable {
-  const EditableSkuAttribute({
+class EditableSkuFormAttribute extends Equatable {
+  const EditableSkuFormAttribute({
     required this.id,
     required this.name,
     required this.value,
@@ -12,8 +12,8 @@ class EditableSkuAttribute extends Equatable {
   final String name;
   final String value;
 
-  EditableSkuAttribute copyWith({String? id, String? name, String? value}) {
-    return EditableSkuAttribute(
+  EditableSkuFormAttribute copyWith({String? id, String? name, String? value}) {
+    return EditableSkuFormAttribute(
       id: id ?? this.id,
       name: name ?? this.name,
       value: value ?? this.value,
@@ -24,8 +24,8 @@ class EditableSkuAttribute extends Equatable {
     return SkuAttributeEntity(uid: id, attributeName: name, value: value);
   }
 
-  static EditableSkuAttribute fromEntity(SkuAttributeEntity entity) {
-    return EditableSkuAttribute(
+  static EditableSkuFormAttribute fromEntity(SkuAttributeEntity entity) {
+    return EditableSkuFormAttribute(
       id: entity.uid,
       name: entity.attributeName,
       value: entity.value,

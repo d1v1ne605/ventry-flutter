@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
@@ -7,18 +9,19 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_image.dart';
 
-class EditSkuMediaCard extends StatelessWidget {
-  const EditSkuMediaCard({
+class SkuFormMediaCard extends StatelessWidget {
+  const SkuFormMediaCard({
     super.key,
     required this.attributeItems,
-    required this.imageUrls,
+    required this.imageItems,
     required this.onEditAttributesTap,
     required this.onEditMediaTap,
   });
 
   final List<SkuAttributeEntity> attributeItems;
-  final List<String> imageUrls;
+  final List<EditableSkuFormImage> imageItems;
   final VoidCallback onEditAttributesTap;
   final VoidCallback onEditMediaTap;
 
@@ -26,9 +29,9 @@ class EditSkuMediaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _EditSkuSectionCard(
-          title: AppStrings.editSkuAttributes,
-          actionLabel: AppStrings.editSkuEdit,
+        _SkuFormSectionCard(
+          title: AppStrings.skuFormAttributes,
+          actionLabel: AppStrings.skuFormEdit,
           actionIcon: Icons.edit_outlined,
           onActionTap: onEditAttributesTap,
           child: LayoutBuilder(
@@ -45,7 +48,7 @@ class EditSkuMediaCard extends StatelessWidget {
                     .map(
                       (item) => SizedBox(
                         width: itemWidth,
-                        child: _EditSkuAttributeTile(item: item),
+                        child: _SkuFormAttributeTile(item: item),
                       ),
                     )
                     .toList(),
@@ -53,24 +56,24 @@ class EditSkuMediaCard extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 20.h),
-        _EditSkuSectionCard(
-          title: AppStrings.editSkuMedia,
-          actionLabel: AppStrings.editSkuManage,
+        SizedBox(height: AppSize.size20.h),
+        _SkuFormSectionCard(
+          title: AppStrings.skuFormMedia,
+          actionLabel: AppStrings.skuFormManage,
           actionIcon: Icons.photo_library_outlined,
           onActionTap: onEditMediaTap,
           child: Row(
             children: [
-              _EditSkuImageTile(
-                imageUrl: imageUrls.isNotEmpty ? imageUrls.first : null,
+              _SkuFormImageTile(
+                image: imageItems.isNotEmpty ? imageItems.first : null,
                 showBadge: true,
               ),
               SizedBox(width: AppSize.size8.w),
-              _EditSkuImageTile(
-                imageUrl: imageUrls.length > 1 ? imageUrls[1] : null,
+              _SkuFormImageTile(
+                image: imageItems.length > 1 ? imageItems[1] : null,
               ),
               SizedBox(width: AppSize.size8.w),
-              const _EditSkuAddImageTile(),
+              const _SkuFormAddImageTile(),
             ],
           ),
         ),
@@ -79,8 +82,8 @@ class EditSkuMediaCard extends StatelessWidget {
   }
 }
 
-class _EditSkuSectionCard extends StatelessWidget {
-  const _EditSkuSectionCard({
+class _SkuFormSectionCard extends StatelessWidget {
+  const _SkuFormSectionCard({
     required this.title,
     required this.actionLabel,
     required this.actionIcon,
@@ -100,7 +103,7 @@ class _EditSkuSectionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(AppSize.size16.w),
       decoration: BoxDecoration(
-        color: AppColors.editSkuCardBackground,
+        color: AppColors.skuFormCardBackground,
         boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
@@ -109,12 +112,12 @@ class _EditSkuSectionCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: AppTextStyles.editSkuSectionTitle),
+              Text(title, style: AppTextStyles.skuFormSectionTitle),
               OutlinedButton.icon(
                 onPressed: onActionTap,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textHeading,
-                  side: const BorderSide(color: Color(0xFF6B7280)),
+                  side: const BorderSide(color: AppColors.skuFormActionBorder),
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSize.size12.w,
                     vertical: AppSize.size8.h,
@@ -126,7 +129,7 @@ class _EditSkuSectionCard extends StatelessWidget {
                 icon: Icon(actionIcon, size: AppSize.size16.r),
                 label: Text(
                   actionLabel,
-                  style: AppTextStyles.editSkuButtonLabel,
+                  style: AppTextStyles.skuFormButtonLabel,
                 ),
               ),
             ],
@@ -139,8 +142,8 @@ class _EditSkuSectionCard extends StatelessWidget {
   }
 }
 
-class _EditSkuAttributeTile extends StatelessWidget {
-  const _EditSkuAttributeTile({required this.item});
+class _SkuFormAttributeTile extends StatelessWidget {
+  const _SkuFormAttributeTile({required this.item});
 
   final SkuAttributeEntity item;
 
@@ -149,18 +152,18 @@ class _EditSkuAttributeTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(AppSize.size8.w),
       decoration: BoxDecoration(
-        color: AppColors.editSkuSoftBackground,
+        color: AppColors.skuFormSoftBackground,
         borderRadius: BorderRadius.circular(AppSize.size8.r),
         border: Border.all(color: AppColors.inputBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.attributeName, style: AppTextStyles.editSkuFieldLabel),
+          Text(item.attributeName, style: AppTextStyles.skuFormFieldLabel),
           SizedBox(height: AppSize.size4.h),
           Text(
             item.value,
-            style: AppTextStyles.editSkuButtonLabel.copyWith(
+            style: AppTextStyles.skuFormButtonLabel.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -170,16 +173,20 @@ class _EditSkuAttributeTile extends StatelessWidget {
   }
 }
 
-class _EditSkuImageTile extends StatelessWidget {
-  const _EditSkuImageTile({this.imageUrl, this.showBadge = false});
+class _SkuFormImageTile extends StatelessWidget {
+  const _SkuFormImageTile({this.image, this.showBadge = false});
 
-  final String? imageUrl;
+  final EditableSkuFormImage? image;
   final bool showBadge;
 
   @override
   Widget build(BuildContext context) {
-    final safeImageUrl = StringUtils.isSafeNetworkUrl(imageUrl)
-        ? imageUrl
+    final image = this.image;
+    final safeImageUrl =
+        image != null &&
+            !image.isLocalFile &&
+            StringUtils.isSafeNetworkUrl(image.previewPath)
+        ? image.previewPath
         : null;
 
     return Expanded(
@@ -193,7 +200,7 @@ class _EditSkuImageTile extends StatelessWidget {
                 border: Border.all(color: AppColors.inputBorder),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x1A000000),
+                    color: AppColors.skuFormImageShadow,
                     offset: Offset(0, 1),
                     blurRadius: 2,
                   ),
@@ -201,18 +208,7 @@ class _EditSkuImageTile extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(AppSize.size8.r),
-                child: safeImageUrl == null
-                    ? Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover)
-                    : Image.network(
-                        safeImageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
-                          return Image.asset(
-                            AppAssets.imgPlaceHolder,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
+                child: _buildImage(image, safeImageUrl),
               ),
             ),
             if (showBadge)
@@ -225,13 +221,13 @@ class _EditSkuImageTile extends StatelessWidget {
                     vertical: AppSize.size4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(AppSize.size4.r),
                     border: Border.all(color: AppColors.inputBorder),
                   ),
                   child: Text(
-                    'Main',
-                    style: AppTextStyles.editSkuFieldLabel.copyWith(
+                    AppStrings.skuFormMainImageBadge,
+                    style: AppTextStyles.skuFormFieldLabel.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -243,10 +239,32 @@ class _EditSkuImageTile extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildImage(EditableSkuFormImage? image, String? safeImageUrl) {
+    if (image == null) {
+      return Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover);
+    }
+
+    if (image.isLocalFile) {
+      return Image.file(File(image.previewPath), fit: BoxFit.cover);
+    }
+
+    if (safeImageUrl == null) {
+      return Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover);
+    }
+
+    return Image.network(
+      safeImageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) {
+        return Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover);
+      },
+    );
+  }
 }
 
-class _EditSkuAddImageTile extends StatelessWidget {
-  const _EditSkuAddImageTile();
+class _SkuFormAddImageTile extends StatelessWidget {
+  const _SkuFormAddImageTile();
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +273,7 @@ class _EditSkuAddImageTile extends StatelessWidget {
         aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.editSkuSoftBackground,
+            color: AppColors.skuFormSoftBackground,
             borderRadius: BorderRadius.circular(AppSize.size8.r),
             border: Border.all(
               color: AppColors.inputBorder,
@@ -273,8 +291,8 @@ class _EditSkuAddImageTile extends StatelessWidget {
               ),
               SizedBox(height: AppSize.size8.h),
               Text(
-                AppStrings.editSkuAddImage,
-                style: AppTextStyles.editSkuFieldLabel,
+                AppStrings.skuFormAddImage,
+                style: AppTextStyles.skuFormFieldLabel,
               ),
             ],
           ),

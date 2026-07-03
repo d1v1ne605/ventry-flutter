@@ -6,8 +6,8 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/widgets/dashed_border_painter.dart';
 
-class EditSkuUploadImageTile extends StatelessWidget {
-  const EditSkuUploadImageTile({super.key, this.height, this.onTap});
+class SkuFormUploadImageTile extends StatelessWidget {
+  const SkuFormUploadImageTile({super.key, this.height, this.onTap});
 
   final double? height;
   final VoidCallback? onTap;
@@ -23,7 +23,7 @@ class EditSkuUploadImageTile extends StatelessWidget {
           radius: AppSize.size12.r,
         ),
         child: Material(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSize.size12.r),
           child: InkWell(
             onTap: onTap,
@@ -38,8 +38,8 @@ class EditSkuUploadImageTile extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.size8.h),
                 Text(
-                  AppStrings.editSkuUploadNew,
-                  style: AppTextStyles.editSkuFieldLabel,
+                  AppStrings.skuFormUploadNew,
+                  style: AppTextStyles.skuFormFieldLabel,
                 ),
               ],
             ),

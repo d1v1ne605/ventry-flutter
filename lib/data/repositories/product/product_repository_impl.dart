@@ -10,9 +10,11 @@ import 'package:ventry_flutter/data/datasources/remote/product/product_api.dart'
 import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
@@ -26,6 +28,8 @@ import 'package:ventry_flutter/domain/repositories/product/product_repository.da
 @LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
   final ProductApi _productApi;
+  static const String _unknownSpuName = 'Unknown';
+  static const String _unknownSpuStatus = 'UNKNOWN';
   static const List<String> _supportedMimeTypes = [
     'image/jpeg',
     'image/png',
@@ -67,7 +71,7 @@ class ProductRepositoryImpl implements ProductRepository {
                 (group) => SkuSpuGroupEntity(
                   spuUid: group.spu.uid,
                   spuName: group.spu.name ?? '',
-                  spuStatus: group.spu.status ?? 'UNKNOWN',
+                  spuStatus: group.spu.status ?? _unknownSpuStatus,
                   categoryName: group.spu.category?.name,
                   categoryImageUrl: group.spu.category?.imageUrl,
                   skus: group.skus
@@ -95,6 +99,31 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid) async {
     try {
       final response = await _productApi.getSkuByUid(skuUid);
+      return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params) async {
+    try {
+      final response = await _productApi.createSku(
+        CreateSkuRequest(
+          spuUid: params.spuUid,
+          skuCode: params.skuCode,
+          barCode: params.barCode,
+          sellingPrice: params.sellingPrice,
+          costPrice: params.costPrice,
+          stockQuantity: params.stockQuantity,
+          minStockQuantity: params.minStockQuantity,
+          imageKeys: params.imageKeys,
+          isSellable: params.isSellable,
+          attributeValueUids: params.attributeValueUids,
+        ),
+      );
       return Right(_mapSkuToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());
@@ -288,8 +317,8 @@ class ProductRepositoryImpl implements ProductRepository {
       isSellable: response.isSellable,
       version: response.version,
       spuUid: spu?.uid ?? '',
-      spuName: spu?.name ?? 'Unknown',
-      spuStatus: spu?.status ?? 'UNKNOWN',
+      spuName: spu?.name ?? _unknownSpuName,
+      spuStatus: spu?.status ?? _unknownSpuStatus,
       spuDescription: spu?.description,
       spuCategoryName: spu?.category?.name,
       spuCurrency: spu?.currency,

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
+import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
@@ -13,6 +14,8 @@ abstract class ProductRepository {
   Future<Either<Failure, SkuSpuGroupListEntity>> getSkus(SkuQueryParams params);
 
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid);
+
+  Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params);
 
   Future<Either<Failure, SkuEntity>> updateSku(UpdateSkuParams params);
 

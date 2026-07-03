@@ -9,8 +9,8 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
 
-class EditSkuImageGalleryTile extends StatelessWidget {
-  const EditSkuImageGalleryTile({
+class SkuFormImageGalleryTile extends StatelessWidget {
+  const SkuFormImageGalleryTile({
     super.key,
     required this.previewPath,
     required this.onRemove,
@@ -34,7 +34,7 @@ class EditSkuImageGalleryTile extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSize.size12.r),
         border: Border.all(color: AppColors.inputBorder),
         boxShadow: const [AppColors.cardShadow],
@@ -78,13 +78,13 @@ class EditSkuImageGalleryTile extends StatelessWidget {
                     vertical: AppSize.size4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: AppColors.skuFormImageBadgeOverlay,
                     borderRadius: BorderRadius.circular(AppSize.size4.r),
                   ),
                   child: Text(
-                    AppStrings.editSkuCover,
-                    style: AppTextStyles.editSkuFieldLabel.copyWith(
-                      color: Colors.white,
+                    AppStrings.skuFormCover,
+                    style: AppTextStyles.skuFormFieldLabel.copyWith(
+                      color: AppColors.onPrimary,
                     ),
                   ),
                 ),
@@ -93,7 +93,7 @@ class EditSkuImageGalleryTile extends StatelessWidget {
               top: AppSize.size8.h,
               right: AppSize.size8.w,
               child: Material(
-                color: Colors.white.withValues(alpha: 0.92),
+                color: AppColors.skuFormFloatingActionBackground,
                 shape: const CircleBorder(),
                 child: InkWell(
                   onTap: onRemove,

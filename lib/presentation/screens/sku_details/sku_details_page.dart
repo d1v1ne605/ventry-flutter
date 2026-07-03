@@ -14,6 +14,7 @@ import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_page.dart';
 import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_event.dart';
 import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_state.dart';
@@ -47,10 +48,10 @@ class _SkuDetailsView extends StatefulWidget {
 class _SkuDetailsViewState extends State<_SkuDetailsView> {
   SkuEntity? _editedSku;
 
-  Future<void> _openEditSku(BuildContext context, SkuEntity sku) async {
+  Future<void> _openSkuForm(BuildContext context, SkuEntity sku) async {
     final updatedSku = await context.pushNamed<SkuEntity>(
-      RouterName.editSku,
-      extra: _editedSku ?? sku,
+      RouterName.skuForm,
+      extra: SkuFormPageArgs.edit(_editedSku ?? sku),
     );
 
     if (updatedSku == null || !context.mounted) {
@@ -60,7 +61,7 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
     setState(() {
       _editedSku = updatedSku;
     });
-    AppSnackBar.showSuccess(context, AppStrings.editSkuUpdatedSuccess);
+    AppSnackBar.showSuccess(context, AppStrings.skuFormUpdatedSuccess);
   }
 
   @override
@@ -142,7 +143,7 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
                             Expanded(
                               child: _OutlinedButton(
                                 text: AppStrings.editVariantButton,
-                                onPressed: () => _openEditSku(context, sku),
+                                onPressed: () => _openSkuForm(context, sku),
                               ),
                             ),
                           ],

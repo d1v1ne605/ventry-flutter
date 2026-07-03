@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ventry_flutter/core/constants/app_errors.dart';
 import '../../../core/errors/failures.dart';
 import '../../../core/logging/app_logger.dart';
 
@@ -9,7 +10,7 @@ class ErrorInterceptor extends Interceptor {
 
   final AppLogger _logger;
 
-  static const String _serverErrorMessage = 'Server error occurred';
+  static const String _serverErrorMessage = AppErrors.serverErrorOccurred;
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -41,7 +42,10 @@ class ErrorInterceptor extends Interceptor {
       case 400:
         // Bad request
         handler.next(
-          _attachFailure(err, ServerFailure('Invalid request: $errorMessage')),
+          _attachFailure(
+            err,
+            ServerFailure(AppErrors.invalidRequest(errorMessage)),
+          ),
         );
         break;
       case 401:
@@ -52,31 +56,39 @@ class ErrorInterceptor extends Interceptor {
             ServerFailure(
               errorMessage != _serverErrorMessage
                   ? errorMessage
-                  : 'Session expired. Please login again',
+                  : AppErrors.sessionExpired,
             ),
           ),
         );
         break;
       case 403:
         // Forbidden - no access permission
-        handler.next(_attachFailure(err, const ServerFailure('Access denied')));
+        handler.next(
+          _attachFailure(err, const ServerFailure(AppErrors.accessDenied)),
+        );
         break;
       case 404:
         // Not found
         handler.next(
-          _attachFailure(err, const ServerFailure('Resource not found')),
+          _attachFailure(err, const ServerFailure(AppErrors.resourceNotFound)),
         );
         break;
       case 409:
         // Conflict
         handler.next(
-          _attachFailure(err, ServerFailure('Data conflict: $errorMessage')),
+          _attachFailure(
+            err,
+            ServerFailure(AppErrors.dataConflict(errorMessage)),
+          ),
         );
         break;
       case 422:
         // Unprocessable entity (validation error)
         handler.next(
-          _attachFailure(err, ServerFailure('Validation error: $errorMessage')),
+          _attachFailure(
+            err,
+            ServerFailure(AppErrors.validationError(errorMessage)),
+          ),
         );
         break;
       case 500:
@@ -87,7 +99,7 @@ class ErrorInterceptor extends Interceptor {
         handler.next(
           _attachFailure(
             err,
-            const ServerFailure('Server error. Please try again later'),
+            const ServerFailure(AppErrors.serverErrorTryAgainLater),
           ),
         );
         break;
@@ -99,8 +111,8 @@ class ErrorInterceptor extends Interceptor {
   /// Handle timeout errors
   void _handleTimeoutError(DioException err, ErrorInterceptorHandler handler) {
     final message = err.type == DioExceptionType.connectionTimeout
-        ? 'Connection timeout. Please check your network connection'
-        : 'Response timeout. Please try again';
+        ? AppErrors.connectionTimeout
+        : AppErrors.responseTimeout;
 
     handler.next(_attachFailure(err, NetworkFailure(message)));
   }

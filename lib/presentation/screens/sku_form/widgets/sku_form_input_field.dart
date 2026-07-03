@@ -5,8 +5,8 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 
-class EditSkuInputField extends StatelessWidget {
-  const EditSkuInputField({
+class SkuFormInputField extends StatelessWidget {
+  const SkuFormInputField({
     super.key,
     required this.label,
     required this.controller,
@@ -32,7 +32,7 @@ class EditSkuInputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.editSkuFieldLabel),
+        Text(label, style: AppTextStyles.skuFormFieldLabel),
         SizedBox(height: AppSize.size4.h),
         TextField(
           controller: controller,
@@ -41,11 +41,11 @@ class EditSkuInputField extends StatelessWidget {
           onChanged: onChanged,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
-          style: AppTextStyles.editSkuFieldValue,
+          style: AppTextStyles.skuFormFieldValue,
           decoration: InputDecoration(
             isDense: true,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.surface,
             contentPadding: EdgeInsets.symmetric(
               horizontal: AppSize.size12.w,
               vertical: AppSize.size12.h,
@@ -61,6 +61,6 @@ class EditSkuInputField extends StatelessWidget {
 
   OutlineInputBorder get _border => OutlineInputBorder(
     borderRadius: BorderRadius.circular(AppSize.size8.r),
-    borderSide: const BorderSide(color: AppColors.editSkuFieldBorder),
+    borderSide: const BorderSide(color: AppColors.skuFormFieldBorder),
   );
 }

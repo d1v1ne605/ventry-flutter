@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
+import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/response/product_response.dart';
@@ -32,6 +33,9 @@ abstract class ProductApi {
 
   @GET('/skus/{skuUid}')
   Future<SkuResponse> getSkuByUid(@Path('skuUid') String skuUid);
+
+  @POST('/skus')
+  Future<SkuResponse> createSku(@Body() CreateSkuRequest request);
 
   @PATCH('/skus/{skuUid}')
   Future<SkuResponse> updateSku(
