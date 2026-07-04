@@ -13,6 +13,7 @@ import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
@@ -33,13 +34,19 @@ class SpuVariantsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           getIt<SpuVariantsBloc>()..add(LoadSpuVariants(spuUid)),
-      child: const _SpuVariantsView(),
+      child: _SpuVariantsView(spuUid: spuUid),
     );
   }
 }
 
 class _SpuVariantsView extends StatelessWidget {
-  const _SpuVariantsView();
+  const _SpuVariantsView({required this.spuUid});
+
+  final String spuUid;
+
+  void _refreshVariants(BuildContext context) {
+    context.read<SpuVariantsBloc>().add(LoadSpuVariants(spuUid));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +76,41 @@ class _SpuVariantsView extends StatelessWidget {
       body: BlocBuilder<SpuVariantsBloc, SpuVariantsState>(
         builder: (context, state) {
           if (state.status == BaseStatus.loading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+            return AppPullToRefresh(
+              onRefresh: () => _refreshVariants(context),
+              child: const CustomScrollView(
+                physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
           if (state.status == BaseStatus.failure) {
-            return _VariantsErrorState(message: state.errorMessage);
+            return AppPullToRefresh(
+              onRefresh: () => _refreshVariants(context),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _VariantsErrorState(message: state.errorMessage),
+                  ),
+                ],
+              ),
+            );
           }
 
           final group = state.group;
@@ -83,7 +118,10 @@ class _SpuVariantsView extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          return _VariantsContent(group: group);
+          return AppPullToRefresh(
+            onRefresh: () => _refreshVariants(context),
+            child: _VariantsContent(group: group),
+          );
         },
       ),
     );
@@ -148,6 +186,9 @@ class _VariantsContent extends StatelessWidget {
     final variants = group.sortedSkus;
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

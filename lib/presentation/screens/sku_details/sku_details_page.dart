@@ -9,6 +9,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
@@ -33,13 +34,15 @@ class SkuDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<SkuDetailsBloc>()..add(LoadSkuDetails(skuUid)),
-      child: const _SkuDetailsView(),
+      child: _SkuDetailsView(skuUid: skuUid),
     );
   }
 }
 
 class _SkuDetailsView extends StatefulWidget {
-  const _SkuDetailsView();
+  const _SkuDetailsView({required this.skuUid});
+
+  final String skuUid;
 
   @override
   State<_SkuDetailsView> createState() => _SkuDetailsViewState();
@@ -47,6 +50,13 @@ class _SkuDetailsView extends StatefulWidget {
 
 class _SkuDetailsViewState extends State<_SkuDetailsView> {
   SkuEntity? _editedSku;
+
+  void _refreshSkuDetails() {
+    setState(() {
+      _editedSku = null;
+    });
+    context.read<SkuDetailsBloc>().add(LoadSkuDetails(widget.skuUid));
+  }
 
   Future<void> _openSkuForm(BuildContext context, SkuEntity sku) async {
     final updatedSku = await context.pushNamed<SkuEntity>(
@@ -83,16 +93,44 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
       body: BlocBuilder<SkuDetailsBloc, SkuDetailsState>(
         builder: (context, state) {
           if (state.status == BaseStatus.loading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+            return AppPullToRefresh(
+              onRefresh: _refreshSkuDetails,
+              child: const CustomScrollView(
+                physics: AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
           if (state.status == BaseStatus.failure) {
-            return Center(
-              child: Text(
-                state.errorMessage ?? 'Error loading SKU details',
-                style: TextStyle(fontSize: 16.sp, color: Colors.red),
+            return AppPullToRefresh(
+              onRefresh: _refreshSkuDetails,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        state.errorMessage ?? AppStrings.editSpuLoadFailed,
+                        style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -101,26 +139,32 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
             final sku = _editedSku ?? state.sku!;
             return Stack(
               children: [
-                SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    left: 16.w,
-                    right: 16.w,
-                    top: 20.h,
-                    bottom: 128.h,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SkuHeroCard(sku: sku),
-                      SizedBox(height: 20.h),
-                      InventoryStatsBar(sku: sku),
-                      SizedBox(height: 20.h),
-                      GeneralInfoCard(sku: sku),
-                      SizedBox(height: 20.h),
-                      AttributesCard(sku: sku),
-                      SizedBox(height: 20.h),
-                      DescriptionCard(sku: sku),
-                    ],
+                AppPullToRefresh(
+                  onRefresh: _refreshSkuDetails,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    padding: EdgeInsets.only(
+                      left: 16.w,
+                      right: 16.w,
+                      top: 20.h,
+                      bottom: 128.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SkuHeroCard(sku: sku),
+                        SizedBox(height: 20.h),
+                        InventoryStatsBar(sku: sku),
+                        SizedBox(height: 20.h),
+                        GeneralInfoCard(sku: sku),
+                        SizedBox(height: 20.h),
+                        AttributesCard(sku: sku),
+                        SizedBox(height: 20.h),
+                        DescriptionCard(sku: sku),
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(

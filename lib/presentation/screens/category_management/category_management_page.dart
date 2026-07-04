@@ -5,6 +5,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/category_list_item.dart';
 import 'package:ventry_flutter/presentation/screens/category_management/widgets/add_category_bottom_sheet.dart';
@@ -127,47 +128,48 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
               ),
               // List
               Expanded(
-                child: BlocBuilder<CategoryBloc, CategoryState>(
-                  buildWhen: (previous, current) =>
-                      previous.isLoading != current.isLoading ||
-                      previous.categories != current.categories,
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      );
-                    }
+                child: AppPullToRefresh(
+                  onRefresh: () =>
+                      context.read<CategoryBloc>().add(LoadCategories()),
+                  child: BlocBuilder<CategoryBloc, CategoryState>(
+                    buildWhen: (previous, current) =>
+                        previous.isLoading != current.isLoading ||
+                        previous.categories != current.categories ||
+                        previous.searchKeyword != current.searchKeyword,
+                    builder: (context, state) {
+                      if (state.isLoading) {
+                        return const _CategoryLoadingState();
+                      }
 
-                    if (state.categories.isEmpty) {
-                      return Center(
-                        child: Text(
-                          state.searchKeyword.isEmpty
+                      if (state.categories.isEmpty) {
+                        return _CategoryEmptyState(
+                          message: state.searchKeyword.isEmpty
                               ? AppStrings.categoryEmpty
                               : AppStrings.categoryNoResults,
-                          style: AppTextStyles.searchHint,
-                        ),
-                      );
-                    }
-
-                    return ListView.separated(
-                      padding: EdgeInsets.fromLTRB(
-                        AppSize.size24.w,
-                        AppSize.size8.h,
-                        AppSize.size24.w,
-                        96.h,
-                      ),
-                      itemCount: state.categories.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                        return CategoryListItem(
-                          category: state.categories[index],
                         );
-                      },
-                    );
-                  },
+                      }
+
+                      return ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        padding: EdgeInsets.fromLTRB(
+                          AppSize.size24.w,
+                          AppSize.size8.h,
+                          AppSize.size24.w,
+                          96.h,
+                        ),
+                        itemCount: state.categories.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 12.h),
+                        itemBuilder: (context, index) {
+                          return CategoryListItem(
+                            category: state.categories[index],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -210,6 +212,46 @@ class _CategoryManagementViewState extends State<_CategoryManagementView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CategoryLoadingState extends StatelessWidget {
+  const _CategoryLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const CustomScrollView(
+      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CategoryEmptyState extends StatelessWidget {
+  const _CategoryEmptyState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(child: Text(message, style: AppTextStyles.searchHint)),
+        ),
+      ],
     );
   }
 }

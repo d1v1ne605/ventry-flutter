@@ -52,6 +52,9 @@ class AppStrings {
   static const String navPartners = 'Đối tác';
   static const String navAccount = 'Tài khoản';
 
+  // ── Pull To Refresh ─────────────────────────────────────────────────────────
+  static const String pullToRefreshLoading = 'Đang làm mới dữ liệu';
+
   // ── Quick Add ────────────────────────────────────────────────────────────────
   static const String quickAddTitle = 'Thêm sản phẩm';
   static const String quickAddBasicInfoTitle = 'Thông tin cơ bản';

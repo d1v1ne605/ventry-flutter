@@ -5,6 +5,7 @@ import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/presentation/screens/inventory_dashboard/widgets/inventory_dashboard_card.dart';
 import 'package:ventry_flutter/presentation/screens/inventory_dashboard/widgets/inventory_header_section.dart';
 
@@ -57,24 +58,30 @@ class _InventoryDashboardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(
-        AppSize.size16.w,
-        AppSize.size24.h,
-        AppSize.size16.w,
-        AppSize.size24.h,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          InventoryHeaderSection(
-            onScannerTap: () {
-              // context.push(RouterPath.testScanner);
-            },
-          ),
-          SizedBox(height: AppSize.size24.h),
-          _CardList(cards: cards),
-        ],
+    return AppPullToRefresh(
+      onRefresh: () {},
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        padding: EdgeInsets.fromLTRB(
+          AppSize.size16.w,
+          AppSize.size24.h,
+          AppSize.size16.w,
+          AppSize.size24.h,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            InventoryHeaderSection(
+              onScannerTap: () {
+                // context.push(RouterPath.testScanner);
+              },
+            ),
+            SizedBox(height: AppSize.size24.h),
+            _CardList(cards: cards),
+          ],
+        ),
       ),
     );
   }

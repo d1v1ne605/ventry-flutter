@@ -6,6 +6,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_bloc.dart';
@@ -122,86 +123,94 @@ class _ProductCatalogBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollController,
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverToBoxAdapter(
-          child: _StickyHeader(controller: searchController, onQrTap: onQrTap),
+    return AppPullToRefresh(
+      onRefresh: () => context.read<ProductCatalogBloc>().add(const LoadSkus()),
+      child: CustomScrollView(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
         ),
-        BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
-          buildWhen: (prev, curr) =>
-              prev.isLoading != curr.isLoading ||
-              prev.isLoadingMore != curr.isLoadingMore ||
-              prev.spuGroups != curr.spuGroups,
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+        slivers: [
+          SliverToBoxAdapter(
+            child: _StickyHeader(
+              controller: searchController,
+              onQrTap: onQrTap,
+            ),
+          ),
+          BlocBuilder<ProductCatalogBloc, ProductCatalogState>(
+            buildWhen: (prev, curr) =>
+                prev.isLoading != curr.isLoading ||
+                prev.isLoadingMore != curr.isLoadingMore ||
+                prev.spuGroups != curr.spuGroups,
+            builder: (context, state) {
+              if (state.isLoading) {
+                return const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                );
+              }
+
+              if (state.spuGroups.isEmpty) {
+                return const SliverFillRemaining(child: _EmptyState());
+              }
+
+              return SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSize.size16.w,
+                  AppSize.size8.h,
+                  AppSize.size16.w,
+                  96.h,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (ctx, i) {
+                      if (i >= state.spuGroups.length) {
+                        return const _LoadMoreIndicator();
+                      }
+
+                      final group = state.spuGroups[i];
+                      final isLastDataItem = i == state.spuGroups.length - 1;
+
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: isLastDataItem && !state.isLoadingMore
+                              ? 0
+                              : 12.h,
+                        ),
+                        child: ProductCard(
+                          group: group,
+                          onTap: () {
+                            final sku = group.representativeSku;
+                            if (sku == null) {
+                              return;
+                            }
+
+                            if (group.variantCount > 1) {
+                              ctx.pushNamed(
+                                RouterName.spuVariants,
+                                pathParameters: {'spuUid': group.spuUid},
+                              );
+                              return;
+                            }
+
+                            ctx.pushNamed(
+                              RouterName.skuDetail,
+                              pathParameters: {'skuUid': sku.uid},
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    childCount:
+                        state.spuGroups.length + (state.isLoadingMore ? 1 : 0),
+                  ),
                 ),
               );
-            }
-
-            if (state.spuGroups.isEmpty) {
-              return const SliverFillRemaining(child: _EmptyState());
-            }
-
-            return SliverPadding(
-              padding: EdgeInsets.fromLTRB(
-                AppSize.size16.w,
-                AppSize.size8.h,
-                AppSize.size16.w,
-                96.h,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (ctx, i) {
-                    if (i >= state.spuGroups.length) {
-                      return const _LoadMoreIndicator();
-                    }
-
-                    final group = state.spuGroups[i];
-                    final isLastDataItem = i == state.spuGroups.length - 1;
-
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: isLastDataItem && !state.isLoadingMore
-                            ? 0
-                            : 12.h,
-                      ),
-                      child: ProductCard(
-                        group: group,
-                        onTap: () {
-                          final sku = group.representativeSku;
-                          if (sku == null) {
-                            return;
-                          }
-
-                          if (group.variantCount > 1) {
-                            ctx.pushNamed(
-                              RouterName.spuVariants,
-                              pathParameters: {'spuUid': group.spuUid},
-                            );
-                            return;
-                          }
-
-                          ctx.pushNamed(
-                            RouterName.skuDetail,
-                            pathParameters: {'skuUid': sku.uid},
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  childCount:
-                      state.spuGroups.length + (state.isLoadingMore ? 1 : 0),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 }

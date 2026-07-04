@@ -8,6 +8,7 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
+import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/core/widgets/custom_text_field.dart';
@@ -28,13 +29,15 @@ class EditSpuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<EditSpuBloc>()..add(LoadEditSpu(spuUid: spuUid)),
-      child: const _EditSpuView(),
+      child: _EditSpuView(spuUid: spuUid),
     );
   }
 }
 
 class _EditSpuView extends StatefulWidget {
-  const _EditSpuView();
+  const _EditSpuView({required this.spuUid});
+
+  final String spuUid;
 
   @override
   State<_EditSpuView> createState() => _EditSpuViewState();
@@ -93,6 +96,12 @@ class _EditSpuViewState extends State<_EditSpuView> {
     );
   }
 
+  void _refreshSpu(BuildContext context) {
+    _seededSpuUid = null;
+    _seededVersion = null;
+    context.read<EditSpuBloc>().add(LoadEditSpu(spuUid: widget.spuUid));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditSpuBloc, EditSpuState>(
@@ -134,12 +143,15 @@ class _EditSpuViewState extends State<_EditSpuView> {
           ),
           trailingWidget: SizedBox(width: AppSize.size40.w),
         ),
-        body: _EditSpuBody(
-          nameController: _nameController,
-          currencyController: _currencyController,
-          unitController: _unitController,
-          descriptionController: _descriptionController,
-          onChanged: () => _notifyFormChanged(context),
+        body: AppPullToRefresh(
+          onRefresh: () => _refreshSpu(context),
+          child: _EditSpuBody(
+            nameController: _nameController,
+            currencyController: _currencyController,
+            unitController: _unitController,
+            descriptionController: _descriptionController,
+            onChanged: () => _notifyFormChanged(context),
+          ),
         ),
         bottomNavigationBar: _EditSpuBottomBar(
           onSubmit: () => _submit(context),
@@ -170,16 +182,39 @@ class _EditSpuBody extends StatelessWidget {
       selector: (state) => state.loadStatus,
       builder: (context, status) {
         if (status == BaseStatus.initial || status == BaseStatus.loading) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          return const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
+              ),
+            ],
           );
         }
 
         if (status == BaseStatus.failure) {
-          return const _EditSpuEmptyState();
+          return const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _EditSpuEmptyState(),
+              ),
+            ],
+          );
         }
 
         return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           padding: EdgeInsets.fromLTRB(
             AppSize.size16.w,
             AppSize.size20.h,
