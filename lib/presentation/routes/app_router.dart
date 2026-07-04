@@ -17,23 +17,30 @@ import '../screens/test_scanner/test_scanner_page.dart';
 import '../screens/sku_form/sku_form_page.dart';
 import '../screens/sku_details/sku_details_page.dart';
 import '../screens/spu_variants/spu_variants_page.dart';
+import '../screens/splash/splash_page.dart';
 import '../../injection.dart';
 import 'auth_notifier.dart';
 import 'router_constants.dart';
 
 final router = GoRouter(
-  initialLocation: RouterPath.login,
+  initialLocation: RouterPath.splash,
   refreshListenable: getIt<AuthNotifier>(),
   redirect: (context, state) {
     final authNotifier = getIt<AuthNotifier>();
+    final isSplashRoute = state.matchedLocation == RouterPath.splash;
 
-    // Wait until we have checked local storage for existing token
-    if (!authNotifier.isInitialized) return null;
+    if (!authNotifier.isInitialized) {
+      return isSplashRoute ? null : RouterPath.splash;
+    }
 
     final isAuth = authNotifier.isAuthenticated;
     final isLoginRoute =
         state.matchedLocation == RouterPath.login ||
         state.matchedLocation == RouterPath.register;
+
+    if (isSplashRoute) {
+      return isAuth ? RouterPath.inventory : RouterPath.login;
+    }
 
     if (!isAuth && !isLoginRoute) {
       return RouterPath.login;
@@ -46,6 +53,11 @@ final router = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(
+      path: RouterPath.splash,
+      name: RouterName.splash,
+      builder: (context, state) => const SplashPage(),
+    ),
     GoRoute(
       path: RouterPath.login,
       name: RouterName.login,

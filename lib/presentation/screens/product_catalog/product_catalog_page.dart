@@ -242,6 +242,8 @@ class _StickyHeader extends StatelessWidget {
             onFilterTap: () {},
           ),
           SizedBox(height: AppSize.size16.h),
+          // Just comment out for now, will re-enable when we have the filter counts ready
+          // Don't delete the code, as we will re-enable it in the future
           // BlocSelector<ProductCatalogBloc, ProductCatalogState, _FilterCounts>(
           //   selector: (state) => _FilterCounts(
           //     total: state.total,

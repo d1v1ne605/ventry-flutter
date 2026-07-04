@@ -2,15 +2,19 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/logging/app_bloc_observer.dart';
 import 'core/logging/app_logger.dart';
 import 'injection.dart';
 import 'presentation/routes/app_router.dart';
+import 'presentation/routes/auth_notifier.dart';
 import 'core/theme/app_colors.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await dotenv.load(fileName: ".env");
   await configureDependencies();
 
@@ -38,7 +42,10 @@ void main() async {
     return true;
   };
 
+  await getIt<AuthNotifier>().initializationComplete;
+
   runApp(const MyApp());
+  FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {
@@ -52,7 +59,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'Ventry Storage Management',
+          title: 'Ventry',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
             useMaterial3: true,

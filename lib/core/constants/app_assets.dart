@@ -19,4 +19,6 @@ class AppAssets {
 
   // Images
   static const String imgPlaceHolder = 'assets/images/img_place_holder.png';
+  static const String ventryIconNoBg = 'assets/images/ventry_icon_no_bg.png';
+  static const String ventrySplashIcon = 'assets/images/ventry_splash_icon.png';
 }

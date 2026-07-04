@@ -41,6 +41,7 @@ dependencies:
   uuid: ^4.5.3
   intl: ^0.20.3
   mobile_scanner: ^7.2.0
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,7 @@ dev_dependencies:
   retrofit_generator: ^8.1.0
   mocktail: ^1.0.5
   drift_dev: ^2.14.0
+  flutter_launcher_icons: ^0.14.4
 
 dependency_overrides:
   retrofit_generator: 7.0.8
@@ -66,3 +68,33 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/fonts/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/images/ventry_icon_bg.png
+  adaptive_icon_background: "#F7F9FB"
+  adaptive_icon_foreground: assets/images/ventry_icon_no_bg.png
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/images/ventry_icon_bg.png
+    background_color: "#F7F9FB"
+    theme_color: "#00685F"
+  windows:
+    generate: true
+    image_path: assets/images/ventry_icon_bg.png
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: assets/images/ventry_icon_bg.png
+
+flutter_native_splash:
+  color: "#F7F9FB"
+  image: assets/images/ventry_splash_icon.png
+  android: true
+  ios: false
+  web: true
+  android_12:
+    color: "#F7F9FB"
+    image: assets/images/ventry_splash_icon.png

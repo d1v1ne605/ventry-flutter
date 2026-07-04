@@ -2,6 +2,7 @@ abstract final class RouterPath {
   RouterPath._(); // Private constructor prevents instantiation of the class
 
   static const String login = '/';
+  static const String splash = '/splash';
   static const String register = '/register';
   static const String inventory = '/inventory';
   static const String productCatalog = '/product-catalog';
@@ -19,6 +20,7 @@ abstract final class RouterName {
   RouterName._(); // Private constructor prevents instantiation of the class
 
   static const String login = 'login';
+  static const String splash = 'splash';
   static const String register = 'register';
   static const String inventory = 'inventory';
   static const String productCatalog = 'productCatalog';
