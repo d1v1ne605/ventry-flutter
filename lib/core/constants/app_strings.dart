@@ -11,340 +11,340 @@ class AppStrings {
   static const String appName = 'Ventry';
 
   // ── Inventory Dashboard ──────────────────────────────────────────────────────
-  static const String storageManagerTitle = 'STORAGE MANAGER';
-  static const String inventoryDashboard = 'Inventory Dashboard';
-  static const String inventorySubtitle = 'Manage your physical assets';
+  static const String storageManagerTitle = 'QUẢN LÝ KHO';
+  static const String inventoryDashboard = 'Bảng điều khiển kho';
+  static const String inventorySubtitle = 'Quản lý tài sản vật lý của bạn';
 
   // ── Cards ────────────────────────────────────────────────────────────────────
-  static const String productCatalogTitle = 'Product Catalog';
-  static const String productCatalogSubtitle = 'View and edit all stored items';
-  static const String categoryManagementTitle = 'Category Management';
+  static const String productCatalogTitle = 'Danh mục sản phẩm';
+  static const String productCatalogSubtitle =
+      'Xem và chỉnh sửa tất cả mặt hàng đang lưu kho';
+  static const String categoryManagementTitle = 'Quản lý danh mục';
   static const String categoryManagementSubtitle =
-      'Organize items by type and location';
-  static const String categorySearchHint = 'Search category...';
-  static const String categoryAddButton = 'Add Category';
-  static const String categoryEditButton = 'Edit Category';
-  static const String categoryNewTitle = 'New Category';
-  static const String categoryEditTitle = 'Edit Category';
-  static const String categoryUpdateTitle = 'Update Category';
-  static const String categorySaveTitle = 'Save Category';
-  static const String categoryDeleteTitle = 'Delete Category';
+      'Sắp xếp mặt hàng theo loại và vị trí';
+  static const String categorySearchHint = 'Tìm kiếm danh mục...';
+  static const String categoryAddButton = 'Thêm danh mục';
+  static const String categoryEditButton = 'Sửa danh mục';
+  static const String categoryNewTitle = 'Danh mục mới';
+  static const String categoryEditTitle = 'Sửa danh mục';
+  static const String categoryUpdateTitle = 'Cập nhật danh mục';
+  static const String categorySaveTitle = 'Lưu danh mục';
+  static const String categoryDeleteTitle = 'Xóa danh mục';
   static String categoryDeleteConfirm(String name) =>
-      'Are you sure you want to delete $name?';
-  static const String categoryNameLabel = 'Name';
-  static const String categoryNameHint = 'Category Name';
-  static const String categoryImageLabel = 'Image URL (optional)';
+      'Bạn có chắc muốn xóa $name không?';
+  static const String categoryNameLabel = 'Tên';
+  static const String categoryNameHint = 'Tên danh mục';
+  static const String categoryImageLabel = 'URL hình ảnh (không bắt buộc)';
   static const String categoryImageHint = 'https://...';
-  static const String categorySaveButton = 'Save';
-  static const String categoryCancelButton = 'Cancel';
-  static const String categoryDeleteButton = 'Delete';
-  static const String categoryEmpty = 'No categories found.';
-  static const String categoryNoResults = 'No results found.';
+  static const String categorySaveButton = 'Lưu';
+  static const String categoryCancelButton = 'Hủy';
+  static const String categoryDeleteButton = 'Xóa';
+  static const String categoryEmpty = 'Không tìm thấy danh mục nào.';
+  static const String categoryNoResults = 'Không tìm thấy kết quả.';
 
-  static const String stockMovementLogsTitle = 'Stock Movement Logs';
+  static const String stockMovementLogsTitle = 'Nhật ký xuất nhập kho';
   static const String stockMovementLogsSubtitle =
-      'Track inbound and outbound history';
+      'Theo dõi lịch sử nhập và xuất kho';
 
   // ── Bottom Nav ───────────────────────────────────────────────────────────────
-  static const String navSales = 'Sales';
-  static const String navInventory = 'Inventory';
-  static const String navPartners = 'Partners';
-  static const String navAccount = 'Account';
+  static const String navSales = 'Bán hàng';
+  static const String navInventory = 'Kho';
+  static const String navPartners = 'Đối tác';
+  static const String navAccount = 'Tài khoản';
 
   // ── Quick Add ────────────────────────────────────────────────────────────────
-  static const String quickAddTitle = 'Add Product';
-  static const String quickAddBasicInfoTitle = 'Basic Information';
-  static const String quickAddProductNameLabel = 'Product Name';
-  static const String quickAddProductNameHint = 'Enter product name';
-  static const String quickAddSkuLabel = 'SKU Code';
+  static const String quickAddTitle = 'Thêm sản phẩm';
+  static const String quickAddBasicInfoTitle = 'Thông tin cơ bản';
+  static const String quickAddProductNameLabel = 'Tên sản phẩm';
+  static const String quickAddProductNameHint = 'Nhập tên sản phẩm';
+  static const String quickAddSkuLabel = 'Mã SKU';
   static const String quickAddSkuHint = 'PROD-789';
-  static const String quickAddCategoryLabel = 'Category';
-  static const String quickAddDescriptionLabel = 'Short Description';
-  static const String quickAddDescriptionHint =
-      'Brief details about the product...';
-  static const String quickAddImageLabel = 'Product Image';
-  static const String quickAddTapToUpload = 'Tap to upload image';
-  static const String quickAddTapToUploadImages = 'Tap to upload images';
-  static const String quickAddNext = 'Next';
-  static const String quickAddBack = 'Back';
-  static const String quickAddStep2Title = 'Price & Inventory';
+  static const String quickAddCategoryLabel = 'Danh mục';
+  static const String quickAddDescriptionLabel = 'Mô tả ngắn';
+  static const String quickAddDescriptionHint = 'Thông tin ngắn về sản phẩm...';
+  static const String quickAddImageLabel = 'Hình ảnh sản phẩm';
+  static const String quickAddTapToUpload = 'Nhấn để tải ảnh lên';
+  static const String quickAddTapToUploadImages = 'Nhấn để tải ảnh lên';
+  static const String quickAddNext = 'Tiếp theo';
+  static const String quickAddBack = 'Quay lại';
+  static const String quickAddStep2Title = 'Giá & Tồn kho';
   static const String quickAddStep2Subtitle =
-      'Set the retail price and your cost price to track margins.';
-  static const String quickAddStep2CurrencyLabel = 'Currency';
-  static const String quickAddStep2SellingPriceLabel = 'Selling Price';
-  static const String quickAddStep2CostPriceLabel = 'Cost Price';
+      'Thiết lập giá bán lẻ và giá vốn để theo dõi biên lợi nhuận.';
+  static const String quickAddStep2CurrencyLabel = 'Tiền tệ';
+  static const String quickAddStep2SellingPriceLabel = 'Giá bán';
+  static const String quickAddStep2CostPriceLabel = 'Giá vốn';
   static const String quickAddStep2CostPriceHelper =
-      'Used to calculate profit margin.';
-  static const String quickAddStep2InventoryTitle = 'Inventory';
-  static const String quickAddStep2QuantityLabel = 'Stock Quantity';
-  static const String quickAddStep2UnitLabel = 'Unit of Measure';
+      'Dùng để tính biên lợi nhuận.';
+  static const String quickAddStep2InventoryTitle = 'Tồn kho';
+  static const String quickAddStep2QuantityLabel = 'Số lượng tồn kho';
+  static const String quickAddStep2UnitLabel = 'Đơn vị tính';
   static const String quickAddStep2InfoText =
-      'Margins will be automatically calculated on the dashboard once this product is saved and inventory is tracked.';
-  static const String quickAddStep2Required = 'Required';
-  static const String quickAddStep2Optional = 'Optional';
-  static const String quickAddStep2Progress = 'Step 2 of 5';
-  static const String quickAddStep3ProgressText = 'Step 3';
-  static const String quickAddStep3Title = 'Attributes & Partners';
-  static const String quickAddStep3AttributesTitle = 'Attributes';
-  static const String quickAddStep3AddAttributeButton = 'Add Attribute';
-  static const String quickAddStep3BarcodeTitle = 'Barcode / QR';
+      'Biên lợi nhuận sẽ được tự động tính trên bảng điều khiển sau khi sản phẩm này được lưu và tồn kho được theo dõi.';
+  static const String quickAddStep2Required = 'Bắt buộc';
+  static const String quickAddStep2Optional = 'Không bắt buộc';
+  static const String quickAddStep2Progress = 'Bước 2 trên 5';
+  static const String quickAddStep3ProgressText = 'Bước 3';
+  static const String quickAddStep3Title = 'Thuộc tính & Đối tác';
+  static const String quickAddStep3AttributesTitle = 'Thuộc tính';
+  static const String quickAddStep3AddAttributeButton = 'Thêm thuộc tính';
+  static const String quickAddStep3BarcodeTitle = 'Mã vạch / QR';
   static const String quickAddStep3BarcodeHint =
-      'Scan or enter barcode manually';
-  static const String quickAddStep3Scan = 'Scan';
-  static const String quickAddStep3SupplierTitle = 'Supplier';
-  static const String quickAddStep3SupplierHint = 'Select a supplier...';
-  static const String quickAddStep3KeyHint = 'e.g., Warranty';
-  static const String quickAddStep3ValueHint = 'e.g., 1 Year';
-  static const String quickAddStep4ProgressText = 'Step 4 of 4';
-  static const String quickAddStep4Title = 'Review & Confirm';
-  static const String quickAddStep4BasicDetailsLabel = 'BASIC DETAILS';
-  static const String quickAddStep4AttributesLabel = 'ATTRIBUTES & VARIANTS';
-  static const String quickAddStep4PricingLabel = 'PRICING';
-  static const String quickAddStep4InventoryLabel = 'INVENTORY';
-  static const String quickAddStep4SupplierBarcodeLabel = 'SUPPLIER & BARCODE';
-  static const String quickAddStep4SellingPrice = 'Selling Price';
-  static const String quickAddStep4CostPrice = 'Cost Price';
-  static const String quickAddStep4Margin = 'Margin';
-  static const String quickAddStep4InitialStock = 'Initial Stock';
-  static const String quickAddStep4LowStockAlert = 'Low Stock Alert';
-  static const String quickAddStep4Location = 'Location';
-  static const String quickAddStep4Supplier = 'Supplier';
-  static const String quickAddStep4BarcodeOptional = 'Barcode (Optional)';
-  static const String quickAddStep4Missing = 'MISSING';
-  static const String quickAddStep4BarcodeScanHint = 'Scan or enter barcode';
-  static const String quickAddStep4GeneratedVariants = 'Generated Variants';
-  static const String quickAddStep4Status = 'Status';
+      'Quét hoặc nhập mã vạch thủ công';
+  static const String quickAddStep3Scan = 'Quét';
+  static const String quickAddStep3SupplierTitle = 'Nhà cung cấp';
+  static const String quickAddStep3SupplierHint = 'Chọn nhà cung cấp...';
+  static const String quickAddStep3KeyHint = 'VD: Bảo hành';
+  static const String quickAddStep3ValueHint = 'VD: 1 năm';
+  static const String quickAddStep4ProgressText = 'Bước 4 trên 4';
+  static const String quickAddStep4Title = 'Xem lại & Xác nhận';
+  static const String quickAddStep4BasicDetailsLabel = 'THÔNG TIN CƠ BẢN';
+  static const String quickAddStep4AttributesLabel = 'THUỘC TÍNH & BIẾN THỂ';
+  static const String quickAddStep4PricingLabel = 'GIÁ';
+  static const String quickAddStep4InventoryLabel = 'TỒN KHO';
+  static const String quickAddStep4SupplierBarcodeLabel =
+      'NHÀ CUNG CẤP & MÃ VẠCH';
+  static const String quickAddStep4SellingPrice = 'Giá bán';
+  static const String quickAddStep4CostPrice = 'Giá vốn';
+  static const String quickAddStep4Margin = 'Biên lợi nhuận';
+  static const String quickAddStep4InitialStock = 'Tồn kho ban đầu';
+  static const String quickAddStep4LowStockAlert = 'Cảnh báo tồn kho thấp';
+  static const String quickAddStep4Location = 'Vị trí';
+  static const String quickAddStep4Supplier = 'Nhà cung cấp';
+  static const String quickAddStep4BarcodeOptional = 'Mã vạch (không bắt buộc)';
+  static const String quickAddStep4Missing = 'THIẾU';
+  static const String quickAddStep4BarcodeScanHint = 'Quét hoặc nhập mã vạch';
+  static const String quickAddStep4GeneratedVariants = 'Biến thể đã tạo';
+  static const String quickAddStep4Status = 'Trạng thái';
 
   // ── Product Catalog ──────────────────────────────────────────────────────────
   static const String productCatalogPageTitle = 'StockMaster';
-  static const String productCatalogEmpty = 'No products found';
-  static const String searchHint = 'Search by SKU name, barcode, ...';
-  static const String filterTotalStock = 'Total Stock';
-  static const String filterLowStock = 'Low Stock';
-  static const String filterOutOfStock = 'Out of Stock';
-  static const String inStock = 'In Stock';
-  static const String lowStock = 'Low Stock';
-  static const String outOfStock = 'Out';
+  static const String productCatalogEmpty = 'Không tìm thấy sản phẩm nào';
+  static const String searchHint = 'Tìm theo tên SKU, mã vạch, ...';
+  static const String filterTotalStock = 'Tổng tồn kho';
+  static const String filterLowStock = 'Tồn kho thấp';
+  static const String filterOutOfStock = 'Hết hàng';
+  static const String inStock = 'Còn hàng';
+  static const String lowStock = 'Tồn kho thấp';
+  static const String outOfStock = 'Hết';
   static const String skuPrefix = 'SKU: ';
-  static const String addProduct = 'Add Product';
-  static String variantCount(int count) =>
-      count == 1 ? '$count Variant' : '$count Variants';
+  static const String addProduct = 'Thêm sản phẩm';
+  static String variantCount(int count) => '$count biến thể';
 
   // ── Add Product ──────────────────────────────────────────────────────────────
-  static const String addProductTitle = 'Add Product';
-  static const String addProductProgress1 = '1 of 3';
-  static const String addProductNameLabel = 'Product Name';
-  static const String addProductNameHint = 'Enter product name';
-  static const String addProductCategoryLabel = 'Category';
-  static const String addProductCurrencyLabel = 'Currency';
-  static const String addProductUnitLabel = 'Unit of Measure';
-  static const String addProductDescriptionLabel = 'Description';
-  static const String addProductDescriptionHint =
-      'Briefly describe the product...';
-  static const String addProductImageLabel = 'Product Image';
-  static const String addProductImageHint = 'Tap to upload an image';
-  static const String addProductCancel = 'Cancel';
-  static const String addProductNext = 'Next';
-  static const String saveAndComplete = 'Save & Complete';
-  static const String createNewCategory = 'Create New Category';
+  static const String addProductTitle = 'Thêm sản phẩm';
+  static const String addProductProgress1 = '1 trên 3';
+  static const String addProductNameLabel = 'Tên sản phẩm';
+  static const String addProductNameHint = 'Nhập tên sản phẩm';
+  static const String addProductCategoryLabel = 'Danh mục';
+  static const String addProductCurrencyLabel = 'Tiền tệ';
+  static const String addProductUnitLabel = 'Đơn vị tính';
+  static const String addProductDescriptionLabel = 'Mô tả';
+  static const String addProductDescriptionHint = 'Mô tả ngắn về sản phẩm...';
+  static const String addProductImageLabel = 'Hình ảnh sản phẩm';
+  static const String addProductImageHint = 'Nhấn để tải ảnh lên';
+  static const String addProductCancel = 'Hủy';
+  static const String addProductNext = 'Tiếp theo';
+  static const String saveAndComplete = 'Lưu & Hoàn tất';
+  static const String createNewCategory = 'Tạo danh mục mới';
 
-  static const String uploadImage = 'Upload Image';
-  static const String takeAPhoto = 'Take a photo';
-  static const String chooseFromGallery = 'Choose from gallery';
+  static const String uploadImage = 'Tải ảnh lên';
+  static const String takeAPhoto = 'Chụp ảnh';
+  static const String chooseFromGallery = 'Chọn từ thư viện';
   static const String addProductUploadInProgress =
-      'Please wait until image upload completes';
-  static const String addProductNameRequired = 'Product Name is required';
-  static const String addProductCreatedSuccess =
-      'Product created successfully!';
-  static const String addProductCreateFailed = 'Failed to create product';
+      'Vui lòng chờ đến khi tải ảnh lên hoàn tất';
+  static const String addProductNameRequired = 'Tên sản phẩm là bắt buộc';
+  static const String addProductCreatedSuccess = 'Tạo sản phẩm thành công!';
+  static const String addProductCreateFailed = 'Tạo sản phẩm thất bại';
   static String selectedNewCategory(String name) =>
-      'Selected new category: $name';
-  static const String currencyHint = 'e.g. USD, EUR, VND';
-  static const String unitHint = 'e.g. Pieces, Boxes';
+      'Đã chọn danh mục mới: $name';
+  static const String currencyHint = 'VD: USD, EUR, VND';
+  static const String unitHint = 'VD: Cái, Hộp';
 
-  static const String addProductProgress2 = 'Step 2 of 3';
-  static const String priceAndSkuVariants = 'Price & SKU Variants';
+  static const String addProductProgress2 = 'Bước 2 trên 3';
+  static const String priceAndSkuVariants = 'Giá & Biến thể SKU';
 
-  static const String skuPreview = 'SKU Preview';
-  static String skuVariantsCount(int count) => '$count Variants';
-  static String priceLabel(String price) => 'Price: \$$price';
-  static String stockLabel(int stock) => 'Stock: $stock';
+  static const String skuPreview = 'Xem trước SKU';
+  static String skuVariantsCount(int count) => '$count biến thể';
+  static String priceLabel(String price) => 'Giá: \$$price';
+  static String stockLabel(int stock) => 'Tồn kho: $stock';
 
-  static const String editVariant = 'Edit Variant';
-  static const String skuInfo = 'SKU Info : ';
-  static const String skuCodeLabel = 'SKU Code';
-  static const String skuCodeHint = 'Automatically';
-  static const String barcodeLabel = 'Barcode';
-  static const String barcodeHint = 'Scan or enter manually';
-  static const String pricingAndStock = 'Pricing & Stock';
-  static const String initialStock = 'Initial Stock';
-  static const String saveButton = 'Save';
+  static const String editVariant = 'Sửa biến thể';
+  static const String skuInfo = 'Thông tin SKU: ';
+  static const String skuCodeLabel = 'Mã SKU';
+  static const String skuCodeHint = 'Tự động';
+  static const String barcodeLabel = 'Mã vạch';
+  static const String barcodeHint = 'Quét hoặc nhập thủ công';
+  static const String pricingAndStock = 'Giá & Tồn kho';
+  static const String initialStock = 'Tồn kho ban đầu';
+  static const String saveButton = 'Lưu';
 
-  static const String variantOptionsDefinition = 'Variant Options Definition';
-  static const String addAnotherOption = 'Add Another Option';
-  static const String optionNameLabel = 'Option Name';
-  static const String optionNameHint = 'e.g. Color';
-  static const String optionValuesLabel = 'Option Values';
-  static const String optionValuesHint = 'Type and press enter...';
+  static const String variantOptionsDefinition = 'Định nghĩa tùy chọn biến thể';
+  static const String addAnotherOption = 'Thêm tùy chọn khác';
+  static const String optionNameLabel = 'Tên tùy chọn';
+  static const String optionNameHint = 'VD: Màu sắc';
+  static const String optionValuesLabel = 'Giá trị tùy chọn';
+  static const String optionValuesHint = 'Nhập và nhấn enter...';
 
-  static const String sellingPriceHint = 'e.g. 10.00';
-  static const String costPriceHint = 'e.g. 5.00';
+  static const String sellingPriceHint = 'VD: 10.00';
+  static const String costPriceHint = 'VD: 5.00';
   static const String stockQuantityHint = '0';
   static const String editVariantPriceHint = '\$ 0.00';
 
-  static const String addCustomVariant = 'Add Custom Variant';
-  static const String variantAttributes = 'Variant Attributes';
-  static const String colorLabel = 'Color';
-  static const String colorHint = 'e.g. Black';
-  static const String storageLabel = 'Storage';
-  static const String storageHint = 'e.g. 128GB';
-  static const String logisticsAndPricing = 'Logistics & Pricing';
+  static const String addCustomVariant = 'Thêm biến thể tùy chỉnh';
+  static const String variantAttributes = 'Thuộc tính biến thể';
+  static const String colorLabel = 'Màu sắc';
+  static const String colorHint = 'VD: Đen';
+  static const String storageLabel = 'Dung lượng';
+  static const String storageHint = 'VD: 128GB';
+  static const String logisticsAndPricing = 'Vận chuyển & Giá';
   static const String skuCodeExampleHint = 'IP15P-BLK-128';
-  static const String barcodeScanHint2 = 'Scan or enter barcode';
+  static const String barcodeScanHint2 = 'Quét hoặc nhập mã vạch';
   static const String priceZeroHint = '0.00';
-  static const String unitPcsHint = 'pcs';
-  static const String saveVariant = 'Save Variant';
+  static const String unitPcsHint = 'cái';
+  static const String saveVariant = 'Lưu biến thể';
 
   // ── Sku Details ──────────────────────────────────────────────────────────────
-  static const String skuDetailsTitle = 'SKU Details';
-  static const String spuVariantsTitle = 'Product Variants';
-  static const String variantsListTitle = 'Related Variants';
-  static const String noVariantsFound = 'No variants found for this product.';
-  static const String stockShortLabel = 'Stock';
-  static const String editVariantButton = 'Edit Variant';
-  static const String quickAdjustButton = 'Quick Adjust';
-  static const String currentStockLabel = 'Current Stock';
-  static const String inTransitLabel = 'In Transit';
-  static const String reservedLabel = 'Reserved';
-  static const String generalInfoTitle = 'General Info';
-  static const String categoryLabel = 'Category';
-  static const String unitOfMeasureLabel = 'Unit of Measure';
-  static const String currencyLabel = 'Currency';
-  static const String isSellableLabel = 'Is Sellable';
-  static const String costPriceLabel = 'Cost Price';
-  static const String sellingPriceLabel = 'Selling Price';
-  static const String marginLabel = 'Margin';
-  static const String attributesTitle = 'Attributes';
-  static const String descriptionTitle = 'Description';
-  static const String notAvailable = 'N/A';
-  static const String addNew = 'Add New';
-  static const String retry = 'Retry';
+  static const String skuDetailsTitle = 'Chi tiết SKU';
+  static const String spuVariantsTitle = 'Biến thể sản phẩm';
+  static const String variantsListTitle = 'Biến thể liên quan';
+  static const String noVariantsFound =
+      'Không tìm thấy biến thể nào cho sản phẩm này.';
+  static const String stockShortLabel = 'Tồn kho';
+  static const String editVariantButton = 'Sửa biến thể';
+  static const String quickAdjustButton = 'Điều chỉnh nhanh';
+  static const String currentStockLabel = 'Tồn kho hiện tại';
+  static const String inTransitLabel = 'Đang vận chuyển';
+  static const String reservedLabel = 'Đã giữ chỗ';
+  static const String generalInfoTitle = 'Thông tin chung';
+  static const String categoryLabel = 'Danh mục';
+  static const String unitOfMeasureLabel = 'Đơn vị tính';
+  static const String currencyLabel = 'Tiền tệ';
+  static const String isSellableLabel = 'Có thể bán';
+  static const String costPriceLabel = 'Giá vốn';
+  static const String sellingPriceLabel = 'Giá bán';
+  static const String marginLabel = 'Biên lợi nhuận';
+  static const String attributesTitle = 'Thuộc tính';
+  static const String descriptionTitle = 'Mô tả';
+  static const String notAvailable = 'Không có';
+  static const String addNew = 'Thêm mới';
+  static const String retry = 'Thử lại';
 
   // ── SPU Form ────────────────────────────────────────────────────────────────
-  static const String editSpuTitle = 'Edit Product';
-  static const String editSpuButton = 'Edit SPU';
-  static const String editSpuSaveChanges = 'Save Changes';
-  static const String editSpuBasicInformation = 'Basic Information';
-  static const String editSpuNameRequired = 'Product name is required';
-  static const String editSpuUpdatedSuccess = 'Product updated successfully';
-  static const String editSpuLoadFailed = 'Unable to load product';
-  static const String editSpuNoCategory = 'No Category';
-  static const String editSpuSelectCategory = 'Select Category';
-  static const String editSpuCategoryLoadFailed = 'Unable to load categories';
+  static const String editSpuTitle = 'Sửa sản phẩm';
+  static const String editSpuButton = 'Sửa SPU';
+  static const String editSpuSaveChanges = 'Lưu thay đổi';
+  static const String editSpuBasicInformation = 'Thông tin cơ bản';
+  static const String editSpuNameRequired = 'Tên sản phẩm là bắt buộc';
+  static const String editSpuUpdatedSuccess = 'Cập nhật sản phẩm thành công';
+  static const String editSpuLoadFailed = 'Không thể tải sản phẩm';
+  static const String editSpuNoCategory = 'Không có danh mục';
+  static const String editSpuSelectCategory = 'Chọn danh mục';
+  static const String editSpuCategoryLoadFailed = 'Không thể tải danh mục';
 
   // ── SKU Form ────────────────────────────────────────────────────────────────
-  static const String skuFormEditTitle = 'Edit SKU';
-  static const String skuFormCreateTitle = 'Add SKU';
-  static const String skuFormSaveChanges = 'Save Changes';
-  static const String skuFormCreateSku = 'Create SKU';
-  static const String skuFormGeneralInformation = 'General Information';
-  static const String skuFormAttributes = 'Attributes';
-  static const String skuFormMedia = 'Media';
-  static const String skuFormDescription = 'Description';
-  static const String skuFormManage = 'Manage';
-  static const String skuFormEdit = 'Edit';
-  static const String skuFormSkuName = 'SKU Name';
-  static const String skuFormCategory = 'Category';
-  static const String skuFormBarcode = 'Barcode';
-  static const String skuFormSkuCode = 'SKU Code';
-  static const String skuFormCostPrice = 'Cost Price';
-  static const String skuFormSellingPrice = 'Selling Price';
-  static const String skuFormCurrency = 'Currency';
-  static const String skuFormUnitOfMeasure = 'Unit of Measure';
-  static const String skuFormIsSellable = 'Is Sellable';
+  static const String skuFormEditTitle = 'Sửa SKU';
+  static const String skuFormCreateTitle = 'Thêm SKU';
+  static const String skuFormSaveChanges = 'Lưu thay đổi';
+  static const String skuFormCreateSku = 'Tạo SKU';
+  static const String skuFormGeneralInformation = 'Thông tin chung';
+  static const String skuFormAttributes = 'Thuộc tính';
+  static const String skuFormMedia = 'Hình ảnh';
+  static const String skuFormDescription = 'Mô tả';
+  static const String skuFormManage = 'Quản lý';
+  static const String skuFormEdit = 'Sửa';
+  static const String skuFormSkuName = 'Tên SKU';
+  static const String skuFormCategory = 'Danh mục';
+  static const String skuFormBarcode = 'Mã vạch';
+  static const String skuFormSkuCode = 'Mã SKU';
+  static const String skuFormCostPrice = 'Giá vốn';
+  static const String skuFormSellingPrice = 'Giá bán';
+  static const String skuFormCurrency = 'Tiền tệ';
+  static const String skuFormUnitOfMeasure = 'Đơn vị tính';
+  static const String skuFormIsSellable = 'Có thể bán';
   static const String skuFormSellableHelper =
-      'Allow this item to be sold in the store';
-  static const String skuFormAddImage = 'Add Image';
-  static const String skuFormEditAttributesTitle = 'Edit Attributes';
-  static const String skuFormEditImagesTitle = 'Edit Images';
-  static const String skuFormCancel = 'Cancel';
-  static const String skuFormApplyAttributes = 'Apply Attributes';
-  static const String skuFormSelectAttributesTitle = 'Select Attributes';
+      'Cho phép mặt hàng này được bán trong cửa hàng';
+  static const String skuFormAddImage = 'Thêm ảnh';
+  static const String skuFormEditAttributesTitle = 'Sửa thuộc tính';
+  static const String skuFormEditImagesTitle = 'Sửa hình ảnh';
+  static const String skuFormCancel = 'Hủy';
+  static const String skuFormApplyAttributes = 'Áp dụng thuộc tính';
+  static const String skuFormSelectAttributesTitle = 'Chọn thuộc tính';
   static const String skuFormSelectAttributesHelper =
-      'Choose one or more shop attributes to add to this SKU.';
-  static const String skuFormAddNewAttribute = 'Add New Attribute';
-  static const String skuFormCreateAttributeTitle = 'New Attribute';
-  static const String skuFormCreateAttributeHint = 'Enter attribute name';
-  static const String skuFormCreateAttributeConfirm = 'Create';
-  static const String skuFormCreateAttributeHeaderAction = 'New';
+      'Chọn một hoặc nhiều thuộc tính cửa hàng để thêm vào SKU này.';
+  static const String skuFormAddNewAttribute = 'Thêm thuộc tính mới';
+  static const String skuFormCreateAttributeTitle = 'Thuộc tính mới';
+  static const String skuFormCreateAttributeHint = 'Nhập tên thuộc tính';
+  static const String skuFormCreateAttributeConfirm = 'Tạo';
+  static const String skuFormCreateAttributeHeaderAction = 'Mới';
   static const String skuFormCreateAttributeHelper =
-      'Create a shop attribute and return to this list.';
-  static const String skuFormCreateAttributeNameLabel = 'Attribute name';
+      'Tạo thuộc tính cửa hàng và quay lại danh sách này.';
+  static const String skuFormCreateAttributeNameLabel = 'Tên thuộc tính';
   static const String skuFormCreateAttributeNameRequired =
-      'Attribute name is required.';
+      'Tên thuộc tính là bắt buộc.';
   static const String skuFormAttributeCreatedSuccess =
-      'Attribute created successfully';
-  static const String skuFormAddSelectedAttributes = 'Add Attributes';
-  static const String skuFormAttributeAlreadyAdded = 'Added';
+      'Tạo thuộc tính thành công';
+  static const String skuFormAddSelectedAttributes = 'Thêm thuộc tính';
+  static const String skuFormAttributeAlreadyAdded = 'Đã thêm';
   static const String skuFormAttributesEmptyState =
-      'No attributes are available for this shop yet.';
+      'Chưa có thuộc tính nào cho cửa hàng này.';
   static const String skuFormAttributesAllAdded =
-      'All available attributes have already been added to this SKU.';
+      'Tất cả thuộc tính hiện có đã được thêm vào SKU này.';
   static const String skuFormAttributesLoadFailed =
-      'Unable to load shop attributes.';
-  static const String skuFormSaveGallery = 'Save Gallery';
-  static const String skuFormUploadNew = 'Upload New';
+      'Không thể tải thuộc tính cửa hàng.';
+  static const String skuFormSaveGallery = 'Lưu thư viện ảnh';
+  static const String skuFormUploadNew = 'Tải ảnh mới';
   static const String skuFormMediaHelper =
-      'Manage the gallery for this SKU. Drag to reorder.';
-  static const String skuFormCover = 'Cover';
-  static const String skuFormMainImageBadge = 'Main';
+      'Quản lý thư viện ảnh cho SKU này. Kéo để sắp xếp lại.';
+  static const String skuFormCover = 'Ảnh bìa';
+  static const String skuFormMainImageBadge = 'Chính';
   static const String skuFormUploadInProgress =
-      'Please wait until image upload completes';
+      'Vui lòng chờ đến khi tải ảnh lên hoàn tất';
   static const String skuFormGalleryUpdatedSuccess =
-      'Gallery updated successfully';
-  static const String skuFormUpdatedSuccess = 'SKU updated successfully';
-  static const String skuFormCreatedSuccess = 'SKU created successfully';
-  static String skuFormNewAttributeLabel(int index) => 'Attribute $index';
+      'Cập nhật thư viện ảnh thành công';
+  static const String skuFormUpdatedSuccess = 'Cập nhật SKU thành công';
+  static const String skuFormCreatedSuccess = 'Tạo SKU thành công';
+  static String skuFormNewAttributeLabel(int index) => 'Thuộc tính $index';
 }
 
 /// Login screen string tokens.
 class _LoginStrings {
-  final String title = 'Welcome Back';
-  final String subtitle = 'Sign in to continue managing your inventory';
+  final String title = 'Chào mừng trở lại';
+  final String subtitle = 'Đăng nhập để tiếp tục quản lý kho của bạn';
   final String emailLabel = 'Email';
-  final String emailHint = 'Enter your email';
-  final String passwordLabel = 'Password';
-  final String passwordHint = 'Enter your password';
-  final String forgotPassword = 'Forgot password?';
-  final String submitButton = 'Sign In';
-  final String footerPrefix = "Don't have an account?";
-  final String footerLink = 'Sign Up';
-  final String errorDefault = 'Invalid email or password. Please try again.';
-  final String successMessage = 'Login successful!';
+  final String emailHint = 'Nhập email của bạn';
+  final String passwordLabel = 'Mật khẩu';
+  final String passwordHint = 'Nhập mật khẩu của bạn';
+  final String forgotPassword = 'Quên mật khẩu?';
+  final String submitButton = 'Đăng nhập';
+  final String footerPrefix = 'Chưa có tài khoản?';
+  final String footerLink = 'Đăng ký';
+  final String errorDefault =
+      'Email hoặc mật khẩu không hợp lệ. Vui lòng thử lại.';
+  final String successMessage = 'Đăng nhập thành công!';
 }
 
 /// Register screen string tokens.
 class _RegisterStrings {
-  final String title = 'Create Account';
-  final String subtitle = 'Join us to manage your inventory smarter';
-  final String fullNameLabel = 'Full Name';
-  final String fullNameHint = 'Enter your full name';
-  final String usernameLabel = 'Username';
-  final String usernameHint = 'Enter your username';
-  final String passwordLabel = 'Password';
-  final String passwordHint = 'Enter your password';
-  final String confirmPasswordLabel = 'Confirm Password';
-  final String confirmPasswordHint = 'Re-enter your password';
-  final String personalInfoSection = 'Account Setup';
-  final String shopDetailsSection = 'Shop Details';
-  final String shopNameLabel = 'Company / Shop Name';
-  final String shopNameHint = 'Enter your company name';
-  final String createButton = 'Create Account';
-  final String footerPrefix = 'Already have an account?';
-  final String footerLink = 'Sign In';
-  final String errorRequiredFields = 'Please fill in all required fields.';
-  final String errorPasswordMismatch = 'Password confirmation does not match.';
-  final String errorDefault =
-      'Unable to create your account. Please try again.';
-  final String successMessage = 'Account created successfully. Please sign in.';
+  final String title = 'Tạo tài khoản';
+  final String subtitle = 'Tham gia để quản lý kho thông minh hơn';
+  final String fullNameLabel = 'Họ và tên';
+  final String fullNameHint = 'Nhập họ và tên của bạn';
+  final String usernameLabel = 'Tên đăng nhập';
+  final String usernameHint = 'Nhập tên đăng nhập của bạn';
+  final String passwordLabel = 'Mật khẩu';
+  final String passwordHint = 'Nhập mật khẩu của bạn';
+  final String confirmPasswordLabel = 'Xác nhận mật khẩu';
+  final String confirmPasswordHint = 'Nhập lại mật khẩu của bạn';
+  final String personalInfoSection = 'Thiết lập tài khoản';
+  final String shopDetailsSection = 'Thông tin cửa hàng';
+  final String shopNameLabel = 'Tên công ty / cửa hàng';
+  final String shopNameHint = 'Nhập tên công ty của bạn';
+  final String createButton = 'Tạo tài khoản';
+  final String footerPrefix = 'Đã có tài khoản?';
+  final String footerLink = 'Đăng nhập';
+  final String errorRequiredFields =
+      'Vui lòng điền đầy đủ các trường bắt buộc.';
+  final String errorPasswordMismatch = 'Xác nhận mật khẩu không khớp.';
+  final String errorDefault = 'Không thể tạo tài khoản. Vui lòng thử lại.';
+  final String successMessage = 'Tạo tài khoản thành công. Vui lòng đăng nhập.';
 }
