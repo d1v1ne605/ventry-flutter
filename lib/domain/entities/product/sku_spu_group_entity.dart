@@ -13,16 +13,26 @@ class SkuSpuGroupEntity extends Equatable {
   final String spuUid;
   final String spuName;
   final String spuStatus;
+  final int spuVersion;
+  final String? spuDescription;
+  final String? categoryUid;
   final String? categoryName;
   final String? categoryImageUrl;
+  final String? currency;
+  final String? unitOfMeasure;
   final List<SkuEntity> skus;
 
   const SkuSpuGroupEntity({
     required this.spuUid,
     required this.spuName,
     required this.spuStatus,
+    required this.spuVersion,
+    this.spuDescription,
+    this.categoryUid,
     this.categoryName,
     this.categoryImageUrl,
+    this.currency,
+    this.unitOfMeasure,
     this.skus = const [],
   });
 
@@ -113,8 +123,13 @@ class SkuSpuGroupEntity extends Equatable {
     spuUid,
     spuName,
     spuStatus,
+    spuVersion,
+    spuDescription,
+    categoryUid,
     categoryName,
     categoryImageUrl,
+    currency,
+    unitOfMeasure,
     skus,
   ];
 }

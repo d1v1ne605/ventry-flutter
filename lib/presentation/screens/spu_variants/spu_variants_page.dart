@@ -15,6 +15,7 @@ import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/spu_variants/bloc/spu_variants_bloc.dart';
@@ -190,7 +191,19 @@ class _VariantsHero extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(group.spuName, style: AppTextStyles.cardTitle),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        group.spuName,
+                        style: AppTextStyles.cardTitle,
+                      ),
+                    ),
+                    SizedBox(width: AppSize.size8.w),
+                    _HeroEditSpuButton(group: group),
+                  ],
+                ),
                 SizedBox(height: 6.h),
                 Text(
                   AppStrings.variantCount(group.variantCount),
@@ -210,6 +223,65 @@ class _VariantsHero extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeroEditSpuButton extends StatelessWidget {
+  const _HeroEditSpuButton({required this.group});
+
+  final SkuSpuGroupEntity group;
+
+  Future<void> _openEditSpuForm(BuildContext context) async {
+    final bloc = context.read<SpuVariantsBloc>();
+    final updatedSpu = await context.pushNamed<SpuEntity>(
+      RouterName.editSpu,
+      pathParameters: {'spuUid': group.spuUid},
+    );
+
+    if (updatedSpu == null || !context.mounted) {
+      return;
+    }
+
+    bloc.add(LoadSpuVariants(group.spuUid));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: AppStrings.editSpuButton,
+      child: Material(
+        color: AppColors.skuChipFill,
+        borderRadius: BorderRadius.circular(AppSize.size8.r),
+        child: InkWell(
+          onTap: () => _openEditSpuForm(context),
+          borderRadius: BorderRadius.circular(AppSize.size8.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSize.size8.w,
+              vertical: AppSize.size6.h,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.edit_rounded,
+                  color: AppColors.primary,
+                  size: AppSize.size16.r,
+                ),
+                SizedBox(width: AppSize.size4.w),
+                Text(
+                  AppStrings.editSpuButton,
+                  style: AppTextStyles.skuChip.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

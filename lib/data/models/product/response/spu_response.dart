@@ -17,8 +17,10 @@ class SpuResponse with _$SpuResponse {
     String? currency,
     String? unitOfMeasure,
     required String status,
+    required int version,
     required DateTime createdAt,
     required DateTime updatedAt,
+    @Default([]) List<Map<String, dynamic>> attributes,
   }) = _SpuResponse;
 
   factory SpuResponse.fromJson(Map<String, dynamic> json) =>

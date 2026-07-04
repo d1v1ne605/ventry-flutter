@@ -233,26 +233,26 @@ class _StickyHeader extends StatelessWidget {
             onFilterTap: () {},
           ),
           SizedBox(height: AppSize.size16.h),
-          BlocSelector<ProductCatalogBloc, ProductCatalogState, _FilterCounts>(
-            selector: (state) => _FilterCounts(
-              total: state.total,
-              lowStock: state.spuGroups
-                  .where((group) => group.lowStockCount > 0)
-                  .length,
-              outOfStock: state.spuGroups
-                  .where((group) => group.stockStatus.isOutOfStock)
-                  .length,
-              filterStatus: state.filterStatus,
-              isStockAlert: state.isStockAlert,
-            ),
-            builder: (context, counts) => ProductFilterChips(
-              selectedFilter: _resolveFilter(counts),
-              onFilterChanged: (filter) => _onFilterChanged(context, filter),
-              totalCount: counts.total,
-              lowStockCount: counts.lowStock,
-              outOfStockCount: counts.outOfStock,
-            ),
-          ),
+          // BlocSelector<ProductCatalogBloc, ProductCatalogState, _FilterCounts>(
+          //   selector: (state) => _FilterCounts(
+          //     total: state.total,
+          //     lowStock: state.spuGroups
+          //         .where((group) => group.lowStockCount > 0)
+          //         .length,
+          //     outOfStock: state.spuGroups
+          //         .where((group) => group.stockStatus.isOutOfStock)
+          //         .length,
+          //     filterStatus: state.filterStatus,
+          //     isStockAlert: state.isStockAlert,
+          //   ),
+          //   builder: (context, counts) => ProductFilterChips(
+          //     selectedFilter: _resolveFilter(counts),
+          //     onFilterChanged: (filter) => _onFilterChanged(context, filter),
+          //     totalCount: counts.total,
+          //     lowStockCount: counts.lowStock,
+          //     outOfStockCount: counts.outOfStock,
+          //   ),
+          // ),
         ],
       ),
     );

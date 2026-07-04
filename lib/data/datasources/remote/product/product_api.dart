@@ -5,10 +5,12 @@ import 'package:ventry_flutter/data/models/product/request/create_product_reques
 import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/update_spu_request.dart';
 import 'package:ventry_flutter/data/models/product/response/product_response.dart';
 import 'package:ventry_flutter/data/models/product/response/presigned_upload_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_spu_group_response.dart';
+import 'package:ventry_flutter/data/models/product/response/spu_response.dart';
 
 part 'product_api.g.dart';
 
@@ -34,6 +36,9 @@ abstract class ProductApi {
   @GET('/skus/{skuUid}')
   Future<SkuResponse> getSkuByUid(@Path('skuUid') String skuUid);
 
+  @GET('/spus/{spuUid}')
+  Future<SpuResponse> getSpuByUid(@Path('spuUid') String spuUid);
+
   @POST('/skus')
   Future<SkuResponse> createSku(@Body() CreateSkuRequest request);
 
@@ -47,6 +52,12 @@ abstract class ProductApi {
   Future<SkuResponse> updateSkuImages(
     @Path('skuUid') String skuUid,
     @Body() UpdateSkuImagesRequest request,
+  );
+
+  @PATCH('/spus/{spuUid}')
+  Future<SpuResponse> updateSpu(
+    @Path('spuUid') String spuUid,
+    @Body() UpdateSpuRequest request,
   );
 
   @GET('/skus/generated-code/latest')

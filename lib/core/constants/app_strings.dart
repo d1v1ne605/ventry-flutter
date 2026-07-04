@@ -230,6 +230,18 @@ class AppStrings {
   static const String addNew = 'Add New';
   static const String retry = 'Retry';
 
+  // ── SPU Form ────────────────────────────────────────────────────────────────
+  static const String editSpuTitle = 'Edit Product';
+  static const String editSpuButton = 'Edit SPU';
+  static const String editSpuSaveChanges = 'Save Changes';
+  static const String editSpuBasicInformation = 'Basic Information';
+  static const String editSpuNameRequired = 'Product name is required';
+  static const String editSpuUpdatedSuccess = 'Product updated successfully';
+  static const String editSpuLoadFailed = 'Unable to load product';
+  static const String editSpuNoCategory = 'No Category';
+  static const String editSpuSelectCategory = 'Select Category';
+  static const String editSpuCategoryLoadFailed = 'Unable to load categories';
+
   // ── SKU Form ────────────────────────────────────────────────────────────────
   static const String skuFormEditTitle = 'Edit SKU';
   static const String skuFormCreateTitle = 'Add SKU';

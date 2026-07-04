@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ventry_flutter/core/layouts/main_layout.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/add_product_step1_page.dart';
+import 'package:ventry_flutter/presentation/screens/edit_spu/edit_spu_page.dart';
 import '../screens/login/login_page.dart';
 import '../screens/register/register_page.dart';
 import '../screens/inventory_dashboard/inventory_dashboard_page.dart';
@@ -76,6 +77,14 @@ final router = GoRouter(
               builder: (context, state) {
                 final spuUid = state.pathParameters['spuUid'] ?? '';
                 return SpuVariantsPage(spuUid: spuUid);
+              },
+            ),
+            GoRoute(
+              path: 'spu/:spuUid/edit',
+              name: RouterName.editSpu,
+              builder: (context, state) {
+                final spuUid = state.pathParameters['spuUid'] ?? '';
+                return EditSpuPage(spuUid: spuUid);
               },
             ),
             GoRoute(

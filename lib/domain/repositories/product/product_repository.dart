@@ -5,8 +5,10 @@ import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
+import 'package:ventry_flutter/domain/entities/product/update_spu_params.dart';
 import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
 import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 
@@ -15,9 +17,13 @@ abstract class ProductRepository {
 
   Future<Either<Failure, SkuEntity>> getSkuByUid(String skuUid);
 
+  Future<Either<Failure, SpuEntity>> getSpuByUid(String spuUid);
+
   Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params);
 
   Future<Either<Failure, SkuEntity>> updateSku(UpdateSkuParams params);
+
+  Future<Either<Failure, SpuEntity>> updateSpu(UpdateSpuParams params);
 
   Future<Either<Failure, SkuEntity>> updateSkuImages(
     UpdateSkuImagesParams params,

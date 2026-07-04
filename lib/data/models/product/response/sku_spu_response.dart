@@ -13,6 +13,7 @@ class SkuSpuResponse with _$SkuSpuResponse {
     String? currency,
     String? unitOfMeasure,
     String? description,
+    @Default(1) int version,
     CategoryResponse? category,
   }) = _SkuSpuResponse;
 

@@ -13,14 +13,18 @@ import 'package:ventry_flutter/data/models/product/request/create_product_sku_re
 import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/update_spu_request.dart';
+import 'package:ventry_flutter/data/models/product/response/spu_response.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
+import 'package:ventry_flutter/domain/entities/product/update_spu_params.dart';
 import 'package:ventry_flutter/domain/entities/product/upload_product_image_params.dart';
 import 'package:ventry_flutter/domain/entities/product/uploaded_product_image_entity.dart';
 import 'package:ventry_flutter/domain/repositories/product/product_repository.dart';
@@ -72,8 +76,13 @@ class ProductRepositoryImpl implements ProductRepository {
                   spuUid: group.spu.uid,
                   spuName: group.spu.name ?? '',
                   spuStatus: group.spu.status ?? _unknownSpuStatus,
+                  spuVersion: group.spu.version,
+                  spuDescription: group.spu.description,
+                  categoryUid: group.spu.category?.uid,
                   categoryName: group.spu.category?.name,
                   categoryImageUrl: group.spu.category?.imageUrl,
+                  currency: group.spu.currency,
+                  unitOfMeasure: group.spu.unitOfMeasure,
                   skus: group.skus
                       .map(
                         (sku) => _mapSkuToEntity(sku, fallbackSpu: group.spu),
@@ -100,6 +109,18 @@ class ProductRepositoryImpl implements ProductRepository {
     try {
       final response = await _productApi.getSkuByUid(skuUid);
       return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SpuEntity>> getSpuByUid(String spuUid) async {
+    try {
+      final response = await _productApi.getSpuByUid(spuUid);
+      return Right(_mapSpuToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
@@ -150,6 +171,28 @@ class ProductRepositoryImpl implements ProductRepository {
         ),
       );
       return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SpuEntity>> updateSpu(UpdateSpuParams params) async {
+    try {
+      final response = await _productApi.updateSpu(
+        params.spuUid,
+        UpdateSpuRequest(
+          version: params.version,
+          name: params.name,
+          categoryUid: params.categoryUid,
+          description: params.description,
+          currency: params.currency,
+          unitOfMeasure: params.unitOfMeasure,
+        ),
+      );
+      return Right(_mapSpuToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
@@ -350,6 +393,26 @@ class ProductRepositoryImpl implements ProductRepository {
       imageKeys: params.imageKeys,
       isSellable: params.isSellable,
       attributeValueUids: params.attributeValueUids,
+    );
+  }
+
+  SpuEntity _mapSpuToEntity(SpuResponse response) {
+    return SpuEntity(
+      uid: response.uid,
+      name: response.name,
+      description: response.description,
+      brand: response.brand,
+      imageKey: response.imageKey,
+      imageUrl: response.imageUrl,
+      currency: response.currency,
+      unitOfMeasure: response.unitOfMeasure,
+      status: response.status,
+      version: response.version,
+      categoryUid: response.category?.uid,
+      categoryName: response.category?.name,
+      categoryImageUrl: response.category?.imageUrl,
+      createdAt: response.createdAt,
+      updatedAt: response.updatedAt,
     );
   }
 

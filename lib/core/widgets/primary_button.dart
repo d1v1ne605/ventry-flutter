@@ -12,6 +12,7 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool isEnabled;
   final Widget? icon;
 
   const PrimaryButton({
@@ -19,49 +20,55 @@ class PrimaryButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.isEnabled = true,
     this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(AppSize.size8.r),
-        border: Border.all(
-          color: const Color(0x80115E59),
-          width: AppSize.size1,
-        ),
-        boxShadow: const [AppColors.buttonShadow],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isLoading ? null : onPressed,
+    final canTap = isEnabled && !isLoading;
+
+    return Opacity(
+      opacity: isEnabled ? 1 : 0.5,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
           borderRadius: BorderRadius.circular(AppSize.size8.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSize.size12.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isLoading)
-                  SizedBox(
-                    width: AppSize.size20.w,
-                    height: AppSize.size20.w,
-                    child: const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: AppSize.size2,
-                    ),
-                  )
-                else ...[
-                  Text(text, style: AppTextStyles.buttonText),
-                  if (icon != null) ...[
-                    SizedBox(width: AppSize.size4.w),
-                    icon!,
+          border: Border.all(
+            color: const Color(0x80115E59),
+            width: AppSize.size1,
+          ),
+          boxShadow: const [AppColors.buttonShadow],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: canTap ? onPressed : null,
+            borderRadius: BorderRadius.circular(AppSize.size8.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSize.size12.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isLoading)
+                    SizedBox(
+                      width: AppSize.size20.w,
+                      height: AppSize.size20.w,
+                      child: const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: AppSize.size2,
+                      ),
+                    )
+                  else ...[
+                    Text(text, style: AppTextStyles.buttonText),
+                    if (icon != null) ...[
+                      SizedBox(width: AppSize.size4.w),
+                      icon!,
+                    ],
                   ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
