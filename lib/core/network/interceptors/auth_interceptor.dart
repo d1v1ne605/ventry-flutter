@@ -138,6 +138,7 @@ class AuthInterceptor extends Interceptor {
     final retryDio =
         _testRetryDio ?? Dio(BaseOptions(baseUrl: requestOptions.baseUrl));
     // Add cookie manager just in case the original request needed it
+    retryDio.interceptors.add(MetadataUnwrapInterceptor());
     retryDio.interceptors.add(CookieManager(_cookieJar));
 
     return retryDio.request<dynamic>(
