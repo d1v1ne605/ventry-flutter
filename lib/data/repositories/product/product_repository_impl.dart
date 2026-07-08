@@ -17,6 +17,7 @@ import 'package:ventry_flutter/data/models/product/request/update_spu_request.da
 import 'package:ventry_flutter/data/models/product/response/spu_response.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
+import 'package:ventry_flutter/domain/entities/product/delete_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
@@ -171,6 +172,21 @@ class ProductRepositoryImpl implements ProductRepository {
         ),
       );
       return Right(_mapSkuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteSku(DeleteSkuParams params) async {
+    try {
+      final response = await _productApi.deleteSku(
+        params.skuUid,
+        params.version,
+      );
+      return Right(response.uid);
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {

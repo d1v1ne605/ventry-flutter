@@ -180,7 +180,7 @@ class _ProductCatalogBody extends StatelessWidget {
                         ),
                         child: ProductCard(
                           group: group,
-                          onTap: () {
+                          onTap: () async {
                             final sku = group.representativeSku;
                             if (sku == null) {
                               return;
@@ -194,10 +194,16 @@ class _ProductCatalogBody extends StatelessWidget {
                               return;
                             }
 
-                            ctx.pushNamed(
+                            final deletedSkuUid = await ctx.pushNamed<String>(
                               RouterName.skuDetail,
                               pathParameters: {'skuUid': sku.uid},
                             );
+
+                            if (deletedSkuUid != null && ctx.mounted) {
+                              ctx.read<ProductCatalogBloc>().add(
+                                const LoadSkus(),
+                              );
+                            }
                           },
                         ),
                       );

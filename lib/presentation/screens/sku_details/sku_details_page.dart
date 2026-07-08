@@ -74,134 +74,216 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
     AppSnackBar.showSuccess(context, AppStrings.skuFormUpdatedSuccess);
   }
 
+  Future<void> _confirmDeleteSku(BuildContext context, SkuEntity sku) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(
+          AppStrings.skuDetailsDeleteTitle,
+          style: AppTextStyles.sectionHeading,
+        ),
+        content: Text(
+          AppStrings.skuDetailsDeleteConfirmation,
+          style: AppTextStyles.body,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(
+              AppStrings.categoryCancelButton,
+              style: AppTextStyles.buttonText.copyWith(
+                color: AppColors.heading,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              AppStrings.skuDetailsDeleteButton,
+              style: AppTextStyles.buttonText.copyWith(
+                color: const Color(0xFFEF4444),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || !context.mounted) {
+      return;
+    }
+
+    context.read<SkuDetailsBloc>().add(
+      DeleteSkuDetails(skuUid: sku.uid, version: sku.version),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppTopBar(
-        title: AppStrings.skuDetailsTitle,
-        leadingWidget: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: AppColors.primary,
-            size: AppSize.size16.r,
+    return BlocListener<SkuDetailsBloc, SkuDetailsState>(
+      listenWhen: (previous, current) =>
+          previous.deleteStatus != current.deleteStatus,
+      listener: (context, state) {
+        if (state.deleteStatus == SkuDetailsDeleteStatus.failure) {
+          AppSnackBar.showError(
+            context,
+            state.deleteMessage ?? AppStrings.editSpuLoadFailed,
+          );
+        }
+
+        if (state.deleteStatus == SkuDetailsDeleteStatus.success &&
+            state.deletedSkuUid != null) {
+          AppSnackBar.showSuccess(context, AppStrings.skuDetailsDeletedSuccess);
+          context.pop(state.deletedSkuUid);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppTopBar(
+          title: AppStrings.skuDetailsTitle,
+          leadingWidget: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: AppColors.primary,
+              size: AppSize.size16.r,
+            ),
+            onPressed: () => context.pop(),
           ),
-          onPressed: () => context.pop(),
+          trailingWidget: _SkuDetailsMoreActions(
+            editedSku: _editedSku,
+            onDeleteSelected: _confirmDeleteSku,
+          ),
         ),
-        trailingWidget: SizedBox(width: 48.w),
-      ),
-      body: BlocBuilder<SkuDetailsBloc, SkuDetailsState>(
-        builder: (context, state) {
-          if (state.status == BaseStatus.loading) {
-            return AppPullToRefresh(
-              onRefresh: _refreshSkuDetails,
-              child: const CustomScrollView(
-                physics: AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
+        body: BlocBuilder<SkuDetailsBloc, SkuDetailsState>(
+          builder: (context, state) {
+            if (state.status == BaseStatus.loading) {
+              return AppPullToRefresh(
+                onRefresh: _refreshSkuDetails,
+                child: const CustomScrollView(
+                  physics: AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
+              );
+            }
+
+            if (state.status == BaseStatus.failure) {
+              return AppPullToRefresh(
+                onRefresh: _refreshSkuDetails,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Text(
+                          state.errorMessage ?? AppStrings.editSpuLoadFailed,
+                          style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state.status == BaseStatus.success && state.sku != null) {
+              final sku = _editedSku ?? state.sku!;
+              final isDeleting =
+                  state.deleteStatus == SkuDetailsDeleteStatus.loading;
+
+              return Stack(
+                children: [
+                  AppPullToRefresh(
+                    onRefresh: _refreshSkuDetails,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 20.h,
+                        bottom: 128.h,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SkuHeroCard(sku: sku),
+                          SizedBox(height: 20.h),
+                          InventoryStatsBar(sku: sku),
+                          SizedBox(height: 20.h),
+                          GeneralInfoCard(sku: sku),
+                          SizedBox(height: 20.h),
+                          AttributesCard(sku: sku),
+                          SizedBox(height: 20.h),
+                          DescriptionCard(sku: sku),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          }
-
-          if (state.status == BaseStatus.failure) {
-            return AppPullToRefresh(
-              onRefresh: _refreshSkuDetails,
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Text(
-                        state.errorMessage ?? AppStrings.editSpuLoadFailed,
-                        style: TextStyle(fontSize: 16.sp, color: Colors.red),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (state.status == BaseStatus.success && state.sku != null) {
-            final sku = _editedSku ?? state.sku!;
-            return Stack(
-              children: [
-                AppPullToRefresh(
-                  onRefresh: _refreshSkuDetails,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    padding: EdgeInsets.only(
-                      left: 16.w,
-                      right: 16.w,
-                      top: 20.h,
-                      bottom: 128.h,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SkuHeroCard(sku: sku),
-                        SizedBox(height: 20.h),
-                        InventoryStatsBar(sku: sku),
-                        SizedBox(height: 20.h),
-                        GeneralInfoCard(sku: sku),
-                        SizedBox(height: 20.h),
-                        AttributesCard(sku: sku),
-                        SizedBox(height: 20.h),
-                        DescriptionCard(sku: sku),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: ClipRRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                      child: Container(
-                        padding: EdgeInsets.all(AppSize.size16.w),
-                        decoration: const BoxDecoration(
-                          color: Color(0xE6F5FAF8),
-                          border: Border(
-                            top: BorderSide(color: AppColors.inputBorder),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                        child: Container(
+                          padding: EdgeInsets.all(AppSize.size16.w),
+                          decoration: const BoxDecoration(
+                            color: Color(0xE6F5FAF8),
+                            border: Border(
+                              top: BorderSide(color: AppColors.inputBorder),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _OutlinedButton(
+                                  text: AppStrings.editVariantButton,
+                                  onPressed: isDeleting
+                                      ? null
+                                      : () => _openSkuForm(context, sku),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _OutlinedButton(
-                                text: AppStrings.editVariantButton,
-                                onPressed: () => _openSkuForm(context, sku),
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
+                  if (isDeleting)
+                    const Positioned.fill(
+                      child: ColoredBox(
+                        color: Colors.white54,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }
 
-          return const SizedBox.shrink();
-        },
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -211,7 +293,7 @@ class _OutlinedButton extends StatelessWidget {
   const _OutlinedButton({required this.text, required this.onPressed});
 
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -223,14 +305,123 @@ class _OutlinedButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSize.size8.r),
-          border: Border.all(color: AppColors.primary),
+          border: Border.all(
+            color: onPressed == null
+                ? AppColors.inputBorder
+                : AppColors.primary,
+          ),
         ),
         alignment: Alignment.center,
         child: Text(
           text,
-          style: AppTextStyles.buttonText.copyWith(color: AppColors.primary),
+          style: AppTextStyles.buttonText.copyWith(
+            color: onPressed == null ? AppColors.subtitle : AppColors.primary,
+          ),
         ),
       ),
+    );
+  }
+}
+
+class _SkuDetailsMoreActions extends StatelessWidget {
+  const _SkuDetailsMoreActions({
+    required this.editedSku,
+    required this.onDeleteSelected,
+  });
+
+  final SkuEntity? editedSku;
+  final Future<void> Function(BuildContext context, SkuEntity sku)
+  onDeleteSelected;
+
+  Future<void> _showActionsSheet(BuildContext context, SkuEntity sku) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16.r),
+              boxShadow: const [AppColors.cardShadow],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 8.h),
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.inputBorder,
+                    borderRadius: BorderRadius.circular(999.r),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: Color(0xFFEF4444),
+                  ),
+                  title: Text(
+                    AppStrings.skuDetailsDeleteButton,
+                    style: AppTextStyles.body.copyWith(
+                      color: const Color(0xFFEF4444),
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    await onDeleteSelected(context, sku);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SkuDetailsBloc, SkuDetailsState>(
+      buildWhen: (previous, current) =>
+          previous.sku != current.sku ||
+          previous.deleteStatus != current.deleteStatus,
+      builder: (context, state) {
+        final sku = editedSku ?? state.sku;
+        final isDeleting = state.deleteStatus == SkuDetailsDeleteStatus.loading;
+
+        if (sku == null) {
+          return SizedBox(width: 48.w);
+        }
+
+        if (isDeleting) {
+          return SizedBox(
+            width: 48.w,
+            child: const Center(
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                  strokeWidth: 2,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return IconButton(
+          tooltip: AppStrings.skuDetailsMoreOptions,
+          onPressed: () => _showActionsSheet(context, sku),
+          icon: Icon(
+            Icons.more_vert,
+            color: AppColors.primary,
+            size: AppSize.size20.r,
+          ),
+        );
+      },
     );
   }
 }

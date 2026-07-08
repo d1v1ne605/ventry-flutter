@@ -6,6 +6,7 @@ import 'package:ventry_flutter/data/models/product/request/create_sku_request.da
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_spu_request.dart';
+import 'package:ventry_flutter/data/models/product/response/delete_sku_response.dart';
 import 'package:ventry_flutter/data/models/product/response/product_response.dart';
 import 'package:ventry_flutter/data/models/product/response/presigned_upload_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_response.dart';
@@ -46,6 +47,12 @@ abstract class ProductApi {
   Future<SkuResponse> updateSku(
     @Path('skuUid') String skuUid,
     @Body() UpdateSkuRequest request,
+  );
+
+  @DELETE('/skus/{skuUid}')
+  Future<DeleteSkuResponse> deleteSku(
+    @Path('skuUid') String skuUid,
+    @Query('version') int version,
   );
 
   @PATCH('/skus/{skuUid}/images')

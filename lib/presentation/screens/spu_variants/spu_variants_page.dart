@@ -427,11 +427,15 @@ class _VariantListItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          context.pushNamed(
+        onTap: () async {
+          final deletedSkuUid = await context.pushNamed<String>(
             RouterName.skuDetail,
             pathParameters: {'skuUid': sku.uid},
           );
+
+          if (deletedSkuUid != null && context.mounted) {
+            context.read<SpuVariantsBloc>().add(LoadSpuVariants(sku.spuUid));
+          }
         },
         borderRadius: BorderRadius.circular(16.r),
         child: Container(

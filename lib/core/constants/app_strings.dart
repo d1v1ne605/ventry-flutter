@@ -214,6 +214,12 @@ class AppStrings {
       'Không tìm thấy biến thể nào cho sản phẩm này.';
   static const String stockShortLabel = 'Tồn kho';
   static const String editVariantButton = 'Sửa biến thể';
+  static const String skuDetailsMoreOptions = 'Tùy chọn khác';
+  static const String skuDetailsDeleteTitle = 'Xoá SKU';
+  static const String skuDetailsDeleteButton = 'Xoá';
+  static const String skuDetailsDeleteConfirmation =
+      'Bạn có chắc muốn xóa SKU này không? ';
+  static const String skuDetailsDeletedSuccess = 'SKU đã được xóa thành công.';
   static const String quickAdjustButton = 'Điều chỉnh nhanh';
   static const String currentStockLabel = 'Tồn kho hiện tại';
   static const String inTransitLabel = 'Đang vận chuyển';
