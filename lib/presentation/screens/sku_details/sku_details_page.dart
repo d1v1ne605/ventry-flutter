@@ -13,6 +13,7 @@ import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_page.dart';
@@ -85,6 +86,19 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
     }
 
     AppSnackBar.showSuccess(context, AppStrings.skuFormCreatedSuccess);
+  }
+
+  Future<void> _openEditSpuForm(BuildContext context, SkuEntity sku) async {
+    final updatedSpu = await context.pushNamed<SpuEntity>(
+      RouterName.editSpu,
+      pathParameters: {'spuUid': sku.spuUid},
+    );
+
+    if (updatedSpu == null || !context.mounted) {
+      return;
+    }
+
+    _refreshSkuDetails();
   }
 
   Future<void> _confirmDeleteSku(BuildContext context, SkuEntity sku) async {
@@ -165,6 +179,7 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
           ),
           trailingWidget: _SkuDetailsMoreActions(
             editedSku: _editedSku,
+            onEditSpuSelected: _openEditSpuForm,
             onCreateSelected: _openCreateSkuForm,
             onDeleteSelected: _confirmDeleteSku,
           ),
@@ -340,11 +355,14 @@ class _OutlinedButton extends StatelessWidget {
 class _SkuDetailsMoreActions extends StatelessWidget {
   const _SkuDetailsMoreActions({
     required this.editedSku,
+    required this.onEditSpuSelected,
     required this.onCreateSelected,
     required this.onDeleteSelected,
   });
 
   final SkuEntity? editedSku;
+  final Future<void> Function(BuildContext context, SkuEntity sku)
+  onEditSpuSelected;
   final Future<void> Function(BuildContext context, SkuEntity sku)
   onCreateSelected;
   final Future<void> Function(BuildContext context, SkuEntity sku)
@@ -376,6 +394,22 @@ class _SkuDetailsMoreActions extends StatelessWidget {
                     color: AppColors.inputBorder,
                     borderRadius: BorderRadius.circular(999.r),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.edit_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: Text(
+                    AppStrings.editSpuButton,
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    await onEditSpuSelected(context, sku);
+                  },
                 ),
                 if (canCreateSameType)
                   ListTile(

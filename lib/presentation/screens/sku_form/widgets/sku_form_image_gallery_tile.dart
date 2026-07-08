@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ventry_flutter/core/constants/app_assets.dart';
@@ -8,6 +6,7 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
+import 'package:ventry_flutter/core/widgets/app_zoomable_image.dart';
 
 class SkuFormImageGalleryTile extends StatelessWidget {
   const SkuFormImageGalleryTile({
@@ -44,30 +43,15 @@ class SkuFormImageGalleryTile extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (isLocalFile)
-              Image.file(
-                File(previewPath),
+            AppZoomableImage(
+              imageUrl: isLocalFile ? null : safeImageUrl,
+              imageFilePath: isLocalFile ? previewPath : null,
+              placeholder: Image.asset(
+                AppAssets.imgPlaceHolder,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
-                  return Image.asset(
-                    AppAssets.imgPlaceHolder,
-                    fit: BoxFit.cover,
-                  );
-                },
-              )
-            else if (safeImageUrl != null)
-              Image.network(
-                safeImageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
-                  return Image.asset(
-                    AppAssets.imgPlaceHolder,
-                    fit: BoxFit.cover,
-                  );
-                },
-              )
-            else
-              Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
+              ),
+              fit: BoxFit.cover,
+            ),
             if (isCover)
               Positioned(
                 left: AppSize.size8.w,

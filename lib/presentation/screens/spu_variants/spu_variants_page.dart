@@ -14,6 +14,7 @@ import 'package:ventry_flutter/core/utils/string_utils.dart';
 import 'package:ventry_flutter/core/widgets/app_snack_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
+import 'package:ventry_flutter/core/widgets/app_zoomable_image.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
@@ -339,22 +340,13 @@ class _HeroImage extends StatelessWidget {
         ? imageUrl
         : null;
 
-    return Container(
+    return AppZoomableImage(
+      imageUrl: safeImageUrl,
       width: 72.r,
       height: 72.r,
-      decoration: BoxDecoration(
-        color: AppColors.searchBarFill,
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: safeImageUrl != null
-          ? Image.network(
-              safeImageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
-            )
-          : Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
+      backgroundColor: AppColors.searchBarFill,
+      borderRadius: BorderRadius.circular(14.r),
+      placeholder: Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
     );
   }
 }

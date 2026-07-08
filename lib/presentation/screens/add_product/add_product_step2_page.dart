@@ -115,8 +115,12 @@ class AddProductStep2Page extends StatelessWidget {
                           if (skus.isEmpty) {
                             skus.add(
                               CreateSkuParams(
-                                skuCode: null,
-                                barCode: null,
+                                skuCode: attrState.globalSkuCode.trim().isEmpty
+                                    ? null
+                                    : attrState.globalSkuCode.trim(),
+                                barCode: attrState.globalBarcode.trim().isEmpty
+                                    ? null
+                                    : attrState.globalBarcode.trim(),
                                 sellingPrice: attrState.globalPrice,
                                 costPrice: attrState.globalCostPrice,
                                 stockQuantity: attrState.globalStock,

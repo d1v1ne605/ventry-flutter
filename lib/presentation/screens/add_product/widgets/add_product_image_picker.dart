@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
+import 'package:ventry_flutter/core/widgets/app_zoomable_image.dart';
 import 'package:ventry_flutter/core/widgets/dashed_border_painter.dart';
 import 'dart:io';
 
@@ -164,10 +165,16 @@ class AddProductImagePicker extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppSize.size8.r),
-            child: Image.file(
-              File(imagePaths[index]),
+            child: AppZoomableImage(
+              imageFilePath: imagePaths[index],
               width: width,
               height: height,
+              placeholder: Image.file(
+                File(imagePaths[index]),
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+              ),
               fit: BoxFit.cover,
             ),
           ),

@@ -5,24 +5,50 @@ import 'package:ventry_flutter/core/constants/app_size.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
+import 'package:ventry_flutter/core/widgets/app_zoomable_image.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 
-class SkuHeroCard extends StatelessWidget {
+class SkuHeroCard extends StatefulWidget {
   final SkuEntity sku;
 
   const SkuHeroCard({super.key, required this.sku});
 
   @override
+  State<SkuHeroCard> createState() => _SkuHeroCardState();
+}
+
+class _SkuHeroCardState extends State<SkuHeroCard> {
+  String? _selectedImageUrl;
+
+  @override
+  void didUpdateWidget(covariant SkuHeroCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sku.uid != widget.sku.uid ||
+        oldWidget.sku.imageUrls != widget.sku.imageUrls) {
+      _selectedImageUrl = null;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final sku = widget.sku;
     final attributesText = sku.attributes.isNotEmpty
         ? sku.attributes.map((e) => e.value).join(' / ')
         : '';
-    final primaryImageUrl = StringUtils.isSafeNetworkUrl(sku.primaryImageUrl)
+    final safePrimaryImageUrl =
+        StringUtils.isSafeNetworkUrl(sku.primaryImageUrl)
         ? sku.primaryImageUrl
         : null;
-    final validImageUrls = sku.imageUrls
-        .where(StringUtils.isSafeNetworkUrl)
-        .toList(growable: false);
+    final galleryImageUrls = {
+      if (safePrimaryImageUrl != null) safePrimaryImageUrl,
+      ...sku.imageUrls.where(StringUtils.isSafeNetworkUrl),
+    }.toList(growable: false);
+    final selectedImageUrl = galleryImageUrls.contains(_selectedImageUrl)
+        ? _selectedImageUrl
+        : null;
+    final mainImageUrl =
+        selectedImageUrl ??
+        (galleryImageUrls.isNotEmpty ? galleryImageUrls.first : null);
 
     return Container(
       padding: EdgeInsets.all(AppSize.size16.w),
@@ -46,50 +72,58 @@ class SkuHeroCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSize.size8.r),
                   border: Border.all(color: AppColors.inputBorder),
                 ),
-                child: primaryImageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(AppSize.size8.r),
-                        child: Image.network(
-                          primaryImageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.image_not_supported,
-                            color: AppColors.navInactive,
-                          ),
-                        ),
-                      )
-                    : Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
+                child: AppZoomableImage(
+                  imageUrl: mainImageUrl,
+                  width: 134.w,
+                  height: 126.h,
+                  backgroundColor: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSize.size8.r),
+                  placeholder: Image.asset(
+                    AppAssets.imgPlaceHolder,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               SizedBox(width: AppSize.size8.w),
               // Thumbnails
-              if (validImageUrls.isNotEmpty)
+              if (galleryImageUrls.isNotEmpty)
                 Expanded(
                   child: Wrap(
                     spacing: AppSize.size8.w,
                     runSpacing: AppSize.size8.h,
-                    children: List.generate(validImageUrls.length, (index) {
-                      final isSelected = index == 0;
-                      return Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppSize.size8.r),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primary
-                                : AppColors.inputBorder,
-                            width: isSelected ? 2 : 1,
+                    children: List.generate(galleryImageUrls.length, (index) {
+                      final imageUrl = galleryImageUrls[index];
+                      final isSelected = imageUrl == mainImageUrl;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedImageUrl = imageUrl;
+                          });
+                        },
+                        child: Container(
+                          width: 40.w,
+                          height: 40.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(
+                              AppSize.size8.r,
+                            ),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.inputBorder,
+                              width: isSelected ? 2 : 1,
+                            ),
                           ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(AppSize.size6.r),
-                          child: Image.network(
-                            validImageUrls[index],
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
-                              Icons.image_not_supported,
-                              size: AppSize.size16,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              AppSize.size6.r,
+                            ),
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  Image.asset(AppAssets.imgPlaceHolder),
                             ),
                           ),
                         ),
