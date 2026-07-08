@@ -74,6 +74,19 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
     AppSnackBar.showSuccess(context, AppStrings.skuFormUpdatedSuccess);
   }
 
+  Future<void> _openCreateSkuForm(BuildContext context, SkuEntity sku) async {
+    final createdSku = await context.pushNamed<SkuEntity>(
+      RouterName.skuForm,
+      extra: SkuFormPageArgs.create(sku),
+    );
+
+    if (createdSku == null || !context.mounted) {
+      return;
+    }
+
+    AppSnackBar.showSuccess(context, AppStrings.skuFormCreatedSuccess);
+  }
+
   Future<void> _confirmDeleteSku(BuildContext context, SkuEntity sku) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -152,6 +165,7 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
           ),
           trailingWidget: _SkuDetailsMoreActions(
             editedSku: _editedSku,
+            onCreateSelected: _openCreateSkuForm,
             onDeleteSelected: _confirmDeleteSku,
           ),
         ),
@@ -326,14 +340,19 @@ class _OutlinedButton extends StatelessWidget {
 class _SkuDetailsMoreActions extends StatelessWidget {
   const _SkuDetailsMoreActions({
     required this.editedSku,
+    required this.onCreateSelected,
     required this.onDeleteSelected,
   });
 
   final SkuEntity? editedSku;
   final Future<void> Function(BuildContext context, SkuEntity sku)
+  onCreateSelected;
+  final Future<void> Function(BuildContext context, SkuEntity sku)
   onDeleteSelected;
 
   Future<void> _showActionsSheet(BuildContext context, SkuEntity sku) async {
+    final canCreateSameType = sku.attributes.isNotEmpty;
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -358,6 +377,23 @@ class _SkuDetailsMoreActions extends StatelessWidget {
                     borderRadius: BorderRadius.circular(999.r),
                   ),
                 ),
+                if (canCreateSameType)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.add_box_outlined,
+                      color: AppColors.primary,
+                    ),
+                    title: Text(
+                      AppStrings.skuDetailsAddSameTypeButton,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    onTap: () async {
+                      Navigator.of(sheetContext).pop();
+                      await onCreateSelected(context, sku);
+                    },
+                  ),
                 ListTile(
                   leading: const Icon(
                     Icons.delete_outline,
