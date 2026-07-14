@@ -120,7 +120,6 @@ class AppStrings {
   static const String quickAddStep4Status = 'Trạng thái';
 
   // ── Product Catalog ──────────────────────────────────────────────────────────
-  static const String productCatalogPageTitle = 'StockMaster';
   static const String productCatalogEmpty = 'Không tìm thấy sản phẩm nào';
   static const String searchHint = 'Tìm theo tên SKU, mã vạch, ...';
   static const String filterTotalStock = 'Tổng tồn kho';
@@ -131,6 +130,11 @@ class AppStrings {
   static const String outOfStock = 'Hết';
   static const String skuPrefix = 'SKU: ';
   static const String addProduct = 'Thêm sản phẩm';
+  static const String productCatalogGroupedMode = 'Theo nhóm';
+  static const String productCatalogFlatMode = 'Tất cả SKU';
+  static const String productCatalogGroupedModeTooltip = 'Nhóm theo sản phẩm';
+  static const String productCatalogFlatModeTooltip = 'Hiển thị tất cả SKU';
+  static const String productCatalogAttributesFallback = 'Không có thuộc tính';
   static String variantCount(int count) => '$count biến thể';
 
   // ── Add Product ──────────────────────────────────────────────────────────────
@@ -168,7 +172,7 @@ class AppStrings {
 
   static const String skuPreview = 'Xem trước SKU';
   static String skuVariantsCount(int count) => '$count biến thể';
-  static String priceLabel(String price) => 'Giá: \$$price';
+  static String priceLabel(String price) => 'Giá: $price';
   static String stockLabel(int stock) => 'Tồn kho: $stock';
 
   static const String editVariant = 'Sửa biến thể';
@@ -191,7 +195,7 @@ class AppStrings {
   static const String sellingPriceHint = 'VD: 10.00';
   static const String costPriceHint = 'VD: 5.00';
   static const String stockQuantityHint = '0';
-  static const String editVariantPriceHint = '\$ 0.00';
+  static const String editVariantPriceHint = '0.00';
 
   static const String addCustomVariant = 'Thêm biến thể tùy chỉnh';
   static const String variantAttributes = 'Thuộc tính biến thể';

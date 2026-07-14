@@ -41,6 +41,7 @@ class ProductCatalogBloc
     );
     // droppable: ignore spam clicks on filter chips
     on<FilterSkus>(_onFilterSkus, transformer: droppable());
+    on<ChangeProductCatalogDisplayMode>(_onChangeDisplayMode);
     on<CreateProduct>(_onCreateProduct);
   }
 
@@ -124,6 +125,13 @@ class ProductCatalogBloc
       clearFilterStatus: filterStatus == null,
       clearStockAlert: isStockAlert == null,
     );
+  }
+
+  void _onChangeDisplayMode(
+    ChangeProductCatalogDisplayMode event,
+    Emitter<ProductCatalogState> emit,
+  ) {
+    emit(state.copyWith(displayMode: event.displayMode));
   }
 
   Future<void> _loadFirstPage(

@@ -7,6 +7,7 @@ import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/core/utils/string_utils.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 
 /// SPU group card in the product catalog list.
@@ -72,6 +73,64 @@ class ProductCard extends StatelessWidget {
   };
 }
 
+/// Flat SKU card used when the catalog needs to show every variant directly.
+class ProductSkuCard extends StatelessWidget {
+  const ProductSkuCard({super.key, required this.sku, this.onTap});
+
+  final SkuEntity sku;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isOut = sku.stockStatus.isOutOfStock;
+    final leftBorderColor = _resolveLeftBorderColor();
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(14.r),
+          border: leftBorderColor != null
+              ? Border(
+                  left: BorderSide(color: leftBorderColor, width: 4.w),
+                )
+              : null,
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A1E293B),
+              offset: Offset(0, 2),
+              blurRadius: 8,
+            ),
+            BoxShadow(
+              color: Color(0xA0FFFFFF),
+              offset: Offset(-1, -1),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(AppSize.size16.r),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _ProductImage(imageUrl: sku.primaryImageUrl, isOut: isOut),
+              SizedBox(width: AppSize.size12.w),
+              Expanded(child: _SkuProductInfo(sku: sku)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color? _resolveLeftBorderColor() => switch (sku.stockStatus) {
+    SkuStockStatus.inStock => null,
+    SkuStockStatus.lowStock => AppColors.lowStockBorder,
+    SkuStockStatus.outOfStock => AppColors.outOfStockBorder,
+  };
+}
+
 class _ProductImage extends StatelessWidget {
   const _ProductImage({this.imageUrl, required this.isOut});
 
@@ -101,6 +160,66 @@ class _ProductImage extends StatelessWidget {
             )
           : Image.asset(AppAssets.imgPlaceHolder, fit: BoxFit.cover),
     );
+  }
+}
+
+class _SkuProductInfo extends StatelessWidget {
+  const _SkuProductInfo({required this.sku});
+
+  final SkuEntity sku;
+
+  @override
+  Widget build(BuildContext context) {
+    final isOut = sku.stockStatus.isOutOfStock;
+    final skuCode = sku.skuCode ?? sku.uid;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                sku.spuName,
+                style: isOut
+                    ? AppTextStyles.productNameMuted
+                    : AppTextStyles.productName,
+                softWrap: true,
+              ),
+            ),
+            SizedBox(width: AppSize.size8.w),
+            _SkuStockBadge(sku: sku),
+          ],
+        ),
+        SizedBox(height: AppSize.size4.h),
+        _AttributeChips(attributes: _attributeSummaries),
+        SizedBox(height: AppSize.size6.h),
+        _SkuPriceRow(skuCode: skuCode, price: sku.sellingPrice, isOut: isOut),
+      ],
+    );
+  }
+
+  List<SkuSpuGroupAttributeSummary> get _attributeSummaries {
+    if (sku.attributes.isEmpty) {
+      return const [
+        SkuSpuGroupAttributeSummary(
+          attributeName: '',
+          value: AppStrings.productCatalogAttributesFallback,
+        ),
+      ];
+    }
+
+    return sku.attributes
+        .where((attribute) => attribute.value.trim().isNotEmpty)
+        .map(
+          (attribute) => SkuSpuGroupAttributeSummary(
+            attributeName: attribute.attributeName,
+            value: attribute.value,
+          ),
+        )
+        .toList(growable: false);
   }
 }
 
@@ -327,6 +446,43 @@ class _StockBadge extends StatelessWidget {
   }
 }
 
+class _SkuStockBadge extends StatelessWidget {
+  const _SkuStockBadge({required this.sku});
+
+  final SkuEntity sku;
+
+  @override
+  Widget build(BuildContext context) {
+    final cfg = _BadgeConfig.fromSku(sku);
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: AppSize.size3.h),
+      decoration: BoxDecoration(
+        color: cfg.fill,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6.r,
+            height: 6.r,
+            decoration: BoxDecoration(
+              color: cfg.dotColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            cfg.label,
+            style: AppTextStyles.stockBadge.copyWith(color: cfg.textColor),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _VariantCount extends StatelessWidget {
   const _VariantCount({required this.count});
 
@@ -380,6 +536,29 @@ class _BadgeConfig {
         label: '${AppStrings.lowStock}: ${group.lowStockCount}',
       ),
       SkuSpuGroupStockStatus.outOfStock => _BadgeConfig(
+        fill: AppColors.outOfStockBadgeFill,
+        dotColor: AppColors.outOfStockDot,
+        textColor: AppColors.outOfStockBadgeText,
+        label: AppStrings.outOfStock,
+      ),
+    };
+  }
+
+  factory _BadgeConfig.fromSku(SkuEntity sku) {
+    return switch (sku.stockStatus) {
+      SkuStockStatus.inStock => _BadgeConfig(
+        fill: AppColors.inStockBadgeFill,
+        dotColor: AppColors.inStockDot,
+        textColor: AppColors.inStockBadgeText,
+        label: '${AppStrings.inStock}: ${sku.stockQuantity}',
+      ),
+      SkuStockStatus.lowStock => _BadgeConfig(
+        fill: AppColors.lowStockBadgeFill,
+        dotColor: AppColors.lowStockDot,
+        textColor: AppColors.lowStockBadgeText,
+        label: '${AppStrings.lowStock}: ${sku.stockQuantity}',
+      ),
+      SkuStockStatus.outOfStock => _BadgeConfig(
         fill: AppColors.outOfStockBadgeFill,
         dotColor: AppColors.outOfStockDot,
         textColor: AppColors.outOfStockBadgeText,

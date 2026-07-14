@@ -1,8 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/core/errors/failures.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 
 enum ProductCatalogActionStatus { initial, success, failure }
+
+enum ProductCatalogDisplayMode { grouped, flat }
 
 class ProductCatalogState extends Equatable {
   final bool isLoading;
@@ -19,6 +22,7 @@ class ProductCatalogState extends Equatable {
   final bool hasReachedEnd;
   final Failure? failure;
   final ProductCatalogActionStatus actionStatus;
+  final ProductCatalogDisplayMode displayMode;
 
   const ProductCatalogState({
     this.isLoading = false,
@@ -35,9 +39,13 @@ class ProductCatalogState extends Equatable {
     this.hasReachedEnd = false,
     this.failure,
     this.actionStatus = ProductCatalogActionStatus.initial,
+    this.displayMode = ProductCatalogDisplayMode.grouped,
   });
 
   bool get hasNextPage => !hasReachedEnd;
+
+  List<SkuEntity> get flattenedSkus =>
+      spuGroups.expand((group) => group.sortedSkus).toList(growable: false);
 
   ProductCatalogState copyWith({
     bool? isLoading,
@@ -54,6 +62,7 @@ class ProductCatalogState extends Equatable {
     bool? hasReachedEnd,
     Failure? failure,
     ProductCatalogActionStatus? actionStatus,
+    ProductCatalogDisplayMode? displayMode,
     bool clearFilterStatus = false,
     bool clearStockAlert = false,
   }) {
@@ -76,6 +85,7 @@ class ProductCatalogState extends Equatable {
       hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
       failure: failure ?? this.failure,
       actionStatus: actionStatus ?? this.actionStatus,
+      displayMode: displayMode ?? this.displayMode,
     );
   }
 
@@ -95,5 +105,6 @@ class ProductCatalogState extends Equatable {
     hasReachedEnd,
     failure,
     actionStatus,
+    displayMode,
   ];
 }

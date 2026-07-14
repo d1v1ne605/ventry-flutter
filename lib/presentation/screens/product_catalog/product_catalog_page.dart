@@ -7,6 +7,8 @@ import 'package:ventry_flutter/core/constants/app_strings.dart';
 import 'package:ventry_flutter/core/theme/app_colors.dart';
 import 'package:ventry_flutter/core/theme/app_text_styles.dart';
 import 'package:ventry_flutter/core/widgets/app_pull_to_refresh.dart';
+import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
+import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_bloc.dart';
@@ -16,7 +18,6 @@ import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/prod
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_catalog_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_filter_chips.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_search_bar.dart';
-import 'package:ventry_flutter/core/widgets/barcode_scanner_bottom_sheet.dart';
 
 /// Product Catalog screen wrapped in [BlocProvider].
 /// Removed AppBottomNavBar — handled by MainLayout (ShellRoute).
@@ -97,7 +98,7 @@ class _ProductCatalogViewState extends State<_ProductCatalogView> {
     return Scaffold(
       backgroundColor: AppColors.screenBackground,
       appBar: ProductCatalogTopBar(
-        title: AppStrings.productCatalogPageTitle,
+        title: AppStrings.productCatalogTitle,
         onBarcodeTap: _handleBarcodeScan,
       ),
       body: _ProductCatalogBody(
@@ -141,6 +142,7 @@ class _ProductCatalogBody extends StatelessWidget {
             buildWhen: (prev, curr) =>
                 prev.isLoading != curr.isLoading ||
                 prev.isLoadingMore != curr.isLoadingMore ||
+                prev.displayMode != curr.displayMode ||
                 prev.spuGroups != curr.spuGroups,
             builder: (context, state) {
               if (state.isLoading) {
@@ -151,7 +153,14 @@ class _ProductCatalogBody extends StatelessWidget {
                 );
               }
 
-              if (state.spuGroups.isEmpty) {
+              final isFlatMode =
+                  state.displayMode == ProductCatalogDisplayMode.flat;
+              final flatSkus = state.flattenedSkus;
+              final itemCount = isFlatMode
+                  ? flatSkus.length
+                  : state.spuGroups.length;
+
+              if (itemCount == 0) {
                 return const SliverFillRemaining(child: _EmptyState());
               }
 
@@ -163,60 +172,81 @@ class _ProductCatalogBody extends StatelessWidget {
                   96.h,
                 ),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (ctx, i) {
-                      if (i >= state.spuGroups.length) {
-                        return const _LoadMoreIndicator();
-                      }
+                  delegate: SliverChildBuilderDelegate((ctx, i) {
+                    if (i >= itemCount) {
+                      return const _LoadMoreIndicator();
+                    }
 
-                      final group = state.spuGroups[i];
-                      final isLastDataItem = i == state.spuGroups.length - 1;
+                    final isLastDataItem = i == itemCount - 1;
 
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: isLastDataItem && !state.isLoadingMore
-                              ? 0
-                              : 12.h,
-                        ),
-                        child: ProductCard(
-                          group: group,
-                          onTap: () async {
-                            final sku = group.representativeSku;
-                            if (sku == null) {
-                              return;
-                            }
-
-                            if (group.variantCount > 1) {
-                              ctx.pushNamed(
-                                RouterName.spuVariants,
-                                pathParameters: {'spuUid': group.spuUid},
-                              );
-                              return;
-                            }
-
-                            final deletedSkuUid = await ctx.pushNamed<String>(
-                              RouterName.skuDetail,
-                              pathParameters: {'skuUid': sku.uid},
-                            );
-
-                            if (deletedSkuUid != null && ctx.mounted) {
-                              ctx.read<ProductCatalogBloc>().add(
-                                const LoadSkus(),
-                              );
-                            }
-                          },
-                        ),
-                      );
-                    },
-                    childCount:
-                        state.spuGroups.length + (state.isLoadingMore ? 1 : 0),
-                  ),
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: isLastDataItem && !state.isLoadingMore
+                            ? 0
+                            : 12.h,
+                      ),
+                      child: isFlatMode
+                          ? ProductSkuCard(
+                              sku: flatSkus[i],
+                              onTap: () =>
+                                  _openSkuDetails(ctx, flatSkus[i].uid),
+                            )
+                          : _GroupedProductCard(group: state.spuGroups[i]),
+                    );
+                  }, childCount: itemCount + (state.isLoadingMore ? 1 : 0)),
                 ),
               );
             },
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _openSkuDetails(BuildContext context, String skuUid) async {
+    final deletedSkuUid = await context.pushNamed<String>(
+      RouterName.skuDetail,
+      pathParameters: {'skuUid': skuUid},
+    );
+
+    if (deletedSkuUid != null && context.mounted) {
+      context.read<ProductCatalogBloc>().add(const LoadSkus());
+    }
+  }
+}
+
+class _GroupedProductCard extends StatelessWidget {
+  const _GroupedProductCard({required this.group});
+
+  final SkuSpuGroupEntity group;
+
+  @override
+  Widget build(BuildContext context) {
+    return ProductCard(
+      group: group,
+      onTap: () async {
+        final sku = group.representativeSku;
+        if (sku == null) {
+          return;
+        }
+
+        if (group.variantCount > 1) {
+          context.pushNamed(
+            RouterName.spuVariants,
+            pathParameters: {'spuUid': group.spuUid},
+          );
+          return;
+        }
+
+        final deletedSkuUid = await context.pushNamed<String>(
+          RouterName.skuDetail,
+          pathParameters: {'skuUid': sku.uid},
+        );
+
+        if (deletedSkuUid != null && context.mounted) {
+          context.read<ProductCatalogBloc>().add(const LoadSkus());
+        }
+      },
     );
   }
 }
@@ -247,6 +277,20 @@ class _StickyHeader extends StatelessWidget {
             onQrTap: onQrTap,
             onFilterTap: () {},
           ),
+          SizedBox(height: AppSize.size12.h),
+          BlocSelector<
+            ProductCatalogBloc,
+            ProductCatalogState,
+            ProductCatalogDisplayMode
+          >(
+            selector: (state) => state.displayMode,
+            builder: (context, displayMode) => _DisplayModeToggle(
+              displayMode: displayMode,
+              onChanged: (mode) => context.read<ProductCatalogBloc>().add(
+                ChangeProductCatalogDisplayMode(mode),
+              ),
+            ),
+          ),
           SizedBox(height: AppSize.size16.h),
           // Just comment out for now, will re-enable when we have the filter counts ready
           // Don't delete the code, as we will re-enable it in the future
@@ -275,17 +319,116 @@ class _StickyHeader extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   ProductFilter _resolveFilter(_FilterCounts counts) {
     if (counts.isStockAlert == true) return ProductFilter.lowStock;
     if (counts.filterStatus == 'OUT_OF_STOCK') return ProductFilter.outOfStock;
     return ProductFilter.totalStock;
   }
 
+  // ignore: unused_element
   void _onFilterChanged(BuildContext context, ProductFilter filter) {
     context.read<ProductCatalogBloc>().add(
       FilterSkus(
         status: filter == ProductFilter.outOfStock ? 'OUT_OF_STOCK' : null,
         isStockAlert: filter == ProductFilter.lowStock ? true : null,
+      ),
+    );
+  }
+}
+
+class _DisplayModeToggle extends StatelessWidget {
+  const _DisplayModeToggle({
+    required this.displayMode,
+    required this.onChanged,
+  });
+
+  final ProductCatalogDisplayMode displayMode;
+  final ValueChanged<ProductCatalogDisplayMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40.h,
+      padding: EdgeInsets.all(AppSize.size4.r),
+      decoration: BoxDecoration(
+        color: AppColors.searchBarFill,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _DisplayModeButton(
+              icon: Icons.view_agenda_outlined,
+              label: AppStrings.productCatalogGroupedMode,
+              tooltip: AppStrings.productCatalogGroupedModeTooltip,
+              isSelected: displayMode == ProductCatalogDisplayMode.grouped,
+              onTap: () => onChanged(ProductCatalogDisplayMode.grouped),
+            ),
+          ),
+          SizedBox(width: AppSize.size4.w),
+          Expanded(
+            child: _DisplayModeButton(
+              icon: Icons.view_list_rounded,
+              label: AppStrings.productCatalogFlatMode,
+              tooltip: AppStrings.productCatalogFlatModeTooltip,
+              isSelected: displayMode == ProductCatalogDisplayMode.flat,
+              onTap: () => onChanged(ProductCatalogDisplayMode.flat),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DisplayModeButton extends StatelessWidget {
+  const _DisplayModeButton({
+    required this.icon,
+    required this.label,
+    required this.tooltip,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final String tooltip;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final foregroundColor = isSelected ? AppColors.primary : AppColors.subtitle;
+
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: isSelected ? AppColors.surface : Colors.transparent,
+        borderRadius: BorderRadius.circular(9.r),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(9.r),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: AppSize.size20.r, color: foregroundColor),
+                SizedBox(width: AppSize.size6.w),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: AppTextStyles.skuChip.copyWith(
+                      color: foregroundColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -380,8 +523,8 @@ class _FilterCounts {
     required this.total,
     required this.lowStock,
     required this.outOfStock,
-    this.filterStatus,
-    this.isStockAlert,
+    required this.filterStatus,
+    required this.isStockAlert,
   });
 
   @override

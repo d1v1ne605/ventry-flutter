@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
+import 'package:ventry_flutter/presentation/screens/product_catalog/bloc/product_catalog_state.dart';
 
 abstract class ProductCatalogEvent extends Equatable {
   const ProductCatalogEvent();
@@ -33,6 +34,15 @@ class FilterSkus extends ProductCatalogEvent {
 
   @override
   List<Object?> get props => [status, isStockAlert];
+}
+
+class ChangeProductCatalogDisplayMode extends ProductCatalogEvent {
+  final ProductCatalogDisplayMode displayMode;
+
+  const ChangeProductCatalogDisplayMode(this.displayMode);
+
+  @override
+  List<Object?> get props => [displayMode];
 }
 
 class CreateProduct extends ProductCatalogEvent {
