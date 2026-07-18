@@ -1,5 +1,4 @@
 # Ventry Flutter
-<video src="./assets/review.mp4" controls autoplay loop muted width="100%"></video>
 Ventry is a Flutter inventory app for managing authentication, product catalogs,
 SKU/SPU variants, categories, quick product creation, image uploads, and barcode
 scanning.
