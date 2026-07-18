@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:ventry_flutter/core/constants/app_errors.dart';
+
 abstract class Failure extends Equatable {
   final String message;
-  const Failure([this.message = 'An unexpected error occurred']);
+  const Failure([this.message = AppErrors.unexpected]);
 
   @override
   List<Object> get props => [message];
@@ -17,5 +19,5 @@ class CacheFailure extends Failure {
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = 'No internet connection']);
+  const NetworkFailure([super.message = AppErrors.noInternetConnection]);
 }
