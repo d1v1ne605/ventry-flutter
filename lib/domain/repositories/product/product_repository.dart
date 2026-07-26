@@ -3,10 +3,12 @@ import 'package:ventry_flutter/core/errors/failures.dart';
 import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/delete_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/product_unit_configuration_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_spu_params.dart';
@@ -20,6 +22,10 @@ abstract class ProductRepository {
 
   Future<Either<Failure, SpuEntity>> getSpuByUid(String spuUid);
 
+  Future<Either<Failure, List<UnitEntity>>> getUnits();
+
+  Future<Either<Failure, UnitEntity>> createUnit(String name);
+
   Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params);
 
   Future<Either<Failure, SkuEntity>> updateSku(UpdateSkuParams params);
@@ -27,6 +33,10 @@ abstract class ProductRepository {
   Future<Either<Failure, String>> deleteSku(DeleteSkuParams params);
 
   Future<Either<Failure, SpuEntity>> updateSpu(UpdateSpuParams params);
+
+  Future<Either<Failure, ProductEntity>> configureProductUnits(
+    ProductUnitConfigurationParams params,
+  );
 
   Future<Either<Failure, SkuEntity>> updateSkuImages(
     UpdateSkuImagesParams params,

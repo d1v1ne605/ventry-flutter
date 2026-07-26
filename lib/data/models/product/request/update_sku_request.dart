@@ -16,6 +16,8 @@ class UpdateSkuRequest with _$UpdateSkuRequest {
     double? costPrice,
     int? stockQuantity,
     int? minStockQuantity,
+    int? unitId,
+    double? conversionFactor,
     bool? isSellable,
     @Default([]) List<String> attributeValueUids,
   }) = _UpdateSkuRequest;

@@ -16,6 +16,7 @@ class CreateProductRequest with _$CreateProductRequest {
     String? brand,
     String? currency,
     String? unitOfMeasure,
+    int? baseUnitId,
     @Default([]) List<String> globalAttributeValueUids,
     @Default([]) List<CreateProductSkuRequest> skus,
   }) = _CreateProductRequest;

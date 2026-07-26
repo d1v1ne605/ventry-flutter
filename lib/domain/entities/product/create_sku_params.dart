@@ -9,6 +9,8 @@ class AddSkuParams extends Equatable {
     this.costPrice,
     this.stockQuantity,
     this.minStockQuantity,
+    this.unitId,
+    this.conversionFactor,
     this.imageKeys = const [],
     this.isSellable = true,
     this.attributeValueUids = const [],
@@ -21,6 +23,8 @@ class AddSkuParams extends Equatable {
   final double? costPrice;
   final int? stockQuantity;
   final int? minStockQuantity;
+  final int? unitId;
+  final double? conversionFactor;
   final List<String> imageKeys;
   final bool isSellable;
   final List<String> attributeValueUids;
@@ -34,6 +38,8 @@ class AddSkuParams extends Equatable {
     costPrice,
     stockQuantity,
     minStockQuantity,
+    unitId,
+    conversionFactor,
     imageKeys,
     isSellable,
     attributeValueUids,

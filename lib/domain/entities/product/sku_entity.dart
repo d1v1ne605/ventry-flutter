@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 
 /// Represents a single SKU (Stock Keeping Unit) entity in the domain layer.
 ///
@@ -12,6 +13,8 @@ class SkuEntity extends Equatable {
   final double? costPrice;
   final int stockQuantity;
   final int minStockQuantity;
+  final UnitEntity? unit;
+  final double? conversionFactor;
   final List<String> imageKeys;
   final List<String> imageUrls;
   final List<SkuAttributeEntity> attributes;
@@ -27,6 +30,7 @@ class SkuEntity extends Equatable {
   final String? spuCategoryName;
   final String? spuCurrency;
   final String? spuUnitOfMeasure;
+  final UnitEntity? spuBaseUnit;
 
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -39,6 +43,8 @@ class SkuEntity extends Equatable {
     this.costPrice,
     required this.stockQuantity,
     required this.minStockQuantity,
+    this.unit,
+    this.conversionFactor,
     this.imageKeys = const [],
     this.imageUrls = const [],
     this.attributes = const [],
@@ -52,6 +58,7 @@ class SkuEntity extends Equatable {
     this.spuCategoryName,
     this.spuCurrency,
     this.spuUnitOfMeasure,
+    this.spuBaseUnit,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -65,8 +72,21 @@ class SkuEntity extends Equatable {
 
   String? get primaryImageUrl => imageUrls.isNotEmpty ? imageUrls.first : null;
 
+  String? get unitName => unit?.name ?? spuUnitOfMeasure;
+
+  String? get baseUnitName => spuBaseUnit?.name ?? spuUnitOfMeasure;
+
   @override
-  List<Object?> get props => [uid, skuCode, status, stockQuantity, version];
+  List<Object?> get props => [
+    uid,
+    skuCode,
+    status,
+    stockQuantity,
+    version,
+    unit,
+    conversionFactor,
+    spuBaseUnit,
+  ];
 }
 
 /// Stock status derived from quantity thresholds.

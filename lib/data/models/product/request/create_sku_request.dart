@@ -7,6 +7,8 @@ class CreateSkuRequest {
     this.costPrice,
     this.stockQuantity,
     this.minStockQuantity,
+    this.unitId,
+    this.conversionFactor,
     this.imageKeys = const [],
     this.isSellable = true,
     this.attributeValueUids = const [],
@@ -19,6 +21,8 @@ class CreateSkuRequest {
   final double? costPrice;
   final int? stockQuantity;
   final int? minStockQuantity;
+  final int? unitId;
+  final double? conversionFactor;
   final List<String> imageKeys;
   final bool isSellable;
   final List<String> attributeValueUids;
@@ -43,6 +47,8 @@ class CreateSkuRequest {
     writeNotNull('costPrice', costPrice);
     writeNotNull('stockQuantity', stockQuantity);
     writeNotNull('minStockQuantity', minStockQuantity);
+    writeNotNull('unitId', unitId);
+    writeNotNull('conversionFactor', conversionFactor);
 
     return json;
   }

@@ -1,17 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class UpdateSkuParams extends Equatable {
-  final String skuUid;
-  final int version;
-  final String? skuCode;
-  final String? barCode;
-  final double? sellingPrice;
-  final double? costPrice;
-  final int? stockQuantity;
-  final int? minStockQuantity;
-  final bool? isSellable;
-  final List<String> attributeValueUids;
-
   const UpdateSkuParams({
     required this.skuUid,
     required this.version,
@@ -21,9 +10,24 @@ class UpdateSkuParams extends Equatable {
     this.costPrice,
     this.stockQuantity,
     this.minStockQuantity,
+    this.unitId,
+    this.conversionFactor,
     this.isSellable,
     this.attributeValueUids = const [],
   });
+
+  final String skuUid;
+  final int version;
+  final String? skuCode;
+  final String? barCode;
+  final double? sellingPrice;
+  final double? costPrice;
+  final int? stockQuantity;
+  final int? minStockQuantity;
+  final int? unitId;
+  final double? conversionFactor;
+  final bool? isSellable;
+  final List<String> attributeValueUids;
 
   @override
   List<Object?> get props => [
@@ -35,6 +39,8 @@ class UpdateSkuParams extends Equatable {
     costPrice,
     stockQuantity,
     minStockQuantity,
+    unitId,
+    conversionFactor,
     isSellable,
     attributeValueUids,
   ];

@@ -33,7 +33,7 @@ class GeneralInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryName = sku.spuCategoryName ?? AppStrings.notAvailable;
-    final unitOfMeasure = sku.spuUnitOfMeasure ?? AppStrings.notAvailable;
+    final unitOfMeasure = sku.unitName ?? AppStrings.notAvailable;
     final currency = sku.spuCurrency ?? AppStrings.notAvailable;
 
     return Container(
@@ -66,6 +66,13 @@ class GeneralInfoCard extends StatelessWidget {
                 _InfoRow(
                   label: AppStrings.unitOfMeasureLabel,
                   value: unitOfMeasure,
+                ),
+                SizedBox(height: AppSize.size16.h),
+                _InfoRow(
+                  label: AppStrings.productUnitConversionFactor,
+                  value:
+                      sku.conversionFactor?.toString() ??
+                      AppStrings.notAvailable,
                 ),
                 SizedBox(height: AppSize.size16.h),
                 _InfoRow(label: AppStrings.currencyLabel, value: currency),

@@ -1,105 +1,18 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/domain/entities/attribute/attribute_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/models/add_product_draft_models.dart';
 
-class VariantOptionValue extends Equatable {
-  final String value;
-  final String? uid;
-  final bool isNew;
-
-  const VariantOptionValue({required this.value, this.uid, this.isNew = false});
-
-  @override
-  List<Object?> get props => [value, uid, isNew];
-}
-
-class VariantOptionGroup extends Equatable {
-  final String id;
-  final String name;
-  final String? attributeUid;
-  final List<VariantOptionValue> values;
-
-  const VariantOptionGroup({
-    required this.id,
-    required this.name,
-    this.attributeUid,
-    this.values = const [],
-  });
-
-  VariantOptionGroup copyWith({
-    String? name,
-    String? attributeUid,
-    bool clearAttributeUid = false,
-    List<VariantOptionValue>? values,
-  }) {
-    return VariantOptionGroup(
-      id: id,
-      name: name ?? this.name,
-      attributeUid: clearAttributeUid
-          ? null
-          : (attributeUid ?? this.attributeUid),
-      values: values ?? this.values,
-    );
-  }
-
-  @override
-  List<Object?> get props => [id, name, attributeUid, values];
-}
-
-class GeneratedSku extends Equatable {
-  final String name;
-  final String skuCode;
-  final String barcode;
-  final double price;
-  final double costPrice;
-  final int stock;
-  final List<VariantOptionValue> options;
-
-  const GeneratedSku({
-    required this.name,
-    this.skuCode = '',
-    this.barcode = '',
-    this.price = 0.0,
-    this.costPrice = 0.0,
-    this.stock = 0,
-    this.options = const [],
-  });
-
-  GeneratedSku copyWith({
-    String? name,
-    String? skuCode,
-    String? barcode,
-    double? price,
-    double? costPrice,
-    int? stock,
-    List<VariantOptionValue>? options,
-  }) {
-    return GeneratedSku(
-      name: name ?? this.name,
-      skuCode: skuCode ?? this.skuCode,
-      barcode: barcode ?? this.barcode,
-      price: price ?? this.price,
-      costPrice: costPrice ?? this.costPrice,
-      stock: stock ?? this.stock,
-      options: options ?? this.options,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    name,
-    skuCode,
-    barcode,
-    price,
-    costPrice,
-    stock,
-    options,
-  ];
-}
+export 'package:ventry_flutter/presentation/screens/add_product/models/add_product_draft_models.dart';
 
 class AddProductState extends Equatable {
   final BaseStatus status;
+  final BaseStatus unitStatus;
   final List<AttributeEntity> localAttributes;
+  final List<UnitEntity> units;
+  final UnitEntity? selectedBaseUnit;
+  final List<ProductUnitDraft> productUnitDrafts;
   final List<VariantOptionGroup> variantGroups;
   final List<GeneratedSku> generatedSkus;
   final String? errorMessage;
@@ -112,7 +25,11 @@ class AddProductState extends Equatable {
 
   const AddProductState({
     this.status = BaseStatus.initial,
+    this.unitStatus = BaseStatus.initial,
     this.localAttributes = const [],
+    this.units = const [],
+    this.selectedBaseUnit,
+    this.productUnitDrafts = const [],
     this.variantGroups = const [],
     this.generatedSkus = const [],
     this.errorMessage,
@@ -124,9 +41,39 @@ class AddProductState extends Equatable {
     this.globalBarcode = '',
   });
 
+  List<ProductUnitDraft> get unitRows {
+    final baseUnit = selectedBaseUnit;
+    if (baseUnit == null) {
+      return productUnitDrafts;
+    }
+    if (baseUnit.id <= 0 || baseUnit.name.trim().isEmpty) {
+      return const [];
+    }
+
+    final validDrafts = productUnitDrafts.where(
+      (draft) =>
+          draft.unit.id > 0 &&
+          draft.unit.name.trim().isNotEmpty &&
+          draft.conversionFactor > 0,
+    );
+    return [
+      ProductUnitDraft(
+        id: 'base-${baseUnit.id}',
+        unit: baseUnit,
+        conversionFactor: 1,
+        sellingPrice: globalPrice,
+      ),
+      ...validDrafts.where((draft) => draft.unit.id != baseUnit.id),
+    ];
+  }
+
   AddProductState copyWith({
     BaseStatus? status,
+    BaseStatus? unitStatus,
     List<AttributeEntity>? localAttributes,
+    List<UnitEntity>? units,
+    UnitEntity? selectedBaseUnit,
+    List<ProductUnitDraft>? productUnitDrafts,
     List<VariantOptionGroup>? variantGroups,
     List<GeneratedSku>? generatedSkus,
     String? errorMessage,
@@ -136,10 +83,17 @@ class AddProductState extends Equatable {
     bool? globalIsSellable,
     String? globalSkuCode,
     String? globalBarcode,
+    bool clearSelectedBaseUnit = false,
   }) {
     return AddProductState(
       status: status ?? this.status,
+      unitStatus: unitStatus ?? this.unitStatus,
       localAttributes: localAttributes ?? this.localAttributes,
+      units: units ?? this.units,
+      selectedBaseUnit: clearSelectedBaseUnit
+          ? null
+          : (selectedBaseUnit ?? this.selectedBaseUnit),
+      productUnitDrafts: productUnitDrafts ?? this.productUnitDrafts,
       variantGroups: variantGroups ?? this.variantGroups,
       generatedSkus: generatedSkus ?? this.generatedSkus,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -155,7 +109,11 @@ class AddProductState extends Equatable {
   @override
   List<Object?> get props => [
     status,
+    unitStatus,
     localAttributes,
+    units,
+    selectedBaseUnit,
+    productUnitDrafts,
     variantGroups,
     generatedSkus,
     errorMessage,

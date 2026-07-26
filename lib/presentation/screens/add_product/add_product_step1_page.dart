@@ -41,8 +41,9 @@ class AddProductStep1Page extends StatelessWidget {
           create: (context) => getIt<CategoryBloc>()..add(LoadCategories()),
         ),
         BlocProvider(
-          create: (context) =>
-              getIt<AddProductBloc>()..add(LoadAttributesEvent()),
+          create: (context) => getIt<AddProductBloc>()
+            ..add(LoadAttributesEvent())
+            ..add(LoadUnitsEvent()),
         ),
         BlocProvider(create: (context) => getIt<AddProductImageUploadBloc>()),
       ],
@@ -67,10 +68,8 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
 
   CategoryEntity? _selectedCategory;
   final TextEditingController _currencyController = TextEditingController();
-  final TextEditingController _unitController = TextEditingController();
 
   final FocusNode _currencyFocus = FocusNode();
-  final FocusNode _unitFocus = FocusNode();
 
   final ImagePicker _picker = ImagePicker();
 
@@ -192,9 +191,6 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
       currency: _currencyController.text.trim().isEmpty
           ? null
           : _currencyController.text.trim(),
-      unitOfMeasure: _unitController.text.trim().isEmpty
-          ? null
-          : _unitController.text.trim(),
       imageKeys: imageState.images.map((image) => image.objectKey).toList(),
       skus: const [],
     );
@@ -223,9 +219,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
     _nameFocus.dispose();
     _descFocus.dispose();
     _currencyController.dispose();
-    _unitController.dispose();
     _currencyFocus.dispose();
-    _unitFocus.dispose();
     super.dispose();
   }
 
@@ -304,9 +298,7 @@ class _AddProductStep1ViewState extends State<_AddProductStep1View> {
                     descFocus: _descFocus,
                     selectedCategory: _selectedCategory,
                     currencyController: _currencyController,
-                    unitController: _unitController,
                     currencyFocus: _currencyFocus,
-                    unitFocus: _unitFocus,
                     imagePaths: imageState.images
                         .map((image) => image.localPath)
                         .toList(),
@@ -337,9 +329,7 @@ class _AddProductBody extends StatelessWidget {
     required this.nameFocus,
     required this.descFocus,
     required this.currencyController,
-    required this.unitController,
     required this.currencyFocus,
-    required this.unitFocus,
     required this.selectedCategory,
     required this.imagePaths,
     required this.isUploadingImages,
@@ -353,9 +343,7 @@ class _AddProductBody extends StatelessWidget {
   final FocusNode nameFocus;
   final FocusNode descFocus;
   final TextEditingController currencyController;
-  final TextEditingController unitController;
   final FocusNode currencyFocus;
-  final FocusNode unitFocus;
   final CategoryEntity? selectedCategory;
   final List<String> imagePaths;
   final bool isUploadingImages;
@@ -498,13 +486,6 @@ class _AddProductBody extends StatelessWidget {
                   hintText: AppStrings.currencyHint,
                   controller: currencyController,
                   focusNode: currencyFocus,
-                ),
-                SizedBox(height: AppSize.size16.h),
-                CustomTextField(
-                  label: AppStrings.addProductUnitLabel,
-                  hintText: AppStrings.unitHint,
-                  controller: unitController,
-                  focusNode: unitFocus,
                 ),
                 SizedBox(height: AppSize.size16.h),
                 CustomTextField(

@@ -12,8 +12,10 @@ import 'package:ventry_flutter/core/widgets/app_top_bar.dart';
 import 'package:ventry_flutter/core/widgets/loader/app_loader_backdrop_filter.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/add_product_bottom_bar.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/price_and_inventory_section.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/product_unit_summary_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/sku_preview_section.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/widgets/step2/variant_options_section.dart';
+import 'package:ventry_flutter/presentation/screens/add_product/utils/product_unit_validation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
@@ -89,6 +91,13 @@ class AddProductStep2Page extends StatelessWidget {
                           final attrState = context
                               .read<AddProductBloc>()
                               .state;
+                          final unitError = validateAddProductUnits(attrState);
+                          if (unitError != null) {
+                            AppSnackBar.showError(context, unitError);
+                            return;
+                          }
+                          final baseUnit = attrState.selectedBaseUnit;
+
                           final skus = attrState.generatedSkus.map((e) {
                             final uids = e.options
                                 .map((opt) => opt.uid)
@@ -106,6 +115,8 @@ class AddProductStep2Page extends StatelessWidget {
                               costPrice: e.costPrice,
                               stockQuantity: e.stock,
                               minStockQuantity: 0,
+                              unitId: e.unitId,
+                              conversionFactor: e.conversionFactor,
                               imageKeys: params.imageKeys,
                               isSellable: attrState.globalIsSellable,
                               attributeValueUids: uids,
@@ -125,6 +136,8 @@ class AddProductStep2Page extends StatelessWidget {
                                 costPrice: attrState.globalCostPrice,
                                 stockQuantity: attrState.globalStock,
                                 minStockQuantity: 0,
+                                unitId: baseUnit?.id,
+                                conversionFactor: baseUnit == null ? null : 1,
                                 imageKeys: params.imageKeys,
                                 isSellable: attrState.globalIsSellable,
                                 attributeValueUids: const [],
@@ -140,6 +153,7 @@ class AddProductStep2Page extends StatelessWidget {
                             imageKeys: params.imageKeys,
                             currency: params.currency,
                             unitOfMeasure: params.unitOfMeasure,
+                            baseUnitId: baseUnit?.id,
                             globalAttributeValueUids:
                                 params.globalAttributeValueUids,
                             skus: skus,
@@ -268,6 +282,11 @@ class _AddProductStep2Body extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const PriceAndInventorySection(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSize.size16.h),
+                    child: const Divider(color: AppColors.divider),
+                  ),
+                  const ProductUnitSummarySection(),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: AppSize.size16.h),
                     child: const Divider(color: AppColors.divider),

@@ -27,23 +27,25 @@ import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_page.dart'
 
 class SpuVariantsPage extends StatelessWidget {
   final String spuUid;
+  final int? unitId;
 
-  const SpuVariantsPage({super.key, required this.spuUid});
+  const SpuVariantsPage({super.key, required this.spuUid, this.unitId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
           getIt<SpuVariantsBloc>()..add(LoadSpuVariants(spuUid)),
-      child: _SpuVariantsView(spuUid: spuUid),
+      child: _SpuVariantsView(spuUid: spuUid, unitId: unitId),
     );
   }
 }
 
 class _SpuVariantsView extends StatelessWidget {
-  const _SpuVariantsView({required this.spuUid});
+  const _SpuVariantsView({required this.spuUid, required this.unitId});
 
   final String spuUid;
+  final int? unitId;
 
   void _refreshVariants(BuildContext context) {
     context.read<SpuVariantsBloc>().add(LoadSpuVariants(spuUid));
@@ -121,7 +123,7 @@ class _SpuVariantsView extends StatelessWidget {
 
           return AppPullToRefresh(
             onRefresh: () => _refreshVariants(context),
-            child: _VariantsContent(group: group),
+            child: _VariantsContent(group: group, unitId: unitId),
           );
         },
       ),
@@ -178,13 +180,16 @@ class _AddVariantAction extends StatelessWidget {
 }
 
 class _VariantsContent extends StatelessWidget {
-  const _VariantsContent({required this.group});
+  const _VariantsContent({required this.group, required this.unitId});
 
   final SkuSpuGroupEntity group;
+  final int? unitId;
 
   @override
   Widget build(BuildContext context) {
-    final variants = group.sortedSkus;
+    final variants = unitId == null
+        ? group.sortedSkus
+        : group.sortedSkus.where((sku) => sku.unit?.id == unitId).toList();
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(
@@ -194,7 +199,7 @@ class _VariantsContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _VariantsHero(group: group),
+          _VariantsHero(group: group, variantCount: variants.length),
           SizedBox(height: 16.h),
           _VariantsSectionHeader(count: variants.length),
           SizedBox(height: 12.h),
@@ -211,9 +216,10 @@ class _VariantsContent extends StatelessWidget {
 }
 
 class _VariantsHero extends StatelessWidget {
-  const _VariantsHero({required this.group});
+  const _VariantsHero({required this.group, required this.variantCount});
 
   final SkuSpuGroupEntity group;
+  final int variantCount;
 
   @override
   Widget build(BuildContext context) {
@@ -243,12 +249,14 @@ class _VariantsHero extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: AppSize.size8.w),
+                    _HeroManageUnitsButton(group: group),
+                    SizedBox(width: AppSize.size8.w),
                     _HeroEditSpuButton(group: group),
                   ],
                 ),
                 SizedBox(height: 6.h),
                 Text(
-                  AppStrings.variantCount(group.variantCount),
+                  AppStrings.variantCount(variantCount),
                   style: AppTextStyles.bodyManrope,
                 ),
                 if (group.attributeSummaries.isNotEmpty) ...[
@@ -265,6 +273,46 @@ class _VariantsHero extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeroManageUnitsButton extends StatelessWidget {
+  const _HeroManageUnitsButton({required this.group});
+
+  final SkuSpuGroupEntity group;
+
+  Future<void> _openUnits(BuildContext context) async {
+    final updated = await context.pushNamed<bool>(
+      RouterName.productUnits,
+      pathParameters: {'spuUid': group.spuUid},
+    );
+
+    if (updated == true && context.mounted) {
+      context.read<SpuVariantsBloc>().add(LoadSpuVariants(group.spuUid));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: AppStrings.unitOfMeasureLabel,
+      child: Material(
+        color: AppColors.skuChipFill,
+        borderRadius: BorderRadius.circular(AppSize.size8.r),
+        child: InkWell(
+          onTap: () => _openUnits(context),
+          borderRadius: BorderRadius.circular(AppSize.size8.r),
+          child: Padding(
+            padding: EdgeInsets.all(AppSize.size6.r),
+            child: Icon(
+              Icons.straighten_rounded,
+              color: AppColors.primary,
+              size: AppSize.size20.r,
+            ),
+          ),
+        ),
       ),
     );
   }

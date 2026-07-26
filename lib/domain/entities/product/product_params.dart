@@ -10,6 +10,7 @@ class CreateProductParams extends Equatable {
   final List<String> imageKeys;
   final String? currency;
   final String? unitOfMeasure;
+  final int? baseUnitId;
   final List<String> globalAttributeValueUids;
   final List<CreateSkuParams> skus;
 
@@ -21,6 +22,7 @@ class CreateProductParams extends Equatable {
     this.imageKeys = const [],
     this.currency,
     this.unitOfMeasure,
+    this.baseUnitId,
     this.globalAttributeValueUids = const [],
     this.skus = const [],
   });
@@ -28,7 +30,18 @@ class CreateProductParams extends Equatable {
   String? get primaryImageKey => imageKeys.isNotEmpty ? imageKeys.first : null;
 
   @override
-  List<Object?> get props => [name, categoryUid];
+  List<Object?> get props => [
+    name,
+    categoryUid,
+    description,
+    brand,
+    imageKeys,
+    currency,
+    unitOfMeasure,
+    baseUnitId,
+    globalAttributeValueUids,
+    skus,
+  ];
 }
 
 /// Params for a single SKU within [CreateProductParams].
@@ -39,6 +52,8 @@ class CreateSkuParams extends Equatable {
   final double? costPrice;
   final int? stockQuantity;
   final int? minStockQuantity;
+  final int? unitId;
+  final double? conversionFactor;
   final List<String> imageKeys;
   final bool isSellable;
   final List<String> attributeValueUids;
@@ -50,13 +65,27 @@ class CreateSkuParams extends Equatable {
     this.costPrice,
     this.stockQuantity,
     this.minStockQuantity,
+    this.unitId,
+    this.conversionFactor,
     this.imageKeys = const [],
     this.isSellable = true,
     this.attributeValueUids = const [],
   });
 
   @override
-  List<Object?> get props => [skuCode, barCode];
+  List<Object?> get props => [
+    skuCode,
+    barCode,
+    sellingPrice,
+    costPrice,
+    stockQuantity,
+    minStockQuantity,
+    unitId,
+    conversionFactor,
+    imageKeys,
+    isSellable,
+    attributeValueUids,
+  ];
 }
 
 /// Params for [GetSkusUseCase].
