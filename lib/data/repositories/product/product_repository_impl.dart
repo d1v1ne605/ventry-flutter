@@ -261,11 +261,15 @@ class ProductRepositoryImpl implements ProductRepository {
         ProductUnitConfigurationRequest(
           version: params.version,
           baseUnitId: params.baseUnitId,
-          createSkus: params.createSkus.map(_mapSkuParamsToJson).toList(),
-          updateSkus: params.updateSkus.map(_mapSkuUpdateToJson).toList(),
-          discontinueSkus: params.discontinueSkus
-              .map(_mapSkuDiscontinueToJson)
-              .toList(),
+          createSkus: params.createSkus.isEmpty
+              ? null
+              : params.createSkus.map(_mapSkuParamsToJson).toList(),
+          updateSkus: params.updateSkus.isEmpty
+              ? null
+              : params.updateSkus.map(_mapSkuUpdateToJson).toList(),
+          discontinueSkus: params.discontinueSkus.isEmpty
+              ? null
+              : params.discontinueSkus.map(_mapSkuDiscontinueToJson).toList(),
         ),
       );
       return Right(_mapProductResponseToEntity(response));
@@ -423,6 +427,7 @@ class ProductRepositoryImpl implements ProductRepository {
       spuUid: spu?.uid ?? '',
       spuName: spu?.name ?? _unknownSpuName,
       spuStatus: spu?.status ?? _unknownSpuStatus,
+      spuVersion: spu?.version ?? 1,
       spuDescription: spu?.description,
       spuCategoryName: spu?.category?.name,
       spuCurrency: spu?.currency,

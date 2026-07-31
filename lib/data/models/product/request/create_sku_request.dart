@@ -1,55 +1,28 @@
-class CreateSkuRequest {
-  const CreateSkuRequest({
-    required this.spuUid,
-    this.skuCode,
-    this.barCode,
-    this.sellingPrice,
-    this.costPrice,
-    this.stockQuantity,
-    this.minStockQuantity,
-    this.unitId,
-    this.conversionFactor,
-    this.imageKeys = const [],
-    this.isSellable = true,
-    this.attributeValueUids = const [],
-  });
+// ignore_for_file: invalid_annotation_target
 
-  final String spuUid;
-  final String? skuCode;
-  final String? barCode;
-  final double? sellingPrice;
-  final double? costPrice;
-  final int? stockQuantity;
-  final int? minStockQuantity;
-  final int? unitId;
-  final double? conversionFactor;
-  final List<String> imageKeys;
-  final bool isSellable;
-  final List<String> attributeValueUids;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{
-      'spuUid': spuUid,
-      'imageKeys': imageKeys,
-      'isSellable': isSellable,
-      'attributeValueUids': attributeValueUids,
-    };
+part 'create_sku_request.freezed.dart';
+part 'create_sku_request.g.dart';
 
-    void writeNotNull(String key, Object? value) {
-      if (value != null) {
-        json[key] = value;
-      }
-    }
+@freezed
+class CreateSkuRequest with _$CreateSkuRequest {
+  @JsonSerializable(includeIfNull: false)
+  const factory CreateSkuRequest({
+    required String spuUid,
+    String? skuCode,
+    String? barCode,
+    double? sellingPrice,
+    double? costPrice,
+    int? stockQuantity,
+    int? minStockQuantity,
+    int? unitId,
+    double? conversionFactor,
+    @Default([]) List<String> imageKeys,
+    @Default(true) bool isSellable,
+    @Default([]) List<String> attributeValueUids,
+  }) = _CreateSkuRequest;
 
-    writeNotNull('skuCode', skuCode);
-    writeNotNull('barCode', barCode);
-    writeNotNull('sellingPrice', sellingPrice);
-    writeNotNull('costPrice', costPrice);
-    writeNotNull('stockQuantity', stockQuantity);
-    writeNotNull('minStockQuantity', minStockQuantity);
-    writeNotNull('unitId', unitId);
-    writeNotNull('conversionFactor', conversionFactor);
-
-    return json;
-  }
+  factory CreateSkuRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateSkuRequestFromJson(json);
 }

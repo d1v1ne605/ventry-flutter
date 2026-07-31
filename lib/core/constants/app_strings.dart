@@ -237,6 +237,8 @@ class AppStrings {
   static const String productUnitDone = 'Xong';
   static const String productUnitBaseSection = 'ĐƠN VỊ TÍNH';
   static const String productUnitConversionSection = 'ĐƠN VỊ QUY ĐỔI';
+  static const String productUnitEditableBadge = 'Đang sửa';
+  static const String productUnitLockedBadge = 'Chỉ xem';
   static const String productUnitNameLabel = 'Tên đơn vị';
   static const String productUnitBaseTitle = 'Chọn đơn vị cơ bản';
   static const String productUnitChooseBase = 'Chọn đơn vị cơ bản';
@@ -259,6 +261,12 @@ class AppStrings {
       'Chưa dùng đơn vị tính cho sản phẩm này';
   static const String productUnitInvalidConversion =
       'Vui lòng chọn đơn vị và nhập số lượng quy đổi lớn hơn 0.';
+  static const String productUnitSkuCodeTooLong =
+      'Mã SKU không được vượt quá 100 ký tự.';
+  static const String productUnitSkuCodeDuplicate = 'Mã SKU không được trùng.';
+  static const String productUnitBaseEditUnsupported =
+      'Không thể đổi đơn vị cơ bản trong màn sửa SKU.';
+  static const String productUnitAddedSuccess = 'Đã thêm đơn vị thành công.';
   static const String currencyLabel = 'Tiền tệ';
   static const String isSellableLabel = 'Có thể bán';
   static const String costPriceLabel = 'Giá vốn';

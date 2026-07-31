@@ -1,9 +1,13 @@
-class DeleteSkuResponse {
-  const DeleteSkuResponse({required this.uid});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final String uid;
+part 'delete_sku_response.freezed.dart';
+part 'delete_sku_response.g.dart';
 
-  factory DeleteSkuResponse.fromJson(Map<String, dynamic> json) {
-    return DeleteSkuResponse(uid: json['uid'] as String? ?? '');
-  }
+@freezed
+class DeleteSkuResponse with _$DeleteSkuResponse {
+  const factory DeleteSkuResponse({@Default('') String uid}) =
+      _DeleteSkuResponse;
+
+  factory DeleteSkuResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeleteSkuResponseFromJson(json);
 }

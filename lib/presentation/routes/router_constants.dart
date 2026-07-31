@@ -33,7 +33,6 @@ abstract final class RouterName {
   static const String skuDetail = 'skuDetail';
   static const String spuVariants = 'spuVariants';
   static const String editSpu = 'editSpu';
-  static const String productUnits = 'productUnits';
   static const String testScanner = 'testScanner';
   static const String skuForm = 'skuForm';
 }

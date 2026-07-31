@@ -1,7 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_image.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/sku_form_current_unit_edit.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/sku_form_unit_draft.dart';
 
 abstract class SkuFormEvent extends Equatable {
   const SkuFormEvent();
@@ -129,4 +132,77 @@ class SkuFormImagesChanged extends SkuFormEvent {
 
   @override
   List<Object?> get props => [images];
+}
+
+class SkuFormUnitDataRequested extends SkuFormEvent {
+  const SkuFormUnitDataRequested();
+}
+
+class SkuFormUnitDraftAdded extends SkuFormEvent {
+  const SkuFormUnitDraftAdded(this.draft);
+
+  final SkuFormUnitDraft draft;
+
+  @override
+  List<Object?> get props => [draft];
+}
+
+class SkuFormUnitDraftChanged extends SkuFormEvent {
+  const SkuFormUnitDraftChanged({
+    required this.id,
+    this.unit,
+    this.skuCode,
+    this.conversionFactor,
+    this.sellingPrice,
+  });
+
+  final String id;
+  final UnitEntity? unit;
+  final String? skuCode;
+  final double? conversionFactor;
+  final double? sellingPrice;
+
+  @override
+  List<Object?> get props => [
+    id,
+    unit,
+    skuCode,
+    conversionFactor,
+    sellingPrice,
+  ];
+}
+
+class SkuFormUnitDraftRemoved extends SkuFormEvent {
+  const SkuFormUnitDraftRemoved(this.id);
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class SkuFormUnitPriceChanged extends SkuFormEvent {
+  const SkuFormUnitPriceChanged({
+    required this.skuUid,
+    required this.sellingPrice,
+  });
+
+  final String skuUid;
+  final double sellingPrice;
+
+  @override
+  List<Object?> get props => [skuUid, sellingPrice];
+}
+
+class SkuFormCurrentUnitChanged extends SkuFormEvent {
+  const SkuFormCurrentUnitChanged(this.edit);
+
+  final SkuFormCurrentUnitEdit edit;
+
+  @override
+  List<Object?> get props => [edit];
+}
+
+class SkuFormUnitConfigurationSubmitted extends SkuFormEvent {
+  const SkuFormUnitConfigurationSubmitted();
 }

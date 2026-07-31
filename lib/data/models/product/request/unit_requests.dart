@@ -1,33 +1,30 @@
-class CreateUnitRequest {
-  const CreateUnitRequest({required this.name});
+// ignore_for_file: invalid_annotation_target
 
-  final String name;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  Map<String, dynamic> toJson() => {'name': name};
+part 'unit_requests.freezed.dart';
+part 'unit_requests.g.dart';
+
+@freezed
+class CreateUnitRequest with _$CreateUnitRequest {
+  @JsonSerializable(includeIfNull: false)
+  const factory CreateUnitRequest({required String name}) = _CreateUnitRequest;
+
+  factory CreateUnitRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateUnitRequestFromJson(json);
 }
 
-class ProductUnitConfigurationRequest {
-  const ProductUnitConfigurationRequest({
-    required this.version,
-    this.baseUnitId,
-    this.createSkus = const [],
-    this.updateSkus = const [],
-    this.discontinueSkus = const [],
-  });
+@freezed
+class ProductUnitConfigurationRequest with _$ProductUnitConfigurationRequest {
+  @JsonSerializable(includeIfNull: false)
+  const factory ProductUnitConfigurationRequest({
+    required int version,
+    int? baseUnitId,
+    List<Map<String, dynamic>>? createSkus,
+    List<Map<String, dynamic>>? updateSkus,
+    List<Map<String, dynamic>>? discontinueSkus,
+  }) = _ProductUnitConfigurationRequest;
 
-  final int version;
-  final int? baseUnitId;
-  final List<Map<String, dynamic>> createSkus;
-  final List<Map<String, dynamic>> updateSkus;
-  final List<Map<String, dynamic>> discontinueSkus;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'version': version,
-      if (baseUnitId != null) 'baseUnitId': baseUnitId,
-      if (createSkus.isNotEmpty) 'createSkus': createSkus,
-      if (updateSkus.isNotEmpty) 'updateSkus': updateSkus,
-      if (discontinueSkus.isNotEmpty) 'discontinueSkus': discontinueSkus,
-    };
-  }
+  factory ProductUnitConfigurationRequest.fromJson(Map<String, dynamic> json) =>
+      _$ProductUnitConfigurationRequestFromJson(json);
 }

@@ -1,35 +1,22 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 
-class UnitResponse {
-  const UnitResponse({
-    required this.id,
-    required this.name,
-    this.createdAt,
-    this.updatedAt,
-  });
+part 'unit_response.freezed.dart';
+part 'unit_response.g.dart';
 
-  final int id;
-  final String name;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+@freezed
+class UnitResponse with _$UnitResponse {
+  const UnitResponse._();
 
-  factory UnitResponse.fromJson(Map<String, dynamic> json) {
-    return UnitResponse(
-      id: json['id'] as int,
-      name: json['name'] as String? ?? '',
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? ''),
-      updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? ''),
-    );
-  }
+  const factory UnitResponse({
+    required int id,
+    @Default('') String name,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) = _UnitResponse;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
-      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
-    };
-  }
+  factory UnitResponse.fromJson(Map<String, dynamic> json) =>
+      _$UnitResponseFromJson(json);
 
   UnitEntity toEntity() {
     return UnitEntity(

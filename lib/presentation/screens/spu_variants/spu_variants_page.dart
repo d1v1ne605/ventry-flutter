@@ -249,8 +249,6 @@ class _VariantsHero extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: AppSize.size8.w),
-                    _HeroManageUnitsButton(group: group),
-                    SizedBox(width: AppSize.size8.w),
                     _HeroEditSpuButton(group: group),
                   ],
                 ),
@@ -273,46 +271,6 @@ class _VariantsHero extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _HeroManageUnitsButton extends StatelessWidget {
-  const _HeroManageUnitsButton({required this.group});
-
-  final SkuSpuGroupEntity group;
-
-  Future<void> _openUnits(BuildContext context) async {
-    final updated = await context.pushNamed<bool>(
-      RouterName.productUnits,
-      pathParameters: {'spuUid': group.spuUid},
-    );
-
-    if (updated == true && context.mounted) {
-      context.read<SpuVariantsBloc>().add(LoadSpuVariants(group.spuUid));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: AppStrings.unitOfMeasureLabel,
-      child: Material(
-        color: AppColors.skuChipFill,
-        borderRadius: BorderRadius.circular(AppSize.size8.r),
-        child: InkWell(
-          onTap: () => _openUnits(context),
-          borderRadius: BorderRadius.circular(AppSize.size8.r),
-          child: Padding(
-            padding: EdgeInsets.all(AppSize.size6.r),
-            child: Icon(
-              Icons.straighten_rounded,
-              color: AppColors.primary,
-              size: AppSize.size20.r,
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -26,6 +26,7 @@ class SkuEntity extends Equatable {
   final String spuUid;
   final String spuName;
   final String spuStatus;
+  final int spuVersion;
   final String? spuDescription;
   final String? spuCategoryName;
   final String? spuCurrency;
@@ -54,6 +55,7 @@ class SkuEntity extends Equatable {
     required this.spuUid,
     required this.spuName,
     required this.spuStatus,
+    required this.spuVersion,
     this.spuDescription,
     this.spuCategoryName,
     this.spuCurrency,
@@ -86,6 +88,7 @@ class SkuEntity extends Equatable {
     unit,
     conversionFactor,
     spuBaseUnit,
+    spuVersion,
   ];
 }
 

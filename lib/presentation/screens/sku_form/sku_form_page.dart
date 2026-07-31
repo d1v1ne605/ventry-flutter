@@ -11,8 +11,13 @@ import 'package:ventry_flutter/domain/entities/category/category_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/configure_product_units_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/create_unit_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_sku_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_latest_generated_sku_code_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_spu_by_uid_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_skus_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_units_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/update_sku_images_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/update_sku_usecase.dart';
 import 'package:ventry_flutter/injection.dart';
@@ -29,6 +34,7 @@ import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_bo
 import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_category_bottom_sheet.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_form_card.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_media_card.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/widgets/sku_form_unit_summary_card.dart';
 
 class SkuFormPage extends StatelessWidget {
   const SkuFormPage({super.key, required this.args});
@@ -50,6 +56,11 @@ class SkuFormPage extends StatelessWidget {
             mode: args.mode,
             initialSku: args.sku,
             updateSkuImagesUseCase: getIt<UpdateSkuImagesUseCase>(),
+            getUnitsUseCase: getIt<GetUnitsUseCase>(),
+            createUnitUseCase: getIt<CreateUnitUseCase>(),
+            getSkusUseCase: getIt<GetSkusUseCase>(),
+            getSpuByUidUseCase: getIt<GetSpuByUidUseCase>(),
+            configureProductUnitsUseCase: getIt<ConfigureProductUnitsUseCase>(),
           ),
         ),
         BlocProvider(
@@ -267,6 +278,21 @@ class _SkuFormViewState extends State<_SkuFormView> {
                               .add(SkuFormSellableChanged(value)),
                         ),
                         SizedBox(height: AppSize.size20.h),
+                        BlocSelector<SkuFormBloc, SkuFormState, bool>(
+                          selector: (state) => state.isCreateMode,
+                          builder: (context, isCreateMode) {
+                            if (isCreateMode) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return Column(
+                              children: [
+                                const SkuFormUnitSummaryCard(),
+                                SizedBox(height: AppSize.size20.h),
+                              ],
+                            );
+                          },
+                        ),
                         BlocBuilder<SkuFormBloc, SkuFormState>(
                           buildWhen: (previous, current) =>
                               previous.attributes != current.attributes ||

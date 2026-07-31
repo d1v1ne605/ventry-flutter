@@ -3,8 +3,11 @@ import 'package:ventry_flutter/core/base/base_status.dart';
 import 'package:ventry_flutter/core/utils/app_formatters.dart';
 import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/sku_form_current_unit_edit.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/models/editable_sku_form_image.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/models/sku_form_unit_draft.dart';
 
 enum SkuFormMode {
   edit,
@@ -133,8 +136,15 @@ class SkuFormState extends Equatable {
     required this.initialImages,
     required this.images,
     this.status = BaseStatus.initial,
+    this.unitStatus = BaseStatus.initial,
     this.errorMessage,
     this.updatedSku,
+    this.units = const [],
+    this.siblingSkus = const [],
+    this.unitDrafts = const [],
+    this.unitPriceEdits = const {},
+    this.currentUnitEdit = const SkuFormCurrentUnitEdit(),
+    this.unitConfigurationSaved = false,
   });
 
   factory SkuFormState.edit(SkuEntity sku) {
@@ -176,8 +186,15 @@ class SkuFormState extends Equatable {
   final List<EditableSkuFormImage> initialImages;
   final List<EditableSkuFormImage> images;
   final BaseStatus status;
+  final BaseStatus unitStatus;
   final String? errorMessage;
   final SkuEntity? updatedSku;
+  final List<UnitEntity> units;
+  final List<SkuEntity> siblingSkus;
+  final List<SkuFormUnitDraft> unitDrafts;
+  final Map<String, double> unitPriceEdits;
+  final SkuFormCurrentUnitEdit currentUnitEdit;
+  final bool unitConfigurationSaved;
 
   String get selectedCategoryName => form.categoryName;
 
@@ -218,6 +235,18 @@ class SkuFormState extends Equatable {
 
   bool get isSubmitting => status == BaseStatus.loading;
 
+  bool get isUnitSubmitting => unitStatus == BaseStatus.loading;
+
+  bool get hasUnitChanges =>
+      unitDrafts.isNotEmpty ||
+      unitPriceEdits.isNotEmpty ||
+      currentUnitEdit != const SkuFormCurrentUnitEdit();
+
+  List<String> get sourceAttributeValueUids => sourceSku.attributes
+      .map((attribute) => attribute.uid)
+      .where((uid) => uid.trim().isNotEmpty)
+      .toList(growable: false);
+
   bool get canSubmit {
     if (isSubmitting || !areRequiredAttributesComplete) {
       return false;
@@ -244,10 +273,18 @@ class SkuFormState extends Equatable {
     List<SkuAttributeEntity>? attributes,
     List<EditableSkuFormImage>? images,
     BaseStatus? status,
+    BaseStatus? unitStatus,
     String? errorMessage,
     bool clearErrorMessage = false,
     SkuEntity? updatedSku,
     bool clearUpdatedSku = false,
+    List<UnitEntity>? units,
+    List<SkuEntity>? siblingSkus,
+    List<SkuFormUnitDraft>? unitDrafts,
+    Map<String, double>? unitPriceEdits,
+    SkuFormCurrentUnitEdit? currentUnitEdit,
+    bool? unitConfigurationSaved,
+    bool clearUnitConfigurationSaved = false,
   }) {
     return SkuFormState(
       mode: mode ?? this.mode,
@@ -259,10 +296,19 @@ class SkuFormState extends Equatable {
       initialImages: initialImages,
       images: images ?? this.images,
       status: status ?? this.status,
+      unitStatus: unitStatus ?? this.unitStatus,
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
       updatedSku: clearUpdatedSku ? null : (updatedSku ?? this.updatedSku),
+      units: units ?? this.units,
+      siblingSkus: siblingSkus ?? this.siblingSkus,
+      unitDrafts: unitDrafts ?? this.unitDrafts,
+      unitPriceEdits: unitPriceEdits ?? this.unitPriceEdits,
+      currentUnitEdit: currentUnitEdit ?? this.currentUnitEdit,
+      unitConfigurationSaved: clearUnitConfigurationSaved
+          ? false
+          : (unitConfigurationSaved ?? this.unitConfigurationSaved),
     );
   }
 
@@ -382,7 +428,14 @@ class SkuFormState extends Equatable {
     initialImages,
     images,
     status,
+    unitStatus,
     errorMessage,
     updatedSku,
+    units,
+    siblingSkus,
+    unitDrafts,
+    unitPriceEdits,
+    currentUnitEdit,
+    unitConfigurationSaved,
   ];
 }
