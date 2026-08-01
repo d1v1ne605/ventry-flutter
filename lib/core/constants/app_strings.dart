@@ -267,6 +267,9 @@ class AppStrings {
   static const String productUnitBaseEditUnsupported =
       'Không thể đổi đơn vị cơ bản trong màn sửa SKU.';
   static const String productUnitAddedSuccess = 'Đã thêm đơn vị thành công.';
+  static const String productUnitUpdatedSuccess =
+      'Đã cập nhật đơn vị thành công.';
+  static const String productUnitRemovedSuccess = 'Đã xoá đơn vị thành công.';
   static const String currencyLabel = 'Tiền tệ';
   static const String isSellableLabel = 'Có thể bán';
   static const String costPriceLabel = 'Giá vốn';

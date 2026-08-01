@@ -12,10 +12,12 @@ import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/configure_product_units_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/create_product_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_unit_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_sku_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_latest_generated_sku_code_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_spu_by_uid_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_sku_by_uid_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_skus_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_units_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/update_sku_images_usecase.dart';
@@ -51,6 +53,7 @@ class SkuFormPage extends StatelessWidget {
             getIt<GetLocalAttributesUseCase>(),
             getIt<CreateAttributeValueUseCase>(),
             getIt<CreateSkuUseCase>(),
+            getIt<CreateProductUseCase>(),
             getIt<GetLatestGeneratedSkuCodeUseCase>(),
             getIt<UpdateSkuUseCase>(),
             mode: args.mode,
@@ -60,6 +63,7 @@ class SkuFormPage extends StatelessWidget {
             createUnitUseCase: getIt<CreateUnitUseCase>(),
             getSkusUseCase: getIt<GetSkusUseCase>(),
             getSpuByUidUseCase: getIt<GetSpuByUidUseCase>(),
+            getSkuByUidUseCase: getIt<GetSkuByUidUseCase>(),
             configureProductUnitsUseCase: getIt<ConfigureProductUnitsUseCase>(),
           ),
         ),

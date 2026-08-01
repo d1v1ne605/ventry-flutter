@@ -21,8 +21,13 @@ List<SkuEntity> sameVariantUnitSkus(SkuFormState state) {
     }
   }
 
-  skusByUid.putIfAbsent(state.sourceSku.uid, () => state.sourceSku);
-  return skusByUid.values.toList().reversed.toList(growable: false);
+  if (state.sourceSku.status == 'ACTIVE') {
+    skusByUid.putIfAbsent(state.sourceSku.uid, () => state.sourceSku);
+  }
+
+  final skus = skusByUid.values.toList();
+  skus.sort(_compareSkuUnitCreatedAtAsc);
+  return skus.toList(growable: false);
 }
 
 SkuEntity? baseUnitSkuForVariant(SkuFormState state) {
@@ -49,7 +54,11 @@ List<UnitEntity> availableUnitsForDraft(
         .where((item) => item.id != draft.id && item.unit.id > 0)
         .map((item) => item.unit.id),
   };
-  return state.units.where((unit) => !blockedIds.contains(unit.id)).toList();
+  final units = state.units
+      .where((unit) => !blockedIds.contains(unit.id))
+      .toList();
+  units.sort(_compareUnitCreatedAtAsc);
+  return units.toList(growable: false);
 }
 
 UnitEntity unitFromText(List<UnitEntity> units, String name, int fallbackId) {
@@ -58,4 +67,33 @@ UnitEntity unitFromText(List<UnitEntity> units, String name, int fallbackId) {
       .where((unit) => unit.name.trim().toLowerCase() == normalizedName)
       .firstOrNull;
   return existing ?? UnitEntity(id: fallbackId, name: name.trim());
+}
+
+int _compareSkuUnitCreatedAtAsc(SkuEntity left, SkuEntity right) {
+  final createdAtCompare = _compareNullableDateTime(
+    left.unit?.createdAt ?? left.createdAt,
+    right.unit?.createdAt ?? right.createdAt,
+  );
+  if (createdAtCompare != 0) return createdAtCompare;
+
+  final idCompare = (left.unit?.id ?? 0).compareTo(right.unit?.id ?? 0);
+  if (idCompare != 0) return idCompare;
+
+  return left.uid.compareTo(right.uid);
+}
+
+int _compareUnitCreatedAtAsc(UnitEntity left, UnitEntity right) {
+  final createdAtCompare = _compareNullableDateTime(
+    left.createdAt,
+    right.createdAt,
+  );
+  if (createdAtCompare != 0) return createdAtCompare;
+  return left.id.compareTo(right.id);
+}
+
+int _compareNullableDateTime(DateTime? left, DateTime? right) {
+  if (left == null && right == null) return 0;
+  if (left == null) return 1;
+  if (right == null) return -1;
+  return left.compareTo(right);
 }

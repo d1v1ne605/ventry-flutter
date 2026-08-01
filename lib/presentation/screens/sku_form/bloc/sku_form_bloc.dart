@@ -17,10 +17,12 @@ import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/configure_product_units_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/create_product_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_unit_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/create_sku_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_latest_generated_sku_code_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_spu_by_uid_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_sku_by_uid_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_skus_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/get_units_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/product/update_sku_images_usecase.dart';
@@ -35,6 +37,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
   final GetLocalAttributesUseCase _getLocalAttributesUseCase;
   final CreateAttributeValueUseCase _createAttributeValueUseCase;
   final CreateSkuUseCase _createSkuUseCase;
+  final CreateProductUseCase _createProductUseCase;
   final GetLatestGeneratedSkuCodeUseCase _getLatestGeneratedSkuCodeUseCase;
   final UpdateSkuUseCase _updateSkuUseCase;
   final UpdateSkuImagesUseCase _updateSkuImagesUseCase;
@@ -42,6 +45,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
   final CreateUnitUseCase _createUnitUseCase;
   final GetSkusUseCase _getSkusUseCase;
   final GetSpuByUidUseCase _getSpuByUidUseCase;
+  final GetSkuByUidUseCase _getSkuByUidUseCase;
   final ConfigureProductUnitsUseCase _configureProductUnitsUseCase;
 
   SkuFormBloc(
@@ -49,6 +53,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     this._getLocalAttributesUseCase,
     this._createAttributeValueUseCase,
     this._createSkuUseCase,
+    this._createProductUseCase,
     this._getLatestGeneratedSkuCodeUseCase,
     this._updateSkuUseCase, {
     required SkuFormMode mode,
@@ -58,12 +63,14 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     required CreateUnitUseCase createUnitUseCase,
     required GetSkusUseCase getSkusUseCase,
     required GetSpuByUidUseCase getSpuByUidUseCase,
+    required GetSkuByUidUseCase getSkuByUidUseCase,
     required ConfigureProductUnitsUseCase configureProductUnitsUseCase,
   }) : _updateSkuImagesUseCase = updateSkuImagesUseCase,
        _getUnitsUseCase = getUnitsUseCase,
        _createUnitUseCase = createUnitUseCase,
        _getSkusUseCase = getSkusUseCase,
        _getSpuByUidUseCase = getSpuByUidUseCase,
+       _getSkuByUidUseCase = getSkuByUidUseCase,
        _configureProductUnitsUseCase = configureProductUnitsUseCase,
        super(
          mode.isCreate
@@ -290,7 +297,11 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     }
 
     final skusResult = await _getSkusUseCase(
-      SkuQueryParams(spuUid: state.sourceSku.spuUid, limit: 100),
+      SkuQueryParams(
+        spuUid: state.sourceSku.spuUid,
+        status: 'ACTIVE',
+        limit: 100,
+      ),
     );
 
     skusResult.fold(
@@ -439,12 +450,17 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
 
     var workingState = state.copyWith(unitPriceEdits: const {});
     if (currentPriceChanged && !currentInfoChanged && !currentRemoved) {
+      final latestSourceSku = await _resolveLatestSourceSku(state, emit);
+      if (latestSourceSku == null) {
+        return;
+      }
+
       final updateResult = await _updateSkuUseCase(
         UpdateSkuParams(
-          skuUid: state.sourceSku.uid,
-          version: state.sourceSku.version,
+          skuUid: latestSourceSku.uid,
+          version: latestSourceSku.version,
           sellingPrice: _currentSellingPrice(state),
-          attributeValueUids: _attributeValueUids(state.sourceSku),
+          attributeValueUids: _attributeValueUids(latestSourceSku),
         ),
       );
       SkuEntity? updatedPriceSku;
@@ -479,6 +495,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
             currentUnitEdit: const SkuFormCurrentUnitEdit(),
             unitStatus: BaseStatus.success,
             unitConfigurationSaved: true,
+            unitSaveResult: SkuFormUnitSaveResult.updated,
             clearErrorMessage: true,
           ),
         );
@@ -548,6 +565,15 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
       return;
     }
 
+    if (_isSourceBaseSku(resolvedState) && currentInfoChanged) {
+      await _createBaseUnitProductStructure(
+        resolvedState,
+        resolvedDrafts,
+        emit,
+      );
+      return;
+    }
+
     if (!currentRemoved && !currentInfoChanged && resolvedDrafts.isEmpty) {
       emit(
         resolvedState.copyWith(
@@ -580,6 +606,22 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     if (latestSpuVersion == null) {
       return;
     }
+    final replacementCreateSku = currentInfoChanged && !currentRemoved
+        ? createSkus.firstOrNull
+        : null;
+    final unitSaveResult = _unitSaveResult(
+      currentRemoved: currentRemoved,
+      currentInfoChanged: currentInfoChanged,
+      currentPriceChanged: currentPriceChanged,
+      addedDraftCount: resolvedDrafts.length,
+    );
+    SkuEntity? latestSourceSku;
+    if (currentRemoved || currentInfoChanged) {
+      latestSourceSku = await _resolveLatestSourceSku(resolvedState, emit);
+      if (latestSourceSku == null) {
+        return;
+      }
+    }
 
     final result = await _configureProductUnitsUseCase(
       ProductUnitConfigurationParams(
@@ -589,8 +631,8 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
         discontinueSkus: [
           if (currentRemoved || currentInfoChanged)
             ProductUnitSkuDiscontinueParams(
-              skuUid: state.sourceSku.uid,
-              version: state.sourceSku.version,
+              skuUid: latestSourceSku!.uid,
+              version: latestSourceSku.version,
             ),
         ],
       ),
@@ -606,17 +648,21 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
         );
       },
       (product) {
-        final latestSourceSku = product.skus
-            .where((sku) => sku.uid == state.sourceSku.uid)
-            .firstOrNull;
+        final sourceSku = _postUnitSaveSourceSku(
+          product.skus,
+          resolvedState,
+          replacementCreateSku: replacementCreateSku,
+          currentRemoved: currentRemoved,
+        );
         emit(
           resolvedState.copyWith(
-            sourceSku: latestSourceSku ?? state.sourceSku,
+            sourceSku: sourceSku,
             siblingSkus: product.skus,
             unitStatus: BaseStatus.success,
             unitDrafts: const [],
             currentUnitEdit: const SkuFormCurrentUnitEdit(),
             unitConfigurationSaved: true,
+            unitSaveResult: unitSaveResult,
             clearErrorMessage: true,
           ),
         );
@@ -919,8 +965,10 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     final currentRemoved = formState.currentUnitEdit.isRemoved;
     final currentInfoChanged = _currentUnitInfoChanged(formState);
     final isBaseSku = sourceSku.uid == _baseUnitSku(formState)?.uid;
+    final isBaseStructureChange =
+        isBaseSku && currentInfoChanged && !currentRemoved;
 
-    if (isBaseSku && currentInfoChanged) {
+    if (isBaseSku && currentRemoved) {
       return AppStrings.productUnitBaseEditUnsupported;
     }
 
@@ -943,7 +991,9 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
     }
 
     for (final sku in _sameAttributeSkus(formState)) {
-      addExistingUnit(sku.unit);
+      if (!isBaseStructureChange) {
+        addExistingUnit(sku.unit);
+      }
       final skuCode = _normalize(sku.skuCode ?? '');
       if (skuCode.isNotEmpty) usedSkuCodes.add(skuCode);
     }
@@ -1001,6 +1051,170 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
       );
       return null;
     }, (spu) => spu.version);
+  }
+
+  Future<SkuEntity?> _resolveLatestSourceSku(
+    SkuFormState formState,
+    Emitter<SkuFormState> emit,
+  ) async {
+    final result = await _getSkuByUidUseCase(formState.sourceSku.uid);
+    return result.fold((failure) {
+      emit(
+        formState.copyWith(
+          unitStatus: BaseStatus.failure,
+          errorMessage: mapFailureToMessage(failure),
+        ),
+      );
+      return null;
+    }, (sku) => sku);
+  }
+
+  Future<void> _createBaseUnitProductStructure(
+    SkuFormState formState,
+    List<SkuFormUnitDraft> drafts,
+    Emitter<SkuFormState> emit,
+  ) async {
+    final baseUnit = _currentUnit(formState);
+    if (baseUnit == null || baseUnit.id <= 0) {
+      emit(
+        formState.copyWith(
+          unitStatus: BaseStatus.failure,
+          errorMessage: AppStrings.productUnitInvalidConversion,
+        ),
+      );
+      return;
+    }
+
+    final pendingSkus = [
+      _baseUnitStructureBaseSku(formState, baseUnit),
+      ...drafts.map((draft) => _draftCreateSku(formState, draft)),
+    ];
+    final skus = await _resolveUnitCreateSkuCodes(pendingSkus, formState, emit);
+    if (skus == null) return;
+
+    final result = await _createProductUseCase(
+      CreateProductParams(
+        name: _baseUnitStructureName(formState, baseUnit),
+        categoryUid: formState.form.categoryUid,
+        description: formState.form.description.trim().isEmpty
+            ? null
+            : formState.form.description.trim(),
+        currency: formState.form.currency.trim().isEmpty
+            ? null
+            : formState.form.currency.trim(),
+        unitOfMeasure: baseUnit.name,
+        baseUnitId: baseUnit.id,
+        skus: skus,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        emit(
+          formState.copyWith(
+            unitStatus: BaseStatus.failure,
+            errorMessage: mapFailureToMessage(failure),
+          ),
+        );
+      },
+      (_) {
+        emit(
+          formState.copyWith(
+            unitStatus: BaseStatus.success,
+            unitDrafts: const [],
+            currentUnitEdit: const SkuFormCurrentUnitEdit(),
+            unitConfigurationSaved: true,
+            unitSaveResult: SkuFormUnitSaveResult.updated,
+            clearErrorMessage: true,
+          ),
+        );
+      },
+    );
+  }
+
+  CreateSkuParams _baseUnitStructureBaseSku(
+    SkuFormState formState,
+    UnitEntity baseUnit,
+  ) {
+    return CreateSkuParams(
+      sellingPrice: _currentSellingPrice(formState),
+      costPrice: formState.sourceSku.costPrice,
+      stockQuantity: 0,
+      minStockQuantity: formState.sourceSku.minStockQuantity,
+      unitId: baseUnit.id,
+      conversionFactor: 1,
+      imageKeys: formState.sourceSku.imageKeys,
+      isSellable: formState.sourceSku.isSellable,
+      attributeValueUids: formState.sourceAttributeValueUids,
+    );
+  }
+
+  String _baseUnitStructureName(SkuFormState formState, UnitEntity baseUnit) {
+    final productName = formState.form.skuName.trim().isEmpty
+        ? formState.sourceSku.spuName
+        : formState.form.skuName.trim();
+    final unitName = baseUnit.name.trim();
+    if (unitName.isEmpty || productName.contains(unitName)) return productName;
+    return '$productName - $unitName';
+  }
+
+  SkuFormUnitSaveResult _unitSaveResult({
+    required bool currentRemoved,
+    required bool currentInfoChanged,
+    required bool currentPriceChanged,
+    required int addedDraftCount,
+  }) {
+    if (currentRemoved) return SkuFormUnitSaveResult.removed;
+    if (currentInfoChanged || currentPriceChanged) {
+      return SkuFormUnitSaveResult.updated;
+    }
+    if (addedDraftCount > 0) return SkuFormUnitSaveResult.added;
+    return SkuFormUnitSaveResult.updated;
+  }
+
+  SkuEntity _postUnitSaveSourceSku(
+    List<SkuEntity> skus,
+    SkuFormState formState, {
+    required CreateSkuParams? replacementCreateSku,
+    required bool currentRemoved,
+  }) {
+    if (replacementCreateSku != null) {
+      final replacement = skus
+          .where((sku) => _matchesCreatedSku(sku, replacementCreateSku))
+          .firstOrNull;
+      if (replacement != null) return replacement;
+    }
+
+    final activeSameVariantSkus = skus
+        .where((sku) => sku.status == 'ACTIVE')
+        .where((sku) => _hasSameAttributeValues(sku, formState))
+        .toList();
+    final activeSourceSku = activeSameVariantSkus
+        .where((sku) => sku.uid == formState.sourceSku.uid)
+        .firstOrNull;
+    if (activeSourceSku != null) return activeSourceSku;
+    if (activeSameVariantSkus.isNotEmpty) return activeSameVariantSkus.first;
+    if (!currentRemoved && formState.sourceSku.status == 'ACTIVE') {
+      return formState.sourceSku;
+    }
+    return formState.sourceSku;
+  }
+
+  bool _matchesCreatedSku(SkuEntity sku, CreateSkuParams params) {
+    if (sku.status != 'ACTIVE') return false;
+    final skuCode = params.skuCode?.trim();
+    if (skuCode != null && skuCode.isNotEmpty && sku.skuCode != skuCode) {
+      return false;
+    }
+    if (params.unitId != null && sku.unit?.id != params.unitId) return false;
+    if (params.conversionFactor != null &&
+        sku.conversionFactor != params.conversionFactor) {
+      return false;
+    }
+    return _sameAttributeValues(
+      _attributeValueUids(sku),
+      params.attributeValueUids,
+    );
   }
 
   Future<List<CreateSkuParams>?> _resolveUnitCreateSkuCodes(
@@ -1093,6 +1307,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
       minStockQuantity: formState.sourceSku.minStockQuantity,
       unitId: _currentUnit(formState)?.id,
       conversionFactor: factor,
+      replacementForSkuUid: formState.sourceSku.uid,
       imageKeys: formState.sourceSku.imageKeys,
       isSellable: formState.sourceSku.isSellable,
       attributeValueUids: formState.sourceAttributeValueUids,
@@ -1130,6 +1345,7 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
       minStockQuantity: sku.minStockQuantity,
       unitId: sku.unitId,
       conversionFactor: sku.conversionFactor,
+      replacementForSkuUid: sku.replacementForSkuUid,
       imageKeys: sku.imageKeys,
       isSellable: sku.isSellable,
       attributeValueUids: sku.attributeValueUids,
@@ -1137,18 +1353,26 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
   }
 
   Iterable<SkuEntity> _sameAttributeSkus(SkuFormState formState) {
-    final sourceUids = formState.sourceAttributeValueUids.toSet();
     return formState.siblingSkus.where((sku) {
       if (sku.uid == formState.sourceSku.uid || sku.status != 'ACTIVE') {
         return false;
       }
-      final skuUids = sku.attributes
-          .map((attribute) => attribute.uid)
-          .where((uid) => uid.trim().isNotEmpty)
-          .toSet();
-      return sourceUids.length == skuUids.length &&
-          sourceUids.every(skuUids.contains);
+      return _hasSameAttributeValues(sku, formState);
     });
+  }
+
+  bool _hasSameAttributeValues(SkuEntity sku, SkuFormState formState) {
+    return _sameAttributeValues(
+      _attributeValueUids(sku),
+      formState.sourceAttributeValueUids,
+    );
+  }
+
+  bool _sameAttributeValues(List<String> left, List<String> right) {
+    final leftUids = left.toSet();
+    final rightUids = right.toSet();
+    return leftUids.length == rightUids.length &&
+        leftUids.every(rightUids.contains);
   }
 
   SkuEntity? _findSameVariantSku(SkuFormState formState, String skuUid) {
@@ -1200,6 +1424,10 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
 
   bool _isBaseUnit(SkuFormState formState, UnitEntity unit) {
     return unit.id > 0 && unit.id == formState.sourceSku.spuBaseUnit?.id;
+  }
+
+  bool _isSourceBaseSku(SkuFormState formState) {
+    return formState.sourceSku.uid == _baseUnitSku(formState)?.uid;
   }
 
   List<SkuEntity> _replaceSku(List<SkuEntity> skus, SkuEntity replacement) {

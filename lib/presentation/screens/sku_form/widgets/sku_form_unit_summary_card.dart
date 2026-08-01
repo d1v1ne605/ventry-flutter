@@ -24,9 +24,22 @@ class SkuFormUnitSummaryCard extends StatelessWidget {
     );
 
     if (updated == true && context.mounted) {
-      AppSnackBar.showSuccess(context, AppStrings.productUnitAddedSuccess);
+      if (bloc.state.unitSaveResult == SkuFormUnitSaveResult.removed) {
+        Navigator.of(context).pop(SkuFormUnitSaveResult.removed);
+        return;
+      }
+
+      AppSnackBar.showSuccess(context, _successMessage(bloc.state));
       bloc.add(const SkuFormUnitDataRequested());
     }
+  }
+
+  String _successMessage(SkuFormState state) {
+    return switch (state.unitSaveResult) {
+      SkuFormUnitSaveResult.removed => AppStrings.productUnitRemovedSuccess,
+      SkuFormUnitSaveResult.updated => AppStrings.productUnitUpdatedSuccess,
+      _ => AppStrings.productUnitAddedSuccess,
+    };
   }
 
   @override

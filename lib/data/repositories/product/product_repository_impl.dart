@@ -374,7 +374,6 @@ class ProductRepositoryImpl implements ProductRepository {
         description: params.description,
         brand: params.brand,
         currency: params.currency,
-        unitOfMeasure: params.unitOfMeasure,
         baseUnitId: params.baseUnitId,
         globalAttributeValueUids: params.globalAttributeValueUids,
         skus: params.skus.map(_mapSkuParamsToRequest).toList(),
@@ -429,6 +428,7 @@ class ProductRepositoryImpl implements ProductRepository {
       spuStatus: spu?.status ?? _unknownSpuStatus,
       spuVersion: spu?.version ?? 1,
       spuDescription: spu?.description,
+      spuCategoryUid: spu?.category?.uid,
       spuCategoryName: spu?.category?.name,
       spuCurrency: spu?.currency,
       spuUnitOfMeasure: spu?.unitOfMeasure,
@@ -507,7 +507,11 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   Map<String, dynamic> _mapSkuParamsToJson(CreateSkuParams params) {
-    return _mapSkuParamsToRequest(params).toJson();
+    return {
+      ..._mapSkuParamsToRequest(params).toJson(),
+      if (params.replacementForSkuUid != null)
+        'replacementForSkuUid': params.replacementForSkuUid,
+    };
   }
 
   Map<String, dynamic> _mapSkuUpdateToJson(ProductUnitSkuUpdateParams params) {

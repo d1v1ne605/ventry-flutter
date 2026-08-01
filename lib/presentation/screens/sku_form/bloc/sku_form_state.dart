@@ -16,6 +16,8 @@ enum SkuFormMode {
   bool get isCreate => this == SkuFormMode.create;
 }
 
+enum SkuFormUnitSaveResult { added, updated, removed }
+
 class SkuFormData extends Equatable {
   const SkuFormData({
     required this.skuName,
@@ -35,6 +37,7 @@ class SkuFormData extends Equatable {
     return SkuFormData(
       skuName: sku.spuName,
       categoryName: sku.spuCategoryName ?? '',
+      categoryUid: sku.spuCategoryUid,
       barcode: sku.barCode ?? '',
       skuCode: sku.skuCode ?? '',
       costPrice: _formatPrice(sku.costPrice),
@@ -50,6 +53,7 @@ class SkuFormData extends Equatable {
     return SkuFormData(
       skuName: sku.spuName,
       categoryName: sku.spuCategoryName ?? '',
+      categoryUid: sku.spuCategoryUid,
       barcode: '',
       skuCode: '',
       costPrice: '',
@@ -145,6 +149,7 @@ class SkuFormState extends Equatable {
     this.unitPriceEdits = const {},
     this.currentUnitEdit = const SkuFormCurrentUnitEdit(),
     this.unitConfigurationSaved = false,
+    this.unitSaveResult,
   });
 
   factory SkuFormState.edit(SkuEntity sku) {
@@ -195,6 +200,7 @@ class SkuFormState extends Equatable {
   final Map<String, double> unitPriceEdits;
   final SkuFormCurrentUnitEdit currentUnitEdit;
   final bool unitConfigurationSaved;
+  final SkuFormUnitSaveResult? unitSaveResult;
 
   String get selectedCategoryName => form.categoryName;
 
@@ -285,6 +291,7 @@ class SkuFormState extends Equatable {
     SkuFormCurrentUnitEdit? currentUnitEdit,
     bool? unitConfigurationSaved,
     bool clearUnitConfigurationSaved = false,
+    SkuFormUnitSaveResult? unitSaveResult,
   }) {
     return SkuFormState(
       mode: mode ?? this.mode,
@@ -309,6 +316,9 @@ class SkuFormState extends Equatable {
       unitConfigurationSaved: clearUnitConfigurationSaved
           ? false
           : (unitConfigurationSaved ?? this.unitConfigurationSaved),
+      unitSaveResult: clearUnitConfigurationSaved
+          ? null
+          : (unitSaveResult ?? this.unitSaveResult),
     );
   }
 
@@ -437,5 +447,6 @@ class SkuFormState extends Equatable {
     unitPriceEdits,
     currentUnitEdit,
     unitConfigurationSaved,
+    unitSaveResult,
   ];
 }
