@@ -11,18 +11,22 @@ import 'package:ventry_flutter/data/models/product/request/create_presigned_uplo
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/unit_requests.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_spu_request.dart';
+import 'package:ventry_flutter/data/models/product/response/product_response.dart';
 import 'package:ventry_flutter/data/models/product/response/spu_response.dart';
 import 'package:ventry_flutter/domain/entities/product/product_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/create_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/delete_sku_params.dart';
+import 'package:ventry_flutter/domain/entities/product/product_unit_configuration_params.dart';
 import 'package:ventry_flutter/domain/entities/product/product_params.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/sku_spu_group_list_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_images_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_sku_params.dart';
 import 'package:ventry_flutter/domain/entities/product/update_spu_params.dart';
@@ -84,6 +88,7 @@ class ProductRepositoryImpl implements ProductRepository {
                   categoryImageUrl: group.spu.category?.imageUrl,
                   currency: group.spu.currency,
                   unitOfMeasure: group.spu.unitOfMeasure,
+                  baseUnit: group.spu.baseUnit?.toEntity(),
                   skus: group.skus
                       .map(
                         (sku) => _mapSkuToEntity(sku, fallbackSpu: group.spu),
@@ -130,6 +135,32 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<Either<Failure, List<UnitEntity>>> getUnits() async {
+    try {
+      final response = await _productApi.getUnits();
+      return Right(response.map((unit) => unit.toEntity()).toList());
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitEntity>> createUnit(String name) async {
+    try {
+      final response = await _productApi.createUnit(
+        CreateUnitRequest(name: name),
+      );
+      return Right(response.toEntity());
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
   Future<Either<Failure, SkuEntity>> createSku(AddSkuParams params) async {
     try {
       final response = await _productApi.createSku(
@@ -141,6 +172,8 @@ class ProductRepositoryImpl implements ProductRepository {
           costPrice: params.costPrice,
           stockQuantity: params.stockQuantity,
           minStockQuantity: params.minStockQuantity,
+          unitId: params.unitId,
+          conversionFactor: params.conversionFactor,
           imageKeys: params.imageKeys,
           isSellable: params.isSellable,
           attributeValueUids: params.attributeValueUids,
@@ -167,6 +200,8 @@ class ProductRepositoryImpl implements ProductRepository {
           costPrice: params.costPrice,
           stockQuantity: params.stockQuantity,
           minStockQuantity: params.minStockQuantity,
+          unitId: params.unitId,
+          conversionFactor: params.conversionFactor,
           isSellable: params.isSellable,
           attributeValueUids: params.attributeValueUids,
         ),
@@ -209,6 +244,35 @@ class ProductRepositoryImpl implements ProductRepository {
         ),
       );
       return Right(_mapSpuToEntity(response));
+    } on DioException catch (e) {
+      return Left(e.toFailure());
+    } catch (e) {
+      return const Left(ServerFailure(AppErrors.unexpected));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ProductEntity>> configureProductUnits(
+    ProductUnitConfigurationParams params,
+  ) async {
+    try {
+      final response = await _productApi.configureProductUnits(
+        params.spuUid,
+        ProductUnitConfigurationRequest(
+          version: params.version,
+          baseUnitId: params.baseUnitId,
+          createSkus: params.createSkus.isEmpty
+              ? null
+              : params.createSkus.map(_mapSkuParamsToJson).toList(),
+          updateSkus: params.updateSkus.isEmpty
+              ? null
+              : params.updateSkus.map(_mapSkuUpdateToJson).toList(),
+          discontinueSkus: params.discontinueSkus.isEmpty
+              ? null
+              : params.discontinueSkus.map(_mapSkuDiscontinueToJson).toList(),
+        ),
+      );
+      return Right(_mapProductResponseToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
@@ -310,30 +374,12 @@ class ProductRepositoryImpl implements ProductRepository {
         description: params.description,
         brand: params.brand,
         currency: params.currency,
-        unitOfMeasure: params.unitOfMeasure,
+        baseUnitId: params.baseUnitId,
         globalAttributeValueUids: params.globalAttributeValueUids,
         skus: params.skus.map(_mapSkuParamsToRequest).toList(),
       );
       final response = await _productApi.createProduct(request);
-      return Right(
-        ProductEntity(
-          spuUid: response.spu.uid,
-          spuName: response.spu.name,
-          brand: response.spu.brand,
-          description: response.spu.description,
-          imageKey: response.spu.imageKey,
-          imageUrl: response.spu.imageUrl,
-          categoryUid: response.spu.category?.uid,
-          currency: response.spu.currency,
-          unitOfMeasure: response.spu.unitOfMeasure,
-          status: response.spu.status,
-          skus: response.skus
-              .map((sku) => _mapSkuToEntity(sku, fallbackSpu: response.spu))
-              .toList(),
-          createdAt: response.spu.createdAt,
-          updatedAt: response.spu.updatedAt,
-        ),
-      );
+      return Right(_mapProductResponseToEntity(response));
     } on DioException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
@@ -370,6 +416,8 @@ class ProductRepositoryImpl implements ProductRepository {
       costPrice: response.costPrice?.toDouble(),
       stockQuantity: response.stockQuantity,
       minStockQuantity: response.minStockQuantity,
+      unit: response.unit?.toEntity(),
+      conversionFactor: response.conversionFactor?.toDouble(),
       imageKeys: List<String>.from(response.imageKeys),
       imageUrls: List<String>.from(response.imageUrls),
       status: response.status,
@@ -378,10 +426,13 @@ class ProductRepositoryImpl implements ProductRepository {
       spuUid: spu?.uid ?? '',
       spuName: spu?.name ?? _unknownSpuName,
       spuStatus: spu?.status ?? _unknownSpuStatus,
+      spuVersion: spu?.version ?? 1,
       spuDescription: spu?.description,
+      spuCategoryUid: spu?.category?.uid,
       spuCategoryName: spu?.category?.name,
       spuCurrency: spu?.currency,
       spuUnitOfMeasure: spu?.unitOfMeasure,
+      spuBaseUnit: spu?.baseUnit?.toEntity(),
       attributes:
           (response.attributes as List<dynamic>?)
               ?.map(
@@ -406,6 +457,8 @@ class ProductRepositoryImpl implements ProductRepository {
       costPrice: params.costPrice,
       stockQuantity: params.stockQuantity,
       minStockQuantity: params.minStockQuantity,
+      unitId: params.unitId,
+      conversionFactor: params.conversionFactor,
       imageKeys: params.imageKeys,
       isSellable: params.isSellable,
       attributeValueUids: params.attributeValueUids,
@@ -422,6 +475,7 @@ class ProductRepositoryImpl implements ProductRepository {
       imageUrl: response.imageUrl,
       currency: response.currency,
       unitOfMeasure: response.unitOfMeasure,
+      baseUnit: response.baseUnit?.toEntity(),
       status: response.status,
       version: response.version,
       categoryUid: response.category?.uid,
@@ -430,6 +484,50 @@ class ProductRepositoryImpl implements ProductRepository {
       createdAt: response.createdAt,
       updatedAt: response.updatedAt,
     );
+  }
+
+  ProductEntity _mapProductResponseToEntity(ProductResponse response) {
+    return ProductEntity(
+      spuUid: response.spu.uid,
+      spuName: response.spu.name,
+      brand: response.spu.brand,
+      description: response.spu.description,
+      imageKey: response.spu.imageKey,
+      imageUrl: response.spu.imageUrl,
+      categoryUid: response.spu.category?.uid,
+      currency: response.spu.currency,
+      unitOfMeasure: response.spu.unitOfMeasure,
+      status: response.spu.status,
+      skus: response.skus
+          .map((sku) => _mapSkuToEntity(sku, fallbackSpu: response.spu))
+          .toList(),
+      createdAt: response.spu.createdAt,
+      updatedAt: response.spu.updatedAt,
+    );
+  }
+
+  Map<String, dynamic> _mapSkuParamsToJson(CreateSkuParams params) {
+    return {
+      ..._mapSkuParamsToRequest(params).toJson(),
+      if (params.replacementForSkuUid != null)
+        'replacementForSkuUid': params.replacementForSkuUid,
+    };
+  }
+
+  Map<String, dynamic> _mapSkuUpdateToJson(ProductUnitSkuUpdateParams params) {
+    return {
+      'skuUid': params.skuUid,
+      'version': params.version,
+      if (params.unitId != null) 'unitId': params.unitId,
+      if (params.conversionFactor != null)
+        'conversionFactor': params.conversionFactor,
+    };
+  }
+
+  Map<String, dynamic> _mapSkuDiscontinueToJson(
+    ProductUnitSkuDiscontinueParams params,
+  ) {
+    return {'skuUid': params.skuUid, 'version': params.version};
   }
 
   Future<void> _uploadToPresignedUrl({

@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:ventry_flutter/data/models/product/request/create_presigned_upload_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_product_request.dart';
 import 'package:ventry_flutter/data/models/product/request/create_sku_request.dart';
+import 'package:ventry_flutter/data/models/product/request/unit_requests.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_images_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_sku_request.dart';
 import 'package:ventry_flutter/data/models/product/request/update_spu_request.dart';
@@ -12,6 +13,7 @@ import 'package:ventry_flutter/data/models/product/response/presigned_upload_res
 import 'package:ventry_flutter/data/models/product/response/sku_response.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_spu_group_response.dart';
 import 'package:ventry_flutter/data/models/product/response/spu_response.dart';
+import 'package:ventry_flutter/data/models/product/response/unit_response.dart';
 
 part 'product_api.g.dart';
 
@@ -21,6 +23,12 @@ abstract class ProductApi {
 
   @POST('/products')
   Future<ProductResponse> createProduct(@Body() CreateProductRequest request);
+
+  @GET('/units')
+  Future<List<UnitResponse>> getUnits();
+
+  @POST('/units')
+  Future<UnitResponse> createUnit(@Body() CreateUnitRequest request);
 
   @GET('/skus/spu-groups')
   Future<SkuSpuGroupListResponse> getSkus({
@@ -65,6 +73,12 @@ abstract class ProductApi {
   Future<SpuResponse> updateSpu(
     @Path('spuUid') String spuUid,
     @Body() UpdateSpuRequest request,
+  );
+
+  @PATCH('/spus/{spuUid}/unit-configuration')
+  Future<ProductResponse> configureProductUnits(
+    @Path('spuUid') String spuUid,
+    @Body() ProductUnitConfigurationRequest request,
   );
 
   @GET('/skus/generated-code/latest')

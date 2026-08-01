@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ventry_flutter/data/models/category/response/category_response.dart';
+import 'package:ventry_flutter/data/models/product/response/unit_response.dart';
 
 part 'spu_response.freezed.dart';
 part 'spu_response.g.dart';
@@ -16,6 +17,7 @@ class SpuResponse with _$SpuResponse {
     CategoryResponse? category,
     String? currency,
     String? unitOfMeasure,
+    UnitResponse? baseUnit,
     required String status,
     required int version,
     required DateTime createdAt,

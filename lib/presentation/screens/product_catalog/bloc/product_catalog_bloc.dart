@@ -235,6 +235,8 @@ class ProductCatalogBloc
           costPrice: sku.costPrice,
           stockQuantity: sku.stockQuantity,
           minStockQuantity: sku.minStockQuantity,
+          unitId: sku.unitId,
+          conversionFactor: sku.conversionFactor,
           imageKeys: sku.imageKeys,
           isSellable: sku.isSellable,
           attributeValueUids: sku.attributeValueUids,
@@ -251,6 +253,7 @@ class ProductCatalogBloc
       imageKeys: event.params.imageKeys,
       currency: event.params.currency,
       unitOfMeasure: event.params.unitOfMeasure,
+      baseUnitId: event.params.baseUnitId,
       globalAttributeValueUids: event.params.globalAttributeValueUids,
       skus: updatedSkus,
     );

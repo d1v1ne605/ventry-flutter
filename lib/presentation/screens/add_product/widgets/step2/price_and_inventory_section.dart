@@ -173,7 +173,7 @@ class _PriceAndInventorySectionState extends State<PriceAndInventorySection> {
               builder: (context, state) {
                 return Switch(
                   value: state.globalIsSellable,
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                   onChanged: (val) {
                     context.read<AddProductBloc>().add(
                       UpdateGlobalIsSellableEvent(val),

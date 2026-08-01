@@ -15,6 +15,8 @@ class CreateProductSkuRequest with _$CreateProductSkuRequest {
     double? costPrice,
     int? stockQuantity,
     int? minStockQuantity,
+    int? unitId,
+    double? conversionFactor,
     @Default([]) List<String> imageKeys,
     @Default(true) bool isSellable,
     @Default([]) List<String> attributeValueUids,

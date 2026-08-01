@@ -55,7 +55,7 @@ class SkuPreviewSection extends StatelessWidget {
                       vertical: AppSize.size4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppSize.size4.r),
                     ),
                     child: Text(

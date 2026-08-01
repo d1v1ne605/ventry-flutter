@@ -18,6 +18,7 @@ import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/prod
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_catalog_top_bar.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_filter_chips.dart';
 import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_search_bar.dart';
+import 'package:ventry_flutter/presentation/screens/product_catalog/widgets/product_unit_group_card.dart';
 
 /// Product Catalog screen wrapped in [BlocProvider].
 /// Removed AppBottomNavBar — handled by MainLayout (ShellRoute).
@@ -156,9 +157,12 @@ class _ProductCatalogBody extends StatelessWidget {
               final isFlatMode =
                   state.displayMode == ProductCatalogDisplayMode.flat;
               final flatSkus = state.flattenedSkus;
+              final unitGroups = state.spuGroups
+                  .expand((group) => group.unitGroups)
+                  .toList(growable: false);
               final itemCount = isFlatMode
                   ? flatSkus.length
-                  : state.spuGroups.length;
+                  : unitGroups.length;
 
               if (itemCount == 0) {
                 return const SliverFillRemaining(child: _EmptyState());
@@ -191,7 +195,7 @@ class _ProductCatalogBody extends StatelessWidget {
                               onTap: () =>
                                   _openSkuDetails(ctx, flatSkus[i].uid),
                             )
-                          : _GroupedProductCard(group: state.spuGroups[i]),
+                          : _GroupedProductCard(group: unitGroups[i]),
                     );
                   }, childCount: itemCount + (state.isLoadingMore ? 1 : 0)),
                 ),
@@ -218,14 +222,14 @@ class _ProductCatalogBody extends StatelessWidget {
 class _GroupedProductCard extends StatelessWidget {
   const _GroupedProductCard({required this.group});
 
-  final SkuSpuGroupEntity group;
+  final SkuSpuUnitGroupEntity group;
 
   @override
   Widget build(BuildContext context) {
-    return ProductCard(
+    return ProductUnitGroupCard(
       group: group,
       onTap: () async {
-        final sku = group.representativeSku;
+        final sku = group.summarySku;
         if (sku == null) {
           return;
         }
@@ -233,7 +237,10 @@ class _GroupedProductCard extends StatelessWidget {
         if (group.variantCount > 1) {
           context.pushNamed(
             RouterName.spuVariants,
-            pathParameters: {'spuUid': group.spuUid},
+            pathParameters: {'spuUid': group.parent.spuUid},
+            queryParameters: {
+              if (group.unit?.id != null) 'unitId': group.unit!.id.toString(),
+            },
           );
           return;
         }

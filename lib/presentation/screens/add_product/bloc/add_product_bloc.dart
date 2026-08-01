@@ -8,6 +8,8 @@ import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_usecas
 import 'package:ventry_flutter/domain/usecases/attribute/create_attribute_value_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/get_local_attributes_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/attribute/sync_attributes_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/create_unit_usecase.dart';
+import 'package:ventry_flutter/domain/usecases/product/get_units_usecase.dart';
 import 'package:ventry_flutter/domain/usecases/usecase.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_event.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
@@ -18,14 +20,19 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
   final SyncAttributesUseCase _syncAttributes;
   final CreateAttributeUseCase _createAttribute;
   final CreateAttributeValueUseCase _createAttributeValue;
+  final GetUnitsUseCase _getUnits;
+  final CreateUnitUseCase _createUnit;
 
   AddProductBloc(
     this._getLocalAttributes,
     this._syncAttributes,
     this._createAttribute,
     this._createAttributeValue,
+    this._getUnits,
+    this._createUnit,
   ) : super(const AddProductState()) {
     on<LoadAttributesEvent>(_onLoadAttributes);
+    on<LoadUnitsEvent>(_onLoadUnits);
     on<AddVariantGroupEvent>(_onAddVariantGroup);
     on<RemoveVariantGroupEvent>(_onRemoveVariantGroup);
     on<UpdateVariantGroupNameEvent>(
@@ -45,6 +52,12 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     on<UpdateGlobalIsSellableEvent>(_onUpdateGlobalIsSellable);
     on<UpdateGlobalSkuCodeEvent>(_onUpdateGlobalSkuCode);
     on<UpdateGlobalBarcodeEvent>(_onUpdateGlobalBarcode);
+    on<SelectBaseUnitEvent>(_onSelectBaseUnit);
+    on<ClearBaseUnitEvent>(_onClearBaseUnit);
+    on<CreateProductUnitEvent>(_onCreateProductUnit);
+    on<AddProductUnitDraftEvent>(_onAddProductUnitDraft);
+    on<UpdateProductUnitDraftEvent>(_onUpdateProductUnitDraft);
+    on<RemoveProductUnitDraftEvent>(_onRemoveProductUnitDraft);
   }
 
   Future<void> _onLoadAttributes(
@@ -80,6 +93,72 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     } else {
       emit(state.copyWith(status: BaseStatus.success));
     }
+  }
+
+  Future<void> _onLoadUnits(
+    LoadUnitsEvent event,
+    Emitter<AddProductState> emit,
+  ) async {
+    emit(state.copyWith(unitStatus: BaseStatus.loading));
+
+    final result = await _getUnits(NoParams());
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          unitStatus: BaseStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (units) => emit(
+        state.copyWith(
+          unitStatus: BaseStatus.success,
+          units: units,
+          selectedBaseUnit: state.selectedBaseUnit,
+        ),
+      ),
+    );
+
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  Future<void> _onCreateProductUnit(
+    CreateProductUnitEvent event,
+    Emitter<AddProductState> emit,
+  ) async {
+    final name = event.name.trim();
+    if (name.isEmpty) return;
+
+    emit(state.copyWith(unitStatus: BaseStatus.loading));
+    final result = await _createUnit(name);
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          unitStatus: BaseStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (unit) {
+        final units = [...state.units, unit];
+        final drafts = event.draftId == null
+            ? state.productUnitDrafts
+            : state.productUnitDrafts.map((draft) {
+                if (draft.id != event.draftId) return draft;
+                return draft.copyWith(unit: unit);
+              }).toList();
+        emit(
+          state.copyWith(
+            unitStatus: BaseStatus.success,
+            units: units,
+            productUnitDrafts: drafts,
+            selectedBaseUnit: event.selectAsBase
+                ? unit
+                : state.selectedBaseUnit,
+          ),
+        );
+      },
+    );
+
+    _generateSkus(emit, state.variantGroups);
   }
 
   void _onAddVariantGroup(
@@ -286,8 +365,9 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     List<VariantOptionGroup> groups,
   ) {
     final validGroups = groups.where((g) => g.values.isNotEmpty).toList();
+    final unitRows = state.unitRows;
 
-    if (validGroups.isEmpty) {
+    if (validGroups.isEmpty && unitRows.isEmpty) {
       emit(state.copyWith(generatedSkus: const []));
       return;
     }
@@ -304,16 +384,41 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
       combinations = newCombinations;
     }
 
-    final skus = combinations.asMap().entries.map((entry) {
+    if (validGroups.isEmpty) {
+      combinations = [[]];
+    }
+
+    final skuSeeds = unitRows.isEmpty
+        ? combinations.map((combo) => (combo: combo, unit: null)).toList()
+        : [
+            for (final combo in combinations)
+              for (final unit in unitRows) (combo: combo, unit: unit),
+          ];
+
+    final skus = skuSeeds.asMap().entries.map((entry) {
       final index = entry.key;
-      final combo = entry.value;
-      final name = combo.map((c) => c.value).join(' - ');
+      final combo = entry.value.combo;
+      final unit = entry.value.unit;
+      final optionName = combo.map((c) => c.value).join(' - ');
+      final name = unit == null
+          ? optionName
+          : optionName.isEmpty
+          ? unit.unit.name
+          : '$optionName - ${unit.unit.name}';
       final existingSku = state.generatedSkus
           .where((s) => s.name == name)
           .firstOrNull;
 
       if (existingSku != null) {
-        return existingSku.copyWith(options: combo);
+        final factor = unit?.conversionFactor ?? 1;
+        return existingSku.copyWith(
+          options: combo,
+          price: unit?.sellingPrice ?? state.globalPrice * factor,
+          costPrice: state.globalCostPrice * factor,
+          unitId: unit?.unit.id,
+          unitName: unit?.unit.name,
+          conversionFactor: unit?.conversionFactor,
+        );
       }
 
       String newSkuCode = '';
@@ -328,14 +433,18 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
         newBarcode = state.globalBarcode;
       }
 
+      final factor = unit?.conversionFactor ?? 1;
       return GeneratedSku(
         name: name,
         options: combo,
-        price: state.globalPrice,
-        costPrice: state.globalCostPrice,
+        price: unit?.sellingPrice ?? state.globalPrice * factor,
+        costPrice: state.globalCostPrice * factor,
         stock: state.globalStock,
         skuCode: newSkuCode,
         barcode: newBarcode,
+        unitId: unit?.unit.id,
+        unitName: unit?.unit.name,
+        conversionFactor: unit?.conversionFactor,
       );
     }).toList();
 
@@ -391,9 +500,12 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     UpdateGlobalPriceEvent event,
     Emitter<AddProductState> emit,
   ) {
-    final updatedSkus = state.generatedSkus
-        .map((sku) => sku.copyWith(price: event.price))
-        .toList();
+    final updatedSkus = state.generatedSkus.map((sku) {
+      if (sku.conversionFactor != null && sku.conversionFactor != 1) {
+        return sku;
+      }
+      return sku.copyWith(price: event.price);
+    }).toList();
     emit(state.copyWith(globalPrice: event.price, generatedSkus: updatedSkus));
   }
 
@@ -402,7 +514,9 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
     Emitter<AddProductState> emit,
   ) {
     final updatedSkus = state.generatedSkus
-        .map((sku) => sku.copyWith(costPrice: event.costPrice))
+        .map(
+          (sku) => sku.copyWith(costPrice: event.costPrice * _unitFactor(sku)),
+        )
         .toList();
     emit(
       state.copyWith(
@@ -462,4 +576,89 @@ class AddProductBloc extends Bloc<AddProductEvent, AddProductState> {
       state.copyWith(globalBarcode: event.barcode, generatedSkus: updatedSkus),
     );
   }
+
+  void _onSelectBaseUnit(
+    SelectBaseUnitEvent event,
+    Emitter<AddProductState> emit,
+  ) {
+    final drafts = state.productUnitDrafts
+        .where((draft) => draft.unit.id != event.unit.id)
+        .toList();
+    emit(
+      state.copyWith(selectedBaseUnit: event.unit, productUnitDrafts: drafts),
+    );
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  void _onClearBaseUnit(
+    ClearBaseUnitEvent event,
+    Emitter<AddProductState> emit,
+  ) {
+    emit(
+      state.copyWith(clearSelectedBaseUnit: true, productUnitDrafts: const []),
+    );
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  void _onAddProductUnitDraft(
+    AddProductUnitDraftEvent event,
+    Emitter<AddProductState> emit,
+  ) {
+    final unit = event.draft.unit;
+    if (unit.id > 0 && state.selectedBaseUnit?.id == unit.id) {
+      return;
+    }
+    if (unit.id > 0 &&
+        state.productUnitDrafts.any((draft) => draft.unit.id == unit.id)) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        productUnitDrafts: [...state.productUnitDrafts, event.draft],
+      ),
+    );
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  void _onRemoveProductUnitDraft(
+    RemoveProductUnitDraftEvent event,
+    Emitter<AddProductState> emit,
+  ) {
+    final drafts = state.productUnitDrafts
+        .where((draft) => draft.id != event.id)
+        .toList();
+    emit(state.copyWith(productUnitDrafts: drafts));
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  void _onUpdateProductUnitDraft(
+    UpdateProductUnitDraftEvent event,
+    Emitter<AddProductState> emit,
+  ) {
+    final unit = event.unit;
+    if (unit != null && unit.id > 0 && state.selectedBaseUnit?.id == unit.id) {
+      return;
+    }
+    if (unit != null &&
+        unit.id > 0 &&
+        state.productUnitDrafts.any(
+          (draft) => draft.id != event.id && draft.unit.id == unit.id,
+        )) {
+      return;
+    }
+
+    final drafts = state.productUnitDrafts.map((draft) {
+      if (draft.id != event.id) return draft;
+      return draft.copyWith(
+        unit: unit,
+        conversionFactor: event.conversionFactor,
+        sellingPrice: event.sellingPrice,
+      );
+    }).toList();
+    emit(state.copyWith(productUnitDrafts: drafts));
+    _generateSkus(emit, state.variantGroups);
+  }
+
+  double _unitFactor(GeneratedSku sku) => sku.conversionFactor ?? 1;
 }

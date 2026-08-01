@@ -125,7 +125,7 @@ class AppStrings {
   static const String filterTotalStock = 'Tổng tồn kho';
   static const String filterLowStock = 'Tồn kho thấp';
   static const String filterOutOfStock = 'Hết hàng';
-  static const String inStock = 'Còn hàng';
+  static const String inStock = 'Tồn';
   static const String lowStock = 'Tồn kho thấp';
   static const String outOfStock = 'Hết';
   static const String skuPrefix = 'SKU: ';
@@ -232,6 +232,44 @@ class AppStrings {
   static const String generalInfoTitle = 'Thông tin chung';
   static const String categoryLabel = 'Danh mục';
   static const String unitOfMeasureLabel = 'Đơn vị tính';
+  static const String productUnitSectionTitle = 'Đơn vị bán';
+  static const String productUnitSetupTitle = 'Đơn vị tính';
+  static const String productUnitDone = 'Xong';
+  static const String productUnitBaseSection = 'ĐƠN VỊ TÍNH';
+  static const String productUnitConversionSection = 'ĐƠN VỊ QUY ĐỔI';
+  static const String productUnitEditableBadge = 'Đang sửa';
+  static const String productUnitLockedBadge = 'Chỉ xem';
+  static const String productUnitNameLabel = 'Tên đơn vị';
+  static const String productUnitBaseTitle = 'Chọn đơn vị cơ bản';
+  static const String productUnitChooseBase = 'Chọn đơn vị cơ bản';
+  static const String productUnitBaseSubtitle =
+      'Đơn vị tham chiếu của sản phẩm, hệ số luôn là 1';
+  static const String productUnitAddConversion = 'Thêm đơn vị quy đổi';
+  static const String productUnitCreateNew = 'Tạo đơn vị mới';
+  static const String productUnitNameHint = 'VD: Chai, Lốc, Thùng';
+  static const String productUnitCreateButton = 'Tạo đơn vị';
+  static const String productUnitConversionFactor = 'Số lượng quy đổi';
+  static const String productUnitConversionHint = 'VD: 4';
+  static const String productUnitBaseRequired =
+      'Vui lòng chọn đơn vị cơ bản trước khi lưu sản phẩm.';
+  static const String productUnitBaseFirst =
+      'Vui lòng chọn đơn vị cơ bản trước khi thêm đơn vị quy đổi.';
+  static const String productUnitDuplicate =
+      'Mỗi đơn vị bán chỉ được chọn một lần.';
+  static const String productUnitDisable = 'Không dùng đơn vị tính';
+  static const String productUnitDisabledSummary =
+      'Chưa dùng đơn vị tính cho sản phẩm này';
+  static const String productUnitInvalidConversion =
+      'Vui lòng chọn đơn vị và nhập số lượng quy đổi lớn hơn 0.';
+  static const String productUnitSkuCodeTooLong =
+      'Mã SKU không được vượt quá 100 ký tự.';
+  static const String productUnitSkuCodeDuplicate = 'Mã SKU không được trùng.';
+  static const String productUnitBaseEditUnsupported =
+      'Không thể đổi đơn vị cơ bản trong màn sửa SKU.';
+  static const String productUnitAddedSuccess = 'Đã thêm đơn vị thành công.';
+  static const String productUnitUpdatedSuccess =
+      'Đã cập nhật đơn vị thành công.';
+  static const String productUnitRemovedSuccess = 'Đã xoá đơn vị thành công.';
   static const String currencyLabel = 'Tiền tệ';
   static const String isSellableLabel = 'Có thể bán';
   static const String costPriceLabel = 'Giá vốn';
@@ -242,6 +280,37 @@ class AppStrings {
   static const String notAvailable = 'Không có';
   static const String addNew = 'Thêm mới';
   static const String retry = 'Thử lại';
+  static const String productUnitsTitle = 'Đơn vị sản phẩm';
+  static const String productUnitsAdd = 'Thêm đơn vị';
+  static const String productUnitsSaved = 'Cập nhật đơn vị sản phẩm thành công';
+  static const String productUnitsBaseMarker = 'Đơn vị cơ bản';
+  static String productUnitConversionSubtitle(double factor) {
+    return 'Quy đổi: $factor đơn vị cơ bản';
+  }
+
+  static String productUnitConversionWithBase(double factor, String baseUnit) {
+    return 'Quy đổi: $factor $baseUnit';
+  }
+
+  static String productUnitEnabledSummary(String baseUnit, int unitCount) {
+    return '$baseUnit là đơn vị cơ bản - $unitCount đơn vị bán';
+  }
+
+  static String productUnitsSummary(int skuCount, int unitCount) {
+    return '$skuCount SKU - $unitCount đơn vị tính';
+  }
+
+  static String productUnitsBaseUnit(String unitName) {
+    return 'Đơn vị cơ bản: $unitName';
+  }
+
+  static String productUnitsSkuCount(int count) {
+    return '$count SKU đang dùng';
+  }
+
+  static String productUnitsPendingCreate(int count) {
+    return '$count SKU mới sẽ được tạo khi lưu.';
+  }
 
   // ── SPU Form ────────────────────────────────────────────────────────────────
   static const String editSpuTitle = 'Sửa sản phẩm';

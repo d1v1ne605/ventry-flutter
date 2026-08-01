@@ -16,6 +16,7 @@ import 'package:ventry_flutter/domain/entities/product/sku_entity.dart';
 import 'package:ventry_flutter/domain/entities/product/spu_entity.dart';
 import 'package:ventry_flutter/injection.dart';
 import 'package:ventry_flutter/presentation/routes/router_constants.dart';
+import 'package:ventry_flutter/presentation/screens/sku_form/bloc/sku_form_state.dart';
 import 'package:ventry_flutter/presentation/screens/sku_form/sku_form_page.dart';
 import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_bloc.dart';
 import 'package:ventry_flutter/presentation/screens/sku_details/bloc/sku_details_event.dart';
@@ -60,15 +61,22 @@ class _SkuDetailsViewState extends State<_SkuDetailsView> {
   }
 
   Future<void> _openSkuForm(BuildContext context, SkuEntity sku) async {
-    final updatedSku = await context.pushNamed<SkuEntity>(
+    final result = await context.pushNamed<Object?>(
       RouterName.skuForm,
       extra: SkuFormPageArgs.edit(_editedSku ?? sku),
     );
 
-    if (updatedSku == null || !context.mounted) {
+    if (result == null || !context.mounted) {
       return;
     }
 
+    if (result == SkuFormUnitSaveResult.removed) {
+      AppSnackBar.showSuccess(context, AppStrings.productUnitRemovedSuccess);
+      context.pop(sku.uid);
+      return;
+    }
+
+    final updatedSku = result as SkuEntity;
     setState(() {
       _editedSku = updatedSku;
     });

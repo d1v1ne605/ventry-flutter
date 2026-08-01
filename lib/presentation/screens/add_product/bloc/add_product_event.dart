@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 import 'package:ventry_flutter/presentation/screens/add_product/bloc/add_product_state.dart';
 
 abstract class AddProductEvent extends Equatable {
@@ -9,6 +10,69 @@ abstract class AddProductEvent extends Equatable {
 }
 
 class LoadAttributesEvent extends AddProductEvent {}
+
+class LoadUnitsEvent extends AddProductEvent {}
+
+class SelectBaseUnitEvent extends AddProductEvent {
+  const SelectBaseUnitEvent(this.unit);
+
+  final UnitEntity unit;
+
+  @override
+  List<Object?> get props => [unit];
+}
+
+class ClearBaseUnitEvent extends AddProductEvent {}
+
+class CreateProductUnitEvent extends AddProductEvent {
+  const CreateProductUnitEvent(
+    this.name, {
+    this.selectAsBase = true,
+    this.draftId,
+  });
+
+  final String name;
+  final bool selectAsBase;
+  final String? draftId;
+
+  @override
+  List<Object?> get props => [name, selectAsBase, draftId];
+}
+
+class AddProductUnitDraftEvent extends AddProductEvent {
+  const AddProductUnitDraftEvent(this.draft);
+
+  final ProductUnitDraft draft;
+
+  @override
+  List<Object?> get props => [draft];
+}
+
+class UpdateProductUnitDraftEvent extends AddProductEvent {
+  const UpdateProductUnitDraftEvent({
+    required this.id,
+    this.unit,
+    this.conversionFactor,
+    this.sellingPrice,
+  });
+
+  final String id;
+  final UnitEntity? unit;
+  final double? conversionFactor;
+  final double? sellingPrice;
+
+  @override
+  List<Object?> get props => [id, unit, conversionFactor, sellingPrice];
+}
+
+class RemoveProductUnitDraftEvent extends AddProductEvent {
+  const RemoveProductUnitDraftEvent(this.id);
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
 
 class AddVariantGroupEvent extends AddProductEvent {}
 

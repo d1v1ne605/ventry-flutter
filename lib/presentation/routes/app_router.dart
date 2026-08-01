@@ -88,7 +88,10 @@ final router = GoRouter(
               name: RouterName.spuVariants,
               builder: (context, state) {
                 final spuUid = state.pathParameters['spuUid'] ?? '';
-                return SpuVariantsPage(spuUid: spuUid);
+                final unitId = int.tryParse(
+                  state.uri.queryParameters['unitId'] ?? '',
+                );
+                return SpuVariantsPage(spuUid: spuUid, unitId: unitId);
               },
             ),
             GoRoute(

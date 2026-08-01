@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ventry_flutter/domain/entities/product/unit_entity.dart';
 
 class SpuEntity extends Equatable {
   final String uid;
@@ -9,6 +10,7 @@ class SpuEntity extends Equatable {
   final String? imageUrl;
   final String? currency;
   final String? unitOfMeasure;
+  final UnitEntity? baseUnit;
   final String status;
   final int version;
   final String? categoryUid;
@@ -26,6 +28,7 @@ class SpuEntity extends Equatable {
     this.imageUrl,
     this.currency,
     this.unitOfMeasure,
+    this.baseUnit,
     required this.status,
     required this.version,
     this.categoryUid,
@@ -45,6 +48,7 @@ class SpuEntity extends Equatable {
     imageUrl,
     currency,
     unitOfMeasure,
+    baseUnit,
     status,
     version,
     categoryUid,

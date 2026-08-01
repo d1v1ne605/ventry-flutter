@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ventry_flutter/data/models/product/response/sku_spu_response.dart';
+import 'package:ventry_flutter/data/models/product/response/unit_response.dart';
 
 part 'sku_response.freezed.dart';
 part 'sku_response.g.dart';
@@ -14,6 +15,8 @@ class SkuResponse with _$SkuResponse {
     double? costPrice,
     required int stockQuantity,
     required int minStockQuantity,
+    UnitResponse? unit,
+    double? conversionFactor,
     @Default([]) List<String> imageKeys,
     @Default([]) List<String> imageUrls,
     required String status,
