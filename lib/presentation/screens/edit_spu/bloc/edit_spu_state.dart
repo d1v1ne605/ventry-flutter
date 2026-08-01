@@ -12,7 +12,6 @@ class EditSpuState extends Equatable {
   final String? selectedCategoryName;
   final String name;
   final String currency;
-  final String unitOfMeasure;
   final String description;
   final SpuEntity? updatedSpu;
   final String? errorMessage;
@@ -26,7 +25,6 @@ class EditSpuState extends Equatable {
     this.selectedCategoryName,
     this.name = '',
     this.currency = '',
-    this.unitOfMeasure = '',
     this.description = '',
     this.updatedSpu,
     this.errorMessage,
@@ -50,8 +48,7 @@ class EditSpuState extends Equatable {
     return name.trim() != currentSpu.name.trim() ||
         selectedCategoryUid != currentSpu.categoryUid ||
         _nullableTrim(description) != _nullableTrim(currentSpu.description) ||
-        _nullableTrim(currency) != _nullableTrim(currentSpu.currency) ||
-        _nullableTrim(unitOfMeasure) != _nullableTrim(currentSpu.unitOfMeasure);
+        _nullableTrim(currency) != _nullableTrim(currentSpu.currency);
   }
 
   bool get canSubmit => hasChanges && name.trim().isNotEmpty;
@@ -67,7 +64,6 @@ class EditSpuState extends Equatable {
     bool clearSelectedCategoryName = false,
     String? name,
     String? currency,
-    String? unitOfMeasure,
     String? description,
     SpuEntity? updatedSpu,
     bool clearUpdatedSpu = false,
@@ -87,7 +83,6 @@ class EditSpuState extends Equatable {
           : selectedCategoryName ?? this.selectedCategoryName,
       name: name ?? this.name,
       currency: currency ?? this.currency,
-      unitOfMeasure: unitOfMeasure ?? this.unitOfMeasure,
       description: description ?? this.description,
       updatedSpu: clearUpdatedSpu ? null : updatedSpu ?? this.updatedSpu,
       errorMessage: clearErrorMessage
@@ -106,7 +101,6 @@ class EditSpuState extends Equatable {
     selectedCategoryName,
     name,
     currency,
-    unitOfMeasure,
     description,
     updatedSpu,
     errorMessage,

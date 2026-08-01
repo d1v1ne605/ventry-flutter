@@ -240,7 +240,6 @@ class ProductRepositoryImpl implements ProductRepository {
           categoryUid: params.categoryUid,
           description: params.description,
           currency: params.currency,
-          unitOfMeasure: params.unitOfMeasure,
         ),
       );
       return Right(_mapSpuToEntity(response));

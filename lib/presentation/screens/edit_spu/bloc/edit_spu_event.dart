@@ -28,33 +28,29 @@ class EditSpuCategoryChanged extends EditSpuEvent {
 class EditSpuFormChanged extends EditSpuEvent {
   final String name;
   final String currency;
-  final String unitOfMeasure;
   final String description;
 
   const EditSpuFormChanged({
     required this.name,
     required this.currency,
-    required this.unitOfMeasure,
     required this.description,
   });
 
   @override
-  List<Object?> get props => [name, currency, unitOfMeasure, description];
+  List<Object?> get props => [name, currency, description];
 }
 
 class SubmitEditSpu extends EditSpuEvent {
   final String name;
   final String currency;
-  final String unitOfMeasure;
   final String description;
 
   const SubmitEditSpu({
     required this.name,
     required this.currency,
-    required this.unitOfMeasure,
     required this.description,
   });
 
   @override
-  List<Object?> get props => [name, currency, unitOfMeasure, description];
+  List<Object?> get props => [name, currency, description];
 }

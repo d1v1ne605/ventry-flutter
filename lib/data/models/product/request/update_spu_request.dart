@@ -11,7 +11,6 @@ class UpdateSpuRequest with _$UpdateSpuRequest {
     String? categoryUid,
     String? description,
     String? currency,
-    String? unitOfMeasure,
   }) = _UpdateSpuRequest;
 
   factory UpdateSpuRequest.fromJson(Map<String, dynamic> json) =>

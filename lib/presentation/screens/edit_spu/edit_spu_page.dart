@@ -46,7 +46,6 @@ class _EditSpuView extends StatefulWidget {
 class _EditSpuViewState extends State<_EditSpuView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _currencyController = TextEditingController();
-  final TextEditingController _unitController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   String? _seededSpuUid;
@@ -56,7 +55,6 @@ class _EditSpuViewState extends State<_EditSpuView> {
   void dispose() {
     _nameController.dispose();
     _currencyController.dispose();
-    _unitController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
@@ -70,7 +68,6 @@ class _EditSpuViewState extends State<_EditSpuView> {
     _seededVersion = spu.version;
     _nameController.text = spu.name;
     _currencyController.text = spu.currency ?? '';
-    _unitController.text = spu.unitOfMeasure ?? '';
     _descriptionController.text = spu.description ?? '';
   }
 
@@ -79,7 +76,6 @@ class _EditSpuViewState extends State<_EditSpuView> {
       SubmitEditSpu(
         name: _nameController.text,
         currency: _currencyController.text,
-        unitOfMeasure: _unitController.text,
         description: _descriptionController.text,
       ),
     );
@@ -90,7 +86,6 @@ class _EditSpuViewState extends State<_EditSpuView> {
       EditSpuFormChanged(
         name: _nameController.text,
         currency: _currencyController.text,
-        unitOfMeasure: _unitController.text,
         description: _descriptionController.text,
       ),
     );
@@ -148,7 +143,6 @@ class _EditSpuViewState extends State<_EditSpuView> {
           child: _EditSpuBody(
             nameController: _nameController,
             currencyController: _currencyController,
-            unitController: _unitController,
             descriptionController: _descriptionController,
             onChanged: () => _notifyFormChanged(context),
           ),
@@ -165,14 +159,12 @@ class _EditSpuBody extends StatelessWidget {
   const _EditSpuBody({
     required this.nameController,
     required this.currencyController,
-    required this.unitController,
     required this.descriptionController,
     required this.onChanged,
   });
 
   final TextEditingController nameController;
   final TextEditingController currencyController;
-  final TextEditingController unitController;
   final TextEditingController descriptionController;
   final VoidCallback onChanged;
 
@@ -224,7 +216,6 @@ class _EditSpuBody extends StatelessWidget {
           child: _EditSpuFormCard(
             nameController: nameController,
             currencyController: currencyController,
-            unitController: unitController,
             descriptionController: descriptionController,
             onChanged: onChanged,
           ),
@@ -238,14 +229,12 @@ class _EditSpuFormCard extends StatelessWidget {
   const _EditSpuFormCard({
     required this.nameController,
     required this.currencyController,
-    required this.unitController,
     required this.descriptionController,
     required this.onChanged,
   });
 
   final TextEditingController nameController;
   final TextEditingController currencyController;
-  final TextEditingController unitController;
   final TextEditingController descriptionController;
   final VoidCallback onChanged;
 
@@ -285,15 +274,6 @@ class _EditSpuFormCard extends StatelessWidget {
             onChanged: (_) => onChanged(),
             textInputAction: TextInputAction.next,
             inputFormatters: [LengthLimitingTextInputFormatter(10)],
-          ),
-          SizedBox(height: AppSize.size16.h),
-          CustomTextField(
-            label: AppStrings.addProductUnitLabel,
-            hintText: AppStrings.unitHint,
-            controller: unitController,
-            onChanged: (_) => onChanged(),
-            textInputAction: TextInputAction.next,
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
           ),
           SizedBox(height: AppSize.size16.h),
           CustomTextField(

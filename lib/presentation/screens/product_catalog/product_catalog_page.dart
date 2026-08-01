@@ -420,8 +420,6 @@ class _DisplayModeButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: AppSize.size20.r, color: foregroundColor),
-                SizedBox(width: AppSize.size6.w),
                 Flexible(
                   child: Text(
                     label,

@@ -317,12 +317,8 @@ class SkuFormBloc extends BaseViewModel<SkuFormEvent, SkuFormState> {
         final skus = list.items
             .expand((group) => group.skus)
             .toList(growable: false);
-        final latestSourceSku = skus
-            .where((sku) => sku.uid == state.sourceSku.uid)
-            .firstOrNull;
         emit(
           state.copyWith(
-            sourceSku: latestSourceSku ?? state.sourceSku,
             unitStatus: BaseStatus.success,
             units: units,
             siblingSkus: skus,

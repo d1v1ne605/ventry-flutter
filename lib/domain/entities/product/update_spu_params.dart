@@ -7,7 +7,6 @@ class UpdateSpuParams extends Equatable {
   final String? categoryUid;
   final String? description;
   final String? currency;
-  final String? unitOfMeasure;
 
   const UpdateSpuParams({
     required this.spuUid,
@@ -16,7 +15,6 @@ class UpdateSpuParams extends Equatable {
     this.categoryUid,
     this.description,
     this.currency,
-    this.unitOfMeasure,
   });
 
   @override
@@ -27,6 +25,5 @@ class UpdateSpuParams extends Equatable {
     categoryUid,
     description,
     currency,
-    unitOfMeasure,
   ];
 }

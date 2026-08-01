@@ -80,7 +80,6 @@ class EditSpuBloc extends BaseViewModel<EditSpuEvent, EditSpuState> {
             clearSelectedCategoryName: spu.categoryName == null,
             name: spu.name,
             currency: spu.currency ?? '',
-            unitOfMeasure: spu.unitOfMeasure ?? '',
             description: spu.description ?? '',
             clearErrorMessage: true,
           ),
@@ -117,7 +116,6 @@ class EditSpuBloc extends BaseViewModel<EditSpuEvent, EditSpuState> {
       state.copyWith(
         name: event.name,
         currency: event.currency,
-        unitOfMeasure: event.unitOfMeasure,
         description: event.description,
         submitStatus: BaseStatus.initial,
       ),
@@ -156,7 +154,6 @@ class EditSpuBloc extends BaseViewModel<EditSpuEvent, EditSpuState> {
       categoryUid: state.selectedCategoryUid,
       description: event.description,
       currency: event.currency,
-      unitOfMeasure: event.unitOfMeasure,
     )) {
       return;
     }
@@ -177,7 +174,6 @@ class EditSpuBloc extends BaseViewModel<EditSpuEvent, EditSpuState> {
         categoryUid: state.selectedCategoryUid,
         description: _nullableTrim(event.description),
         currency: _nullableTrim(event.currency),
-        unitOfMeasure: _nullableTrim(event.unitOfMeasure),
       ),
     );
 
@@ -209,12 +205,10 @@ class EditSpuBloc extends BaseViewModel<EditSpuEvent, EditSpuState> {
     required String? categoryUid,
     required String description,
     required String currency,
-    required String unitOfMeasure,
   }) {
     return name.trim() != spu.name.trim() ||
         categoryUid != spu.categoryUid ||
         _nullableTrim(description) != _nullableTrim(spu.description ?? '') ||
-        _nullableTrim(currency) != _nullableTrim(spu.currency ?? '') ||
-        _nullableTrim(unitOfMeasure) != _nullableTrim(spu.unitOfMeasure ?? '');
+        _nullableTrim(currency) != _nullableTrim(spu.currency ?? '');
   }
 }
